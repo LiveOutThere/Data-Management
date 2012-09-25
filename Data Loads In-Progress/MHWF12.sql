@@ -117,7 +117,7 @@ INSERT INTO tbl_LoadFile_F12_MHW (
 		manage_stock,
 		merchandise_priority
 )
-SELECT  dbo.getMagentoSimpleSKU('MHW', a.jdeStyleID, RIGHT(a.REI,3), LTRIM(RTRIM(a.jdeSizeID)) + CASE WHEN a.jdeDimensionId IS NOT NULL AND a.jdeDimensionId <> '' THEN '-' + a.jdeDimensionId ELSE '' END) AS sku,
+SELECT  dbo.getMagentoSimpleSKU('FW12-MHW', a.jdeStyleID, RIGHT(a.REI,3), LTRIM(RTRIM(a.jdeSizeID)) + CASE WHEN a.jdeDimensionId IS NOT NULL AND a.jdeDimensionId <> '' THEN '-' + a.jdeDimensionId ELSE '' END) AS sku,
 		LTRIM(RTRIM(a.jdeStyleID)) AS vendor_product_id,
 		dbo.getMHWName(a.name) AS name,
 		CASE WHEN RIGHT(RTRIM(a.name),3) = '- W' THEN 'Women' WHEN RIGHT(RTRIM(a.name),3) = '- M' THEN 'Men' ELSE 'Men|Women' END AS gender,
@@ -132,7 +132,7 @@ SELECT  dbo.getMagentoSimpleSKU('MHW', a.jdeStyleID, RIGHT(a.REI,3), LTRIM(RTRIM
 		'simple' AS type,
 		(SELECT TOP 1 Filename FROM [view_RawData_MHW_Photos] WHERE Filename LIKE '%' + a.jdeStyleId + '[_]' + a.jdeColorID + '%' AND Filename NOT LIKE '%' + a.jdeStyleId + '[_]' + a.jdeColorID + '[_]b%' ORDER BY pos) AS image,
 		LTRIM(RTRIM(a.color)) AS image_label,
-		dbo.getUrlKey(dbo.getMHWName(a.name), 'Mountain Hardwear', LTRIM(RTRIM(a.color)) + ' - ' + LTRIM(RTRIM(a.jdeSizeID)) + CASE WHEN a.jdeDimensionId IS NOT NULL AND a.jdeDimensionId <> '' THEN '-' + a.jdeDimensionId ELSE '' END) AS url_key,
+		dbo.getUrlKey(dbo.getMHWName(a.name), 'Mountain Hardwear', LTRIM(RTRIM(a.color)) + ' - ' + LTRIM(RTRIM(a.jdeSizeID)) + CASE WHEN a.jdeDimensionId IS NOT NULL AND a.jdeDimensionId <> '' THEN '-' + a.jdeDimensionId ELSE '' END) + '-fw12' AS url_key,
 		0 AS is_in_stock,
 		1 AS manage_stock,
 		'' AS merchandise_priority
@@ -159,7 +159,7 @@ INSERT INTO tbl_LoadFile_F12_MHW (
 	manage_stock
 )
 SELECT DISTINCT
-	   dbo.getMagentoConfigurableSKU('MHW', a.vendor_product_id) AS sku,
+	   dbo.getMagentoConfigurableSKU('FW12-MHW', a.vendor_product_id) AS sku,
 		'choose_color,choose_size' AS configurable_attributes,
 		vendor_product_id,
 		'Uncategorized',
@@ -169,7 +169,7 @@ SELECT DISTINCT
 		(SELECT MAX(cost) FROM tbl_LoadFile_F12_MHW WHERE vendor_product_id = a.vendor_product_id) AS cost,
 		'1' AS has_options,
 		'configurable' AS type,
-		dbo.getUrlKey(name, 'Mountain Hardwear', '') AS url_key,
+		dbo.getUrlKey(name, 'Mountain Hardwear', '') + '-fw12' AS url_key,
 		'Catalog, Search' AS visibility,
 		1 AS is_in_stock,
 		0 AS manage_stock
@@ -338,8 +338,6 @@ UPDATE a SET
 FROM tbl_LoadFile_F12_MHW AS a
 WHERE type = 'configurable'
 
-DELETE FROM tbl_LoadFile_F12_MHW WHERE type = 'configurable' AND image IS NULL
-
 -- prepend plus signs to tell Magmi to include all images in the media gallery
 UPDATE tbl_LoadFile_F12_MHW SET thumbnail = '+' + image, small_image = '+' + image WHERE image IS NOT NULL
 UPDATE tbl_LoadFile_F12_MHW SET image = '+' + image WHERE image IS NOT NULL
@@ -361,7 +359,7 @@ SELECT  '0', '"' + RTRIM(LTRIM(REPLACE(a.store,'"','""'))) + '"','"' + RTRIM(LTR
 		'"' + RTRIM(LTRIM(REPLACE(a.vendor_color_code,'"','""'))) + '"','"' + RTRIM(LTRIM(REPLACE(a.vendor_size_code,'"','""'))) + '"','"' + RTRIM(LTRIM(REPLACE(a.season,'"','""'))) + '"','"' + RTRIM(LTRIM(REPLACE(REPLACE(REPLACE(a.short_description,'"','""'),CHAR(13),''),CHAR(10),''))) + '"','"' + RTRIM(LTRIM(REPLACE(REPLACE(REPLACE(a.description,'"','""'),CHAR(13),''),CHAR(10),''))) + '"','"' + RTRIM(LTRIM(REPLACE(REPLACE(REPLACE(a.features,'"','""'),CHAR(13),''),CHAR(10),''))) + '"','"' + RTRIM(LTRIM(REPLACE(a.activities,'"','""'))) + '"','"' + RTRIM(LTRIM(REPLACE(a.weather,'"','""'))) + '"','"' + RTRIM(LTRIM(REPLACE(a.layering,'"','""'))) + '"','"' + RTRIM(LTRIM(REPLACE(a.care_instructions,'"','""'))) + '"',
 		'"' + RTRIM(LTRIM(REPLACE(a.fabric,'"','""'))) + '"','"' + RTRIM(LTRIM(REPLACE(a.fit,'"','""'))) + '"','"' + RTRIM(LTRIM(REPLACE(a.volume,'"','""'))) + '"','"' + RTRIM(LTRIM(REPLACE(a.manufacturer,'"','""'))) + '"','"' + RTRIM(LTRIM(REPLACE(a.qty,'"','""'))) + '"','"' + RTRIM(LTRIM(REPLACE(a.is_in_stock,'"','""'))) + '"','"' + RTRIM(LTRIM(REPLACE(a.simples_skus,'"','""'))) + '"','"' + RTRIM(LTRIM(REPLACE(a.url_key,'"','""'))) + '"',
 		'"' + RTRIM(LTRIM(REPLACE(a.super_attribute_pricing,'"','""'))) + '"','"' + RTRIM(LTRIM(REPLACE(a.videos,'"','""'))) + '"','"' + RTRIM(LTRIM(REPLACE(a.hs_tariff,'"','""'))) + '"','"' + RTRIM(LTRIM(REPLACE(a.origin,'"','""'))) + '"','"' + RTRIM(LTRIM(REPLACE(a.weight,'"','""'))) + '"','"' + RTRIM(LTRIM(REPLACE(a.us_skus,'"','""'))) + '"','"' + RTRIM(LTRIM(REPLACE(a.cs_skus,'"','""'))) + '"','"' + RTRIM(LTRIM(REPLACE(a.xre_skus,'"','""'))) + '"','"' + RTRIM(LTRIM(REPLACE(a.backorders,'"','""'))) + '"','"' + RTRIM(LTRIM(REPLACE(a.manage_stock,'"','""'))) + '"'
-FROM dbo.tbl_LoadFile_F12_MHW AS a
+FROM dbo.tbl_LoadFile_F12_MHW AS a WHERE a.image IS NOT NULL
 GO
 
 DECLARE @sql varchar(1024)

@@ -98,7 +98,7 @@ INSERT INTO tbl_LoadFile_F12_SW (
 		image_label,
 		url_key
 )
-SELECT  dbo.getMagentoSimpleSKU('SW', a.[Style #], a.[Color #], REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(a.[Product Size],'3T','O/S'),'24M','O/S'),'12M','O/S'),'6M','O/S'),'1SFM','O/S')) AS sku,
+SELECT  dbo.getMagentoSimpleSKU('FW12-SW', a.[Style #], a.[Color #], REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(a.[Product Size],'3T','O/S'),'24M','O/S'),'12M','O/S'),'6M','O/S'),'1SFM','O/S')) AS sku,
 		[Style #] AS vendor_product_id,
 		dbo.getSWName(a.[Style Name],a.[Product SubCategory]) AS name,
 		dbo.getSWGender(a.[Style Name],a.[Product SubCategory]) AS gender,
@@ -113,10 +113,10 @@ SELECT  dbo.getMagentoSimpleSKU('SW', a.[Style #], a.[Color #], REPLACE(REPLACE(
 		'simple' AS type,
 		dbo.getSWImage(a.[Style #],a.[Color #]) AS image,
 		dbo.getSWColorName(a.[Color Name]) AS image_label,
-		dbo.getUrlKey(dbo.getSWName(a.[Style Name],a.[Product SubCategory]), 'Smartwool', dbo.getSWColorName(a.[Color Name]) + ' - ' + REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(a.[Product Size],'3T','O/S'),'24M','O/S'),'12M','O/S'),'6M','O/S'),'1SFM','O/S')) AS url_key
+		dbo.getUrlKey(dbo.getSWName(a.[Style Name],a.[Product SubCategory]), 'Smartwool', dbo.getSWColorName(a.[Color Name]) + ' - ' + REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(a.[Product Size],'3T','O/S'),'24M','O/S'),'12M','O/S'),'6M','O/S'),'1SFM','O/S')) + '-fw12' AS url_key
 FROM tbl_RawData_F12_SW AS a
 
---DELETE FROM tbl_LoadFile_F12_SW WHERE name IS NULL OR image IS NULL
+DELETE FROM tbl_LoadFile_F12_SW WHERE name IS NULL
 
 INSERT INTO tbl_LoadFile_F12_SW (
 	sku,
@@ -135,7 +135,7 @@ INSERT INTO tbl_LoadFile_F12_SW (
 	manage_stock
 )
 SELECT DISTINCT
-	    dbo.getMagentoConfigurableSKU('SW', a.[Style #]) AS sku,
+	    dbo.getMagentoConfigurableSKU('FW12-SW', a.[Style #]) AS sku,
 		'choose_color,choose_size' AS configurable_attributes,
 		a.[Style #] AS vendor_product_id,
 		'Uncategorized' AS categories,
@@ -145,7 +145,7 @@ SELECT DISTINCT
 		(SELECT MAX(cost) FROM tbl_LoadFile_F12_SW WHERE vendor_product_id = a.[Style #]) AS cost,
 		'1' AS has_options,
 		'configurable' AS type,
-		dbo.getUrlKey(dbo.getSWName(a.[Style Name],a.[Product SubCategory]), 'Smartwool', '') AS url_key,
+		dbo.getUrlKey(dbo.getSWName(a.[Style Name],a.[Product SubCategory]), 'Smartwool', '') + '-fw12' AS url_key,
 		'Catalog, Search' AS visibility,
 		'Z' AS merchandise_priority,
 		0 AS manage_stock
@@ -167,8 +167,6 @@ UPDATE a SET
 FROM tbl_LoadFile_F12_SW AS a
 WHERE type = 'configurable'
 
---DELETE FROM tbl_LoadFile_F12_SW WHERE image IS NULL AND type = 'configurable'
-
 UPDATE tbl_LoadFile_F12_SW SET thumbnail = '+' + image, small_image = '+' + image WHERE image IS NOT NULL
 UPDATE tbl_LoadFile_F12_SW SET image = '+' + image WHERE image IS NOT NULL
 
@@ -189,7 +187,7 @@ SELECT  '"' + RTRIM(LTRIM(REPLACE(a.store,'"','""'))) + '"','"' + RTRIM(LTRIM(RE
 		'"' + RTRIM(LTRIM(REPLACE(a.vendor_color_code,'"','""'))) + '"','"' + RTRIM(LTRIM(REPLACE(a.vendor_size_code,'"','""'))) + '"','"' + RTRIM(LTRIM(REPLACE(a.season,'"','""'))) + '"','"' + RTRIM(LTRIM(REPLACE(a. short_description,'"','""'))) + '"','"' + RTRIM(LTRIM(REPLACE(a.description,'"','""'))) + '"','"' + RTRIM(LTRIM(REPLACE(a.features,'"','""'))) + '"','"' + RTRIM(LTRIM(REPLACE(a.activities,'"','""'))) + '"','"' + RTRIM(LTRIM(REPLACE(a.weather,'"','""'))) + '"','"' + RTRIM(LTRIM(REPLACE(a.layering,'"','""'))) + '"','"' + RTRIM(LTRIM(REPLACE(a.care_instructions,'"','""'))) + '"',
 		'"' + RTRIM(LTRIM(REPLACE(a.fabric,'"','""'))) + '"','"' + RTRIM(LTRIM(REPLACE(a.fit,'"','""'))) + '"','"' + RTRIM(LTRIM(REPLACE(a.volume,'"','""'))) + '"','"' + RTRIM(LTRIM(REPLACE(a.manufacturer,'"','""'))) + '"','"' + RTRIM(LTRIM(REPLACE(a.qty,'"','""'))) + '"','"' + RTRIM(LTRIM(REPLACE(a.is_in_stock,'"','""'))) + '"','"' + RTRIM(LTRIM(REPLACE(a.simples_skus,'"','""'))) + '"','"' + RTRIM(LTRIM(REPLACE(a.url_key,'"','""'))) + '"',
 		'"' + RTRIM(LTRIM(REPLACE(a.super_attribute_pricing,'"','""'))) + '"','"' + RTRIM(LTRIM(REPLACE(a.videos,'"','""'))) + '"','"' + RTRIM(LTRIM(REPLACE(a.hs_tariff,'"','""'))) + '"','"' + RTRIM(LTRIM(REPLACE(a.origin,'"','""'))) + '"','"' + RTRIM(LTRIM(REPLACE(a.weight,'"','""'))) + '"','"' + RTRIM(LTRIM(REPLACE(a.us_skus,'"','""'))) + '"','"' + RTRIM(LTRIM(REPLACE(a.cs_skus,'"','""'))) + '"','"' + RTRIM(LTRIM(REPLACE(a.xre_skus,'"','""'))) + '"','"' + RTRIM(LTRIM(REPLACE(a.merchandise_priority,'"','""'))) + '"','"' + RTRIM(LTRIM(REPLACE(a.backorders,'"','""'))) + '"','"' + RTRIM(LTRIM(REPLACE(a.manage_stock,'"','""'))) + '"'
-FROM dbo.tbl_LoadFile_F12_SW AS a
+FROM dbo.tbl_LoadFile_F12_SW AS a WHERE a.image IS NOT NULL
 GO
 
 DECLARE @sql varchar(1024)

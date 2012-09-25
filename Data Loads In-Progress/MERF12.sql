@@ -113,7 +113,7 @@ SELECT  'FW12-MER' + '-' + REPLACE(dbo.ProperCase(a.Model),' ','') + '-' + CASE 
 		'simple' AS type,
 		dbo.getMERImage(a.Material) AS image,
 		LTRIM(RTRIM(dbo.ProperCase(a.Color))) AS image_label,
-		dbo.getUrlKey(dbo.getMERName(a.Model,a.[Grouping],a.Category), 'Merrell', LTRIM(RTRIM(dbo.ProperCase(a.Color))) + ' - ' + REPLACE(SKU,'OS','O/S')) AS url_key
+		dbo.getUrlKey(dbo.getMERName(a.Model,a.[Grouping],a.Category), 'Merrell', LTRIM(RTRIM(dbo.ProperCase(a.Color))) + ' - ' + REPLACE(SKU,'OS','O/S')) + '-fw12' AS url_key
 FROM tbl_RawData_F12_MER_App AS a
 
 INSERT INTO tbl_LoadFile_F12_MER (
@@ -152,7 +152,7 @@ SELECT  'FW12-MER' + '-' + REPLACE(a.Model,' ','') + '-' + CASE WHEN RIGHT(a.Cat
 		dbo.getUrlKey(dbo.getMERName(a.Model,a.[Grouping],a.Category), 'Merrell', LTRIM(RTRIM(dbo.ProperCase(REPLACE(a.Color,' ','')))) + ' - ' + SUBSTRING(SKU,5,4)) + '-f12' AS url_key
 FROM tbl_RawData_F12_MER_Foot AS a
 
-DELETE FROM tbl_LoadFile_F12_MER WHERE name IS NULL OR image IS NULL
+DELETE FROM tbl_LoadFile_F12_MER WHERE name IS NULL
 
 INSERT INTO tbl_LoadFile_F12_MER (
 	sku,
@@ -181,7 +181,7 @@ SELECT DISTINCT
 		(SELECT MAX(cost) FROM tbl_LoadFile_F12_MER WHERE vendor_product_id = REPLACE(dbo.ProperCase(a.Model),' ','')) AS cost,
 		'1' AS has_options,
 		'configurable' AS type,
-		dbo.getUrlKey(dbo.getMERName(a.Model,a.[Grouping],a.Category), 'Merrell', '') AS url_key,
+		dbo.getUrlKey(dbo.getMERName(a.Model,a.[Grouping],a.Category), 'Merrell', '') + '-fw12' AS url_key,
 		'Catalog, Search' AS visibility,
 		'Z' AS merchandise_priority,
 		0 AS manage_stock
@@ -233,14 +233,11 @@ UPDATE a SET
 FROM tbl_LoadFile_F12_MER AS a
 WHERE type = 'configurable'
 
-DELETE FROM tbl_LoadFile_F12_MER WHERE type = 'simple' AND image IS NULL
-DELETE FROM tbl_LoadFile_F12_MER WHERE type = 'configurable' AND image IS NULL
-
 UPDATE tbl_LoadFile_F12_MER SET thumbnail = '+' + image, small_image = '+' + image WHERE image IS NOT NULL
 UPDATE tbl_LoadFile_F12_MER SET image = '+' + image WHERE image IS NOT NULL
 
 UPDATE tbl_LoadFile_F12_MER SET is_in_stock = 0, qty = 0, visibility = 'Not Visible Individually' WHERE type = 'simple'
-UPDATE tbl_LoadFile_F12_MER SET is_in_stock = 1, qty = 0, visibility = 'Catalog, Search'  WHERE type = 'configurable'
+UPDATE tbl_LoadFile_F12_MER SET is_in_stock = 0, qty = 0, visibility = 'Catalog, Search'  WHERE type = 'configurable'
 GO
 
 CREATE VIEW [dbo].[view_LoadFile_F12_MER]
@@ -259,11 +256,11 @@ SELECT  '"' + RTRIM(LTRIM(REPLACE(a.store,'"','""'))) + '"','"' + RTRIM(LTRIM(RE
 		'"' + RTRIM(LTRIM(REPLACE(a.vendor_color_code,'"','""'))) + '"','"' + RTRIM(LTRIM(REPLACE(a.vendor_size_code,'"','""'))) + '"','"' + RTRIM(LTRIM(REPLACE(a.season,'"','""'))) + '"','"' + RTRIM(LTRIM(REPLACE(a. short_description,'"','""'))) + '"','"' + RTRIM(LTRIM(REPLACE(a.description,'"','""'))) + '"','"' + RTRIM(LTRIM(REPLACE(a.features,'"','""'))) + '"','"' + RTRIM(LTRIM(REPLACE(a.activities,'"','""'))) + '"','"' + RTRIM(LTRIM(REPLACE(a.weather,'"','""'))) + '"','"' + RTRIM(LTRIM(REPLACE(a.layering,'"','""'))) + '"','"' + RTRIM(LTRIM(REPLACE(a.care_instructions,'"','""'))) + '"',
 		'"' + RTRIM(LTRIM(REPLACE(a.fabric,'"','""'))) + '"','"' + RTRIM(LTRIM(REPLACE(a.fit,'"','""'))) + '"','"' + RTRIM(LTRIM(REPLACE(a.volume,'"','""'))) + '"','"' + RTRIM(LTRIM(REPLACE(a.manufacturer,'"','""'))) + '"','"' + RTRIM(LTRIM(REPLACE(a.qty,'"','""'))) + '"','"' + RTRIM(LTRIM(REPLACE(a.is_in_stock,'"','""'))) + '"','"' + RTRIM(LTRIM(REPLACE(a.simples_skus,'"','""'))) + '"','"' + RTRIM(LTRIM(REPLACE(a.url_key,'"','""'))) + '"',
 		'"' + RTRIM(LTRIM(REPLACE(a.super_attribute_pricing,'"','""'))) + '"','"' + RTRIM(LTRIM(REPLACE(a.videos,'"','""'))) + '"','"' + RTRIM(LTRIM(REPLACE(a.hs_tariff,'"','""'))) + '"','"' + RTRIM(LTRIM(REPLACE(a.origin,'"','""'))) + '"','"' + RTRIM(LTRIM(REPLACE(a.weight,'"','""'))) + '"','"' + RTRIM(LTRIM(REPLACE(a.us_skus,'"','""'))) + '"','"' + RTRIM(LTRIM(REPLACE(a.cs_skus,'"','""'))) + '"','"' + RTRIM(LTRIM(REPLACE(a.xre_skus,'"','""'))) + '"','"' + RTRIM(LTRIM(REPLACE(a.merchandise_priority,'"','""'))) + '"','"' + RTRIM(LTRIM(REPLACE(a.backorders,'"','""'))) + '"','"' + RTRIM(LTRIM(REPLACE(a.manage_stock,'"','""'))) + '"'
-FROM dbo.tbl_LoadFile_F12_MER AS a
+FROM dbo.tbl_LoadFile_F12_MER AS a WHERE a.image IS NOT NULL
 GO
 
 DECLARE @sql varchar(1024)
-SELECT @sql = 'bcp "SELECT * FROM LOT_Inventory.dbo.view_LoadFile_F12_MER" queryout "C:\Data\Shared\SQL\F12MER.csv" -w -t , -T -S ' + @@servername
+SELECT @sql = 'bcp "SELECT * FROM LOT_Inventory.dbo.view_LoadFile_F12_MER" queryout "C:\Data\Shared\MER.csv" -w -t , -T -S ' + @@servername
 EXEC master..xp_cmdshell @sql
 
 DROP VIEW view_LoadFile_F12_MER

@@ -98,7 +98,7 @@ INSERT INTO tbl_LoadFile_F12_LOLE (
 		image_label,
 		url_key
 )
-SELECT  dbo.getMagentoSimpleSKU('LOLE', a.Style, LEFT(a.Color,4), a.Size) AS sku,
+SELECT  dbo.getMagentoSimpleSKU('FW12-LOLE', a.Style, LEFT(a.Color,4), a.Size) AS sku,
 		a.Style AS vendor_product_id,
 		'Women''s ' + dbo.ProperCase(a.Description) AS name,
 		'Women' AS gender,
@@ -113,13 +113,13 @@ SELECT  dbo.getMagentoSimpleSKU('LOLE', a.Style, LEFT(a.Color,4), a.Size) AS sku
 		'simple' AS type,
 		dbo.getLOLEImage(a.Style,a.Color,a.UPC) AS image,
 		dbo.ProperCase(REPLACE(SUBSTRING(a.Color,8,50),'Lt.','Light ')) AS image_label,
-		dbo.getUrlKey('Women''s ' + dbo.ProperCase(a.Description),'Lole',dbo.ProperCase(REPLACE(SUBSTRING(a.Color,8,50),'Lt.','Light ')) + ' - ' + a.Size) AS url_key
+		dbo.getUrlKey('Women''s ' + dbo.ProperCase(a.Description),'Lole',dbo.ProperCase(REPLACE(SUBSTRING(a.Color,8,50),'Lt.','Light ')) + ' - ' + a.Size) + '-fw12' AS url_key
 FROM tbl_RawData_F12_LOLE AS a
 LEFT JOIN tbl_RawData_F12_LOLE_Cancelled AS b
 ON a.Style = b.style AND a.Color LIKE '%' + b.code + '%'
 WHERE b.style IS NULL
 
-DELETE FROM tbl_LoadFile_F12_LOLE WHERE name IS NULL OR image IS NULL
+DELETE FROM tbl_LoadFile_F12_LOLE WHERE name IS NULL
 
 INSERT INTO tbl_LoadFile_F12_LOLE (
 	sku,
@@ -138,7 +138,7 @@ INSERT INTO tbl_LoadFile_F12_LOLE (
 	manage_stock
 )
 SELECT DISTINCT
-	   dbo.getMagentoConfigurableSKU('LOLE', a.Style) AS sku,
+	   dbo.getMagentoConfigurableSKU('FW12-LOLE', a.Style) AS sku,
 		'choose_color,choose_size' AS configurable_attributes,
 		a.Style AS vendor_product_id,
 		'Uncategorized' AS categories,
@@ -148,7 +148,7 @@ SELECT DISTINCT
 		(SELECT MAX(cost) FROM tbl_LoadFile_F12_LOLE WHERE vendor_product_id = a.Style) AS cost,
 		'1' AS has_options,
 		'configurable' AS type,
-		dbo.getUrlKey('Women''s ' + dbo.ProperCase(a.Description), 'Lole', '') AS url_key,
+		dbo.getUrlKey('Women''s ' + dbo.ProperCase(a.Description), 'Lole', '') + '-fw12' AS url_key,
 		'Catalog, Search' AS visibility,
 		'Z' AS merchandise_priority,
 		0 AS manage_stock
@@ -170,8 +170,6 @@ UPDATE a SET
 FROM tbl_LoadFile_F12_LOLE AS a
 WHERE type = 'configurable'
 
-DELETE FROM tbl_LoadFile_F12_LOLE WHERE image IS NULL AND type = 'configurable'
-
 UPDATE tbl_LoadFile_F12_LOLE SET thumbnail = '+' + image, small_image = '+' + image WHERE image IS NOT NULL
 UPDATE tbl_LoadFile_F12_LOLE SET image = '+' + image WHERE image IS NOT NULL
 
@@ -192,11 +190,11 @@ SELECT  '"' + RTRIM(LTRIM(REPLACE(a.store,'"','""'))) + '"','"' + RTRIM(LTRIM(RE
 		'"' + RTRIM(LTRIM(REPLACE(a.vendor_color_code,'"','""'))) + '"','"' + RTRIM(LTRIM(REPLACE(a.vendor_size_code,'"','""'))) + '"','"' + RTRIM(LTRIM(REPLACE(a.season,'"','""'))) + '"','"' + RTRIM(LTRIM(REPLACE(a. short_description,'"','""'))) + '"','"' + RTRIM(LTRIM(REPLACE(a.description,'"','""'))) + '"','"' + RTRIM(LTRIM(REPLACE(a.features,'"','""'))) + '"','"' + RTRIM(LTRIM(REPLACE(a.activities,'"','""'))) + '"','"' + RTRIM(LTRIM(REPLACE(a.weather,'"','""'))) + '"','"' + RTRIM(LTRIM(REPLACE(a.layering,'"','""'))) + '"','"' + RTRIM(LTRIM(REPLACE(a.care_instructions,'"','""'))) + '"',
 		'"' + RTRIM(LTRIM(REPLACE(a.fabric,'"','""'))) + '"','"' + RTRIM(LTRIM(REPLACE(a.fit,'"','""'))) + '"','"' + RTRIM(LTRIM(REPLACE(a.volume,'"','""'))) + '"','"' + RTRIM(LTRIM(REPLACE(a.manufacturer,'"','""'))) + '"','"' + RTRIM(LTRIM(REPLACE(a.qty,'"','""'))) + '"','"' + RTRIM(LTRIM(REPLACE(a.is_in_stock,'"','""'))) + '"','"' + RTRIM(LTRIM(REPLACE(a.simples_skus,'"','""'))) + '"','"' + RTRIM(LTRIM(REPLACE(a.url_key,'"','""'))) + '"',
 		'"' + RTRIM(LTRIM(REPLACE(a.super_attribute_pricing,'"','""'))) + '"','"' + RTRIM(LTRIM(REPLACE(a.videos,'"','""'))) + '"','"' + RTRIM(LTRIM(REPLACE(a.hs_tariff,'"','""'))) + '"','"' + RTRIM(LTRIM(REPLACE(a.origin,'"','""'))) + '"','"' + RTRIM(LTRIM(REPLACE(a.weight,'"','""'))) + '"','"' + RTRIM(LTRIM(REPLACE(a.us_skus,'"','""'))) + '"','"' + RTRIM(LTRIM(REPLACE(a.cs_skus,'"','""'))) + '"','"' + RTRIM(LTRIM(REPLACE(a.xre_skus,'"','""'))) + '"','"' + RTRIM(LTRIM(REPLACE(a.merchandise_priority,'"','""'))) + '"','"' + RTRIM(LTRIM(REPLACE(a.backorders,'"','""'))) + '"','"' + RTRIM(LTRIM(REPLACE(a.manage_stock,'"','""'))) + '"'
-FROM dbo.tbl_LoadFile_F12_LOLE AS a
+FROM dbo.tbl_LoadFile_F12_LOLE AS a WHERE a.image IS NOT NULL
 GO
 
 DECLARE @sql varchar(1024)
-SELECT @sql = 'bcp "SELECT * FROM LOT_Inventory.dbo.view_LoadFile_F12_LOLE" queryout "C:\Data\Shared\SQL\F12LOLE.csv" -w -t , -T -S ' + @@servername
+SELECT @sql = 'bcp "SELECT * FROM LOT_Inventory.dbo.view_LoadFile_F12_LOLE" queryout "C:\Data\Shared\LOLE.csv" -w -t , -T -S ' + @@servername
 EXEC master..xp_cmdshell @sql
 
 DROP VIEW view_LoadFile_F12_LOLE

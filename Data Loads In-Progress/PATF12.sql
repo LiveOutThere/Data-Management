@@ -100,7 +100,7 @@ INSERT INTO tbl_LoadFile_F12_PAT (
 		url_key
 		--color_hex_value
 )
-SELECT  dbo.getMagentoSimpleSKU('PAT',a.[Style #],a.[Color Number],REPLACE(a.Size,'ALL','O/S')) AS sku,
+SELECT  dbo.getMagentoSimpleSKU('FW12-PAT',a.[Style #],a.[Color Number],REPLACE(a.Size,'ALL','O/S')) AS sku,
 		a.[Style #] AS vendor_product_id,
 		dbo.getPATName(a.[Style Description]) AS name,
 		REPLACE(REPLACE(REPLACE(a.Gender,'Unisex','Men|Women'),'Womens','Women'),'Mens','Men') AS gender,
@@ -115,11 +115,11 @@ SELECT  dbo.getMagentoSimpleSKU('PAT',a.[Style #],a.[Color Number],REPLACE(a.Siz
 		'simple' AS type,
 		(SELECT TOP 1 Filename FROM [tbl_RawData_F12_PAT_Photos] WHERE Filename LIKE CAST(a.[Style #] AS varchar(10)) + '[_]' + CAST(a.[Color Number] AS varchar(6)) + '%') AS image,
 		dbo.ProperCase(REPLACE(REPLACE(a.[Color Description],': ','/'),' W/','/')) + CASE WHEN RIGHT(a.[Color Description],3) = 'blu' THEN 'e' ELSE '' END AS image_label,
-		dbo.getUrlKey(dbo.getPATName(a.[Style Description]),'Patagonia',dbo.ProperCase(REPLACE(REPLACE(a.[Color Description],': ','/'),' W/','/')) + CASE WHEN RIGHT(a.[Color Description],3) = 'blu' THEN 'e' ELSE '' END + ' - ' + REPLACE(a.Size,'ALL','O/S')) AS url_key
+		dbo.getUrlKey(dbo.getPATName(a.[Style Description]),'Patagonia',dbo.ProperCase(REPLACE(REPLACE(a.[Color Description],': ','/'),' W/','/')) + CASE WHEN RIGHT(a.[Color Description],3) = 'blu' THEN 'e' ELSE '' END + ' - ' + REPLACE(a.Size,'ALL','O/S')) + '-fw12' AS url_key
 		--a.[Hex Code (if solid)] AS color_hex_value
 FROM tbl_RawData_F12_PAT AS a
 
---DELETE FROM tbl_LoadFile_F12_PAT WHERE name IS NULL OR image IS NULL
+DELETE FROM tbl_LoadFile_F12_PAT WHERE name IS NULL
 
 INSERT INTO tbl_LoadFile_F12_PAT (
 	sku,
@@ -138,7 +138,7 @@ INSERT INTO tbl_LoadFile_F12_PAT (
 	manage_stock
 )
 SELECT DISTINCT
-	    dbo.getMagentoConfigurableSKU('PAT',a.[Style #]) AS sku,
+	    dbo.getMagentoConfigurableSKU('FW12-PAT',a.[Style #]) AS sku,
 		'choose_color,choose_size' AS configurable_attributes,
 		a.[Style #] AS vendor_product_id,
 		'Uncategorized' AS categories,
@@ -148,7 +148,7 @@ SELECT DISTINCT
 		(SELECT MAX(cost) FROM tbl_LoadFile_F12_PAT WHERE vendor_product_id = a.[Style #]) AS cost,
 		'1' AS has_options,
 		'configurable' AS type,
-		dbo.getUrlKey(dbo.getPATName(a.[Style Description]), 'Patagonia', '') AS url_key,
+		dbo.getUrlKey(dbo.getPATName(a.[Style Description]), 'Patagonia', '') + '-fw12' AS url_key,
 		'Catalog, Search' AS visibility,
 		'Z' AS merchandise_priority,
 		0 AS manage_stock
@@ -169,8 +169,6 @@ UPDATE a SET
 	media_gallery = dbo.getPATMediaGallery(a.vendor_product_id)
 FROM tbl_LoadFile_F12_PAT AS a
 WHERE type = 'configurable'
-
---DELETE FROM tbl_LoadFile_F12_PAT WHERE image IS NULL AND type = 'configurable'
 
 UPDATE tbl_LoadFile_F12_PAT SET thumbnail = '+' + image, small_image = '+' + image WHERE image IS NOT NULL
 UPDATE tbl_LoadFile_F12_PAT SET image = '+' + image WHERE image IS NOT NULL
@@ -194,7 +192,7 @@ SELECT  '"' + RTRIM(LTRIM(REPLACE(a.store,'"','""'))) + '"','"' + RTRIM(LTRIM(RE
 		'"' + RTRIM(LTRIM(REPLACE(a.vendor_color_code,'"','""'))) + '"','"' + RTRIM(LTRIM(REPLACE(a.vendor_size_code,'"','""'))) + '"','"' + RTRIM(LTRIM(REPLACE(a.season,'"','""'))) + '"','"' + RTRIM(LTRIM(REPLACE(a. short_description,'"','""'))) + '"','"' + RTRIM(LTRIM(REPLACE(a.description,'"','""'))) + '"','"' + RTRIM(LTRIM(REPLACE(a.features,'"','""'))) + '"','"' + RTRIM(LTRIM(REPLACE(a.activities,'"','""'))) + '"','"' + RTRIM(LTRIM(REPLACE(a.weather,'"','""'))) + '"','"' + RTRIM(LTRIM(REPLACE(a.layering,'"','""'))) + '"','"' + RTRIM(LTRIM(REPLACE(a.care_instructions,'"','""'))) + '"',
 		'"' + RTRIM(LTRIM(REPLACE(a.fabric,'"','""'))) + '"','"' + RTRIM(LTRIM(REPLACE(a.fit,'"','""'))) + '"','"' + RTRIM(LTRIM(REPLACE(a.volume,'"','""'))) + '"','"' + RTRIM(LTRIM(REPLACE(a.manufacturer,'"','""'))) + '"','"' + RTRIM(LTRIM(REPLACE(a.qty,'"','""'))) + '"','"' + RTRIM(LTRIM(REPLACE(a.is_in_stock,'"','""'))) + '"','"' + RTRIM(LTRIM(REPLACE(a.simples_skus,'"','""'))) + '"','"' + RTRIM(LTRIM(REPLACE(a.url_key,'"','""'))) + '"',
 		'"' + RTRIM(LTRIM(REPLACE(a.super_attribute_pricing,'"','""'))) + '"','"' + RTRIM(LTRIM(REPLACE(a.videos,'"','""'))) + '"','"' + RTRIM(LTRIM(REPLACE(a.hs_tariff,'"','""'))) + '"','"' + RTRIM(LTRIM(REPLACE(a.origin,'"','""'))) + '"','"' + RTRIM(LTRIM(REPLACE(a.weight,'"','""'))) + '"','"' + RTRIM(LTRIM(REPLACE(a.us_skus,'"','""'))) + '"','"' + RTRIM(LTRIM(REPLACE(a.cs_skus,'"','""'))) + '"','"' + RTRIM(LTRIM(REPLACE(a.xre_skus,'"','""'))) + '"','"' + RTRIM(LTRIM(REPLACE(a.merchandise_priority,'"','""'))) + '"','"' + RTRIM(LTRIM(REPLACE(a.backorders,'"','""'))) + '"','"' + RTRIM(LTRIM(REPLACE(a.manage_stock,'"','""'))) + '"'  
-FROM dbo.tbl_LoadFile_F12_PAT AS a
+FROM dbo.tbl_LoadFile_F12_PAT AS a WHERE a.image IS NOT NULL
 GO
 
 DECLARE @sql varchar(1024)

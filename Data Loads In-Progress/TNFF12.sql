@@ -98,7 +98,7 @@ INSERT INTO tbl_LoadFile_F12_TNF (
 		image_label,
 		url_key
 )
-SELECT  dbo.getMagentoSimpleSKU('TNF', LEFT(a.[Sty Code],4), RIGHT(a.[Sty Code],3),dbo.getTNFSize(a.Dim1,a.Dim2)) AS sku,
+SELECT  dbo.getMagentoSimpleSKU('FW12-TNF', LEFT(a.[Sty Code],4), RIGHT(a.[Sty Code],3),dbo.getTNFSize(a.Dim1,a.Dim2)) AS sku,
 		LEFT(a.[Sty Code],4) AS vendor_product_id,
 		dbo.getTNFName(a.[Sty Desc]) AS name,
 		dbo.getTNFGenderFromName(a.[Sty Desc]) AS gender,
@@ -113,10 +113,10 @@ SELECT  dbo.getMagentoSimpleSKU('TNF', LEFT(a.[Sty Code],4), RIGHT(a.[Sty Code],
 		'simple' AS type,
 		dbo.getTNFImage(a.[Sty Code], a.[Upc Nbr]) AS image, 
 		dbo.getTNFColor(a.[Color Des]) AS image_label,
-		dbo.getUrlKey(dbo.getTNFName(a.[Sty Desc]), 'The North Face', dbo.getTNFColor(a.[Color Des]) + ' - ' + dbo.getTNFSize(a.Dim1,a.Dim2)) AS url_key
+		dbo.getUrlKey(dbo.getTNFName(a.[Sty Desc]), 'The North Face', dbo.getTNFColor(a.[Color Des]) + ' - ' + dbo.getTNFSize(a.Dim1,a.Dim2)) + '-fw12' AS url_key
 FROM tbl_RawData_F12_TNF AS a
 
---DELETE FROM tbl_LoadFile_F12_TNF WHERE name IS NULL OR image IS NULL
+DELETE FROM tbl_LoadFile_F12_TNF WHERE name IS NULL
 
 INSERT INTO tbl_LoadFile_F12_TNF (
 	sku,
@@ -135,7 +135,7 @@ INSERT INTO tbl_LoadFile_F12_TNF (
 	manage_stock
 )
 SELECT DISTINCT
-	    dbo.getMagentoConfigurableSKU('TNF', LEFT(a.[Sty Code],4)) AS sku,
+	    dbo.getMagentoConfigurableSKU('FW12-TNF', LEFT(a.[Sty Code],4)) AS sku,
 		'choose_color,choose_size' AS configurable_attributes,
 		LEFT(a.[Sty Code],4) AS vendor_product_id,
 		'Uncategorized' AS categories,
@@ -145,7 +145,7 @@ SELECT DISTINCT
 		(SELECT MAX(cost) FROM tbl_LoadFile_F12_TNF WHERE vendor_product_id = LEFT(a.[Sty Code],4)) AS cost,
 		'1' AS has_options,
 		'configurable' AS type,
-		dbo.getUrlKey(dbo.getTNFName(a.[Sty Desc]), 'The North Face', '') AS url_key,
+		dbo.getUrlKey(dbo.getTNFName(a.[Sty Desc]), 'The North Face', '') + '-fw12' AS url_key,
 		'Catalog, Search' AS visibility,
 		'Z' AS merchandise_priority,
 		0 AS manage_stock
@@ -165,8 +165,6 @@ UPDATE a SET
 	media_gallery = dbo.getTNFMediaGallery(a.vendor_product_id)
 FROM tbl_LoadFile_F12_TNF AS a
 WHERE type = 'configurable'
-
---DELETE FROM tbl_LoadFile_F12_TNF WHERE image IS NULL AND type = 'configurable'
 
 UPDATE tbl_LoadFile_F12_TNF SET thumbnail = '+' + image, small_image = '+' + image WHERE image IS NOT NULL
 UPDATE tbl_LoadFile_F12_TNF SET image = '+' + image WHERE image IS NOT NULL
@@ -190,7 +188,7 @@ SELECT  '"' + RTRIM(LTRIM(REPLACE(a.store,'"','""'))) + '"','"' + RTRIM(LTRIM(RE
 		'"' + RTRIM(LTRIM(REPLACE(a.vendor_color_code,'"','""'))) + '"','"' + RTRIM(LTRIM(REPLACE(a.vendor_size_code,'"','""'))) + '"','"' + RTRIM(LTRIM(REPLACE(a.season,'"','""'))) + '"','"' + RTRIM(LTRIM(REPLACE(a. short_description,'"','""'))) + '"','"' + RTRIM(LTRIM(REPLACE(a.description,'"','""'))) + '"','"' + RTRIM(LTRIM(REPLACE(a.features,'"','""'))) + '"','"' + RTRIM(LTRIM(REPLACE(a.activities,'"','""'))) + '"','"' + RTRIM(LTRIM(REPLACE(a.weather,'"','""'))) + '"','"' + RTRIM(LTRIM(REPLACE(a.layering,'"','""'))) + '"','"' + RTRIM(LTRIM(REPLACE(a.care_instructions,'"','""'))) + '"',
 		'"' + RTRIM(LTRIM(REPLACE(a.fabric,'"','""'))) + '"','"' + RTRIM(LTRIM(REPLACE(a.fit,'"','""'))) + '"','"' + RTRIM(LTRIM(REPLACE(a.volume,'"','""'))) + '"','"' + RTRIM(LTRIM(REPLACE(a.manufacturer,'"','""'))) + '"','"' + RTRIM(LTRIM(REPLACE(a.qty,'"','""'))) + '"','"' + RTRIM(LTRIM(REPLACE(a.is_in_stock,'"','""'))) + '"','"' + RTRIM(LTRIM(REPLACE(a.simples_skus,'"','""'))) + '"','"' + RTRIM(LTRIM(REPLACE(a.url_key,'"','""'))) + '"',
 		'"' + RTRIM(LTRIM(REPLACE(a.super_attribute_pricing,'"','""'))) + '"','"' + RTRIM(LTRIM(REPLACE(a.videos,'"','""'))) + '"','"' + RTRIM(LTRIM(REPLACE(a.hs_tariff,'"','""'))) + '"','"' + RTRIM(LTRIM(REPLACE(a.origin,'"','""'))) + '"','"' + RTRIM(LTRIM(REPLACE(a.weight,'"','""'))) + '"','"' + RTRIM(LTRIM(REPLACE(a.us_skus,'"','""'))) + '"','"' + RTRIM(LTRIM(REPLACE(a.cs_skus,'"','""'))) + '"','"' + RTRIM(LTRIM(REPLACE(a.xre_skus,'"','""'))) + '"','"' + RTRIM(LTRIM(REPLACE(a.merchandise_priority,'"','""'))) + '"','"' + RTRIM(LTRIM(REPLACE(a.backorders,'"','""'))) + '"','"' + RTRIM(LTRIM(REPLACE(a.manage_stock,'"','""'))) + '"'
-FROM dbo.tbl_LoadFile_F12_TNF AS a
+FROM dbo.tbl_LoadFile_F12_TNF AS a WHERE a.image IS NOT NULL
 GO
 
 DECLARE @sql varchar(1024)

@@ -100,7 +100,7 @@ INSERT INTO tbl_LoadFile_F12_OSP (
 		image_label,
 		url_key
 )
-SELECT  dbo.getMagentoSimpleSKU('OSP', [Style #], [Color Code], Size) AS sku,
+SELECT  dbo.getMagentoSimpleSKU('FW12-OSP', [Style #], [Color Code], Size) AS sku,
 		[Style #] AS vendor_product_id,
 		dbo.getOSPName(a.Model) AS name,
 		dbo.getOSPGender(a.Gender) AS gender,
@@ -115,10 +115,10 @@ SELECT  dbo.getMagentoSimpleSKU('OSP', [Style #], [Color Code], Size) AS sku,
 		'simple' AS type,
 		dbo.getOSPImage(a.Model, a.[UPC], a.Color) AS image,
 		a.Color AS image_label,
-		dbo.getUrlKey(dbo.getOSPName(a.Model), 'Osprey', a.Color + ' - ' + CASE WHEN a.Size = 'MD' THEN 'M' WHEN a.Size = 'LG' THEN 'L' WHEN a.Size = 'SM' THEN 'S' ELSE a.Size END) AS url_key
+		dbo.getUrlKey(dbo.getOSPName(a.Model), 'Osprey', a.Color + ' - ' + CASE WHEN a.Size = 'MD' THEN 'M' WHEN a.Size = 'LG' THEN 'L' WHEN a.Size = 'SM' THEN 'S' ELSE a.Size END) + '-fw12' AS url_key
 FROM tbl_RawData_F12_OSP AS a
 ORDER BY name
-DELETE FROM tbl_LoadFile_F12_OSP WHERE name IS NULL OR image IS NULL
+DELETE FROM tbl_LoadFile_F12_OSP WHERE name IS NULL
 
 -- now let's insert configurable SKUs by doing a SELECT DISTINCT on the same data set, this gives us one configurable per product
 INSERT INTO tbl_LoadFile_F12_OSP (
@@ -138,7 +138,7 @@ INSERT INTO tbl_LoadFile_F12_OSP (
 	manage_stock
 )
 SELECT DISTINCT
-	    dbo.getMagentoConfigurableSKU('OSP', a.[Style #]) AS sku,
+	    dbo.getMagentoConfigurableSKU('FW12-OSP', a.[Style #]) AS sku,
 		'choose_color,choose_size' AS configurable_attributes,
 		a.[Style #] AS vendor_product_id,
 		'Uncategorized' AS categories,
@@ -148,7 +148,7 @@ SELECT DISTINCT
 		(SELECT MAX(cost) FROM tbl_LoadFile_F12_OSP WHERE vendor_product_id = a.[Style #]) AS cost,
 		'1' AS has_options,
 		'configurable' AS type,
-		dbo.getUrlKey(dbo.getOSPName(a.Model), 'Osprey', '') AS url_key,
+		dbo.getUrlKey(dbo.getOSPName(a.Model), 'Osprey', '') + '-fw12' AS url_key,
 		'Catalog, Search' AS visibility,
 		'Z' AS merchandise_priority,
 		0 AS manage_stock
@@ -165,8 +165,6 @@ UPDATE a SET
 	simples_skus = dbo.getOSPAssociatedProducts(a.vendor_product_id)
 FROM tbl_LoadFile_F12_OSP AS a
 WHERE type = 'configurable'
-
-DELETE FROM tbl_LoadFile_F12_OSP WHERE image IS NULL AND type = 'configurable'
 
 -- prepend plus signs to tell Magmi to include all images in the media gallery
 UPDATE tbl_LoadFile_F12_OSP SET thumbnail = '+' + image, small_image = '+' + image WHERE image IS NOT NULL

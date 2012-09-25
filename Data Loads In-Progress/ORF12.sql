@@ -98,7 +98,7 @@ INSERT INTO tbl_LoadFile_F12_OR (
 		image_label,
 		url_key		
 )
-SELECT  dbo.getMagentoSimpleSKU('OR',a.[Style #],dbo.getORColorCode(a.[Color Code]),dbo.getORSize(a.Size)) AS sku,
+SELECT  dbo.getMagentoSimpleSKU('FW12-OR',a.[Style #],dbo.getORColorCode(a.[Color Code]),dbo.getORSize(a.Size)) AS sku,
 		a.[Style #] AS vendor_product_id,
 		REPLACE(dbo.ProperCase(LTRIM(ISNULL(a.Gender, '') + ' ' + a.[Style Name])),'''S ','''s ') AS name,
 		LTRIM(REPLACE((dbo.ProperCase(ISNULL(a.Gender, 'Men|Women'))),'''S','')) AS Gender,
@@ -113,7 +113,7 @@ SELECT  dbo.getMagentoSimpleSKU('OR',a.[Style #],dbo.getORColorCode(a.[Color Cod
 		'simple' AS type,
 		(SELECT TOP 1 Filename FROM [tbl_RawData_F12_OR_Photos] WHERE Filename LIKE '%' + CAST(a.[Style #] AS varchar(5)) + '%' + dbo.getORColorCode(a.[Color Code]) + '%') AS image,
 		dbo.ProperCase(a.[Color Name]) AS image_label,
-		dbo.getUrlKey(REPLACE(dbo.ProperCase(LTRIM(ISNULL(a.Gender, '') + ' ' + a.[Style Name])),'''S ','''s '),'Outdoor Research',dbo.ProperCase(a.[Color Name]) + ' - ' + REPLACE((a.Size),'1SIZE','O/S')) AS url_key
+		dbo.getUrlKey(REPLACE(dbo.ProperCase(LTRIM(ISNULL(a.Gender, '') + ' ' + a.[Style Name])),'''S ','''s '),'Outdoor Research',dbo.ProperCase(a.[Color Name]) + ' - ' + REPLACE((a.Size),'1SIZE','O/S')) + '-fw12' AS url_key
 FROM tbl_RawData_F12_OR AS a
 
 UPDATE tbl_LoadFile_F12_OR SET image = 'M-FerrosiPants-Black-55525_001.jpg' WHERE name LIKE '%ferrosi%' AND gender = 'Men' AND vendor_color_code = '001'
@@ -127,7 +127,7 @@ UPDATE tbl_LoadFile_F12_OR SET image = 'lateral dry bag group36680_909.jpg' WHER
 UPDATE tbl_LoadFile_F12_OR SET image = 'Flat-Dry-Bag-Group-Alpenglow-37480_81_82_562.jpg' WHERE name LIKE 'Flat Dry Bag%'
 UPDATE tbl_LoadFile_F12_OR SET image = 'window dry bag group.jpg' WHERE name LIKE 'Window Dry Bag%'
 
-DELETE FROM tbl_LoadFile_F12_OR WHERE name IS NULL OR image IS NULL OR price IS NULL
+DELETE FROM tbl_LoadFile_F12_OR WHERE name IS NULL OR price IS NULL
 
 INSERT INTO tbl_LoadFile_F12_OR (
 	sku,
@@ -146,7 +146,7 @@ INSERT INTO tbl_LoadFile_F12_OR (
 	manage_stock
 )
 SELECT DISTINCT
-	    dbo.getMagentoConfigurableSKU('OR',a.[Style #]) AS sku,
+	    dbo.getMagentoConfigurableSKU('FW12-OR',a.[Style #]) AS sku,
 		'choose_color,choose_size' AS configurable_attributes,
 		a.[Style #] AS vendor_product_id,
 		'Uncategorized' AS categories,
@@ -156,7 +156,7 @@ SELECT DISTINCT
 		(SELECT MAX(cost) FROM tbl_LoadFile_F12_OR WHERE vendor_product_id = a.[Style #]) AS cost,
 		'1' AS has_options,
 		'configurable' AS type,
-		dbo.getUrlKey(REPLACE(dbo.ProperCase(LTRIM(ISNULL(a.Gender, '') + ' ' + a.[Style Name])),'''S ','''s '), 'Outdoor Research', '') AS url_key,
+		dbo.getUrlKey(REPLACE(dbo.ProperCase(LTRIM(ISNULL(a.Gender, '') + ' ' + a.[Style Name])),'''S ','''s '), 'Outdoor Research', '') + '-fw12' AS url_key,
 		'Catalog, Search' AS visibility,
 		'Z' AS merchandise_priority,
 		0 AS manage_stock
@@ -176,8 +176,6 @@ UPDATE a SET
 	media_gallery = dbo.getORMediaGallery(a.vendor_product_id)
 FROM tbl_LoadFile_F12_OR AS a
 WHERE type = 'configurable'
-
-DELETE FROM tbl_LoadFile_F12_OR WHERE image IS NULL AND type = 'configurable'
 
 UPDATE tbl_LoadFile_F12_OR SET thumbnail = '+' + image, small_image = '+' + image WHERE image IS NOT NULL
 UPDATE tbl_LoadFile_F12_OR SET image = '+' + image WHERE image IS NOT NULL
@@ -199,7 +197,7 @@ SELECT  '0', '"' + RTRIM(LTRIM(REPLACE(a.store,'"','""'))) + '"','"' + RTRIM(LTR
 		'"' + RTRIM(LTRIM(REPLACE(a.vendor_color_code,'"','""'))) + '"','"' + RTRIM(LTRIM(REPLACE(a.vendor_size_code,'"','""'))) + '"','"' + RTRIM(LTRIM(REPLACE(a.season,'"','""'))) + '"','"' + RTRIM(LTRIM(REPLACE(REPLACE(REPLACE(a.short_description,'"','""'),CHAR(13),''),CHAR(10),''))) + '"','"' + RTRIM(LTRIM(REPLACE(REPLACE(REPLACE(a.description,'"','""'),CHAR(13),''),CHAR(10),''))) + '"','"' + RTRIM(LTRIM(REPLACE(REPLACE(REPLACE(a.features,'"','""'),CHAR(13),''),CHAR(10),''))) + '"','"' + RTRIM(LTRIM(REPLACE(a.activities,'"','""'))) + '"','"' + RTRIM(LTRIM(REPLACE(a.weather,'"','""'))) + '"','"' + RTRIM(LTRIM(REPLACE(a.layering,'"','""'))) + '"','"' + RTRIM(LTRIM(REPLACE(a.care_instructions,'"','""'))) + '"',
 		'"' + RTRIM(LTRIM(REPLACE(a.fabric,'"','""'))) + '"','"' + RTRIM(LTRIM(REPLACE(a.fit,'"','""'))) + '"','"' + RTRIM(LTRIM(REPLACE(a.volume,'"','""'))) + '"','"' + RTRIM(LTRIM(REPLACE(a.manufacturer,'"','""'))) + '"','"' + RTRIM(LTRIM(REPLACE(a.qty,'"','""'))) + '"','"' + RTRIM(LTRIM(REPLACE(a.is_in_stock,'"','""'))) + '"','"' + RTRIM(LTRIM(REPLACE(a.simples_skus,'"','""'))) + '"','"' + RTRIM(LTRIM(REPLACE(a.url_key,'"','""'))) + '"',
 		'"' + RTRIM(LTRIM(REPLACE(a.super_attribute_pricing,'"','""'))) + '"','"' + RTRIM(LTRIM(REPLACE(a.videos,'"','""'))) + '"','"' + RTRIM(LTRIM(REPLACE(a.hs_tariff,'"','""'))) + '"','"' + RTRIM(LTRIM(REPLACE(a.origin,'"','""'))) + '"','"' + RTRIM(LTRIM(REPLACE(a.weight,'"','""'))) + '"','"' + RTRIM(LTRIM(REPLACE(a.us_skus,'"','""'))) + '"','"' + RTRIM(LTRIM(REPLACE(a.cs_skus,'"','""'))) + '"','"' + RTRIM(LTRIM(REPLACE(a.xre_skus,'"','""'))) + '"','"' + RTRIM(LTRIM(REPLACE(a.merchandise_priority,'"','""'))) + '"','"' + RTRIM(LTRIM(REPLACE(a.backorders,'"','""'))) + '"','"' + RTRIM(LTRIM(REPLACE(a.manage_stock,'"','""'))) + '"'
-FROM dbo.tbl_LoadFile_F12_OR AS a
+FROM dbo.tbl_LoadFile_F12_OR AS a WHERE a.image IS NOT NULL
 GO
 
 DECLARE @sql varchar(1024)

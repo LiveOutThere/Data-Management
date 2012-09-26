@@ -39,7 +39,7 @@ CREATE TABLE [dbo].[tbl_LoadFile_F12_HH](
 	[vendor_product_id] [nvarchar](50) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
 	[vendor_color_code] [nvarchar](4000) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
 	[vendor_size_code] [nvarchar](4000) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
-	[season] [nvarchar](4000) COLLATE SQL_Latin1_General_CP1_CI_AS NULL CONSTRAINT [DF_tbl_LoadFile_F12_HH_season]  DEFAULT (N'FW12'),
+	[season] [nvarchar](4000) COLLATE SQL_Latin1_General_CP1_CI_AS NULL CONSTRAINT [DF_tbl_LoadFile_F12_HH_season]  DEFAULT (N'FW12A'),
 	[short_description] [nvarchar](4000) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
 	[description] [nvarchar](4000) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
 	[features] [nvarchar](4000) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,

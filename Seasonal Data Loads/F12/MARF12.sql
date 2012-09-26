@@ -100,7 +100,7 @@ INSERT INTO tbl_LoadFile_F12_MAR (
 		image_label,
 		url_key
 )
-SELECT  dbo.getMagentoSimpleSKU('FW12-MAR', a.[Style Number], a.[Color Number], a.[Size]) AS sku,
+SELECT  dbo.getMagentoSimpleSKU('FW12A-MAR', a.[Style Number], a.[Color Number], a.[Size]) AS sku,
 		a.[Style Number] AS vendor_product_id,
 		dbo.getMARName(a.[Style Description]) AS name,
 		CASE WHEN a.[Style Description] LIKE 'Wm''s%' THEN 'Women' WHEN a.[Style Description] LIKE 'Girl''s%' THEN 'Girl' WHEN a.[Style Description] LIKE 'Boy''s%' THEN 'Boy' WHEN a.[Style Description] LIKE 'Kid%' THEN 'Boy|Girl' ELSE 'Men' END AS gender,
@@ -115,7 +115,7 @@ SELECT  dbo.getMagentoSimpleSKU('FW12-MAR', a.[Style Number], a.[Color Number], 
 		'simple' AS type,
 		(SELECT TOP 1 Filename FROM view_RawData_MAR_Photos WHERE Filename LIKE '%' + a.[Style Number] + '%' + a.[Color Number] + '%') AS image,
 		a.[Color Description] AS image_label,
-		dbo.getUrlKey(dbo.getMARName(a.[Style Description]), 'Marmot', a.[Color Description] + ' - ' + a.Size) + '-fw12' AS url_key
+		dbo.getUrlKey(dbo.getMARName(a.[Style Description]), 'Marmot', a.[Color Description] + ' - ' + a.Size) + '-fw12a' AS url_key
 FROM tbl_RawData_F12_MAR AS a
 
 
@@ -137,7 +137,7 @@ INSERT INTO tbl_LoadFile_F12_MAR (
 	manage_stock
 )
 SELECT DISTINCT
-	   dbo.getMagentoConfigurableSKU('FW12-MAR', a.[Style Number]) AS sku,
+	   dbo.getMagentoConfigurableSKU('FW12A-MAR', a.[Style Number]) AS sku,
 		'choose_color,choose_size' AS configurable_attributes,
 		a.[Style Number] AS vendor_product_id,
 		'Uncategorized' AS categories,
@@ -147,7 +147,7 @@ SELECT DISTINCT
 		(SELECT MAX(cost) FROM tbl_LoadFile_F12_MAR WHERE vendor_product_id = a.[Style Number]) AS cost,
 		'1' AS has_options,
 		'configurable' AS type,
-		dbo.getUrlKey(dbo.getMARName(a.[Style Description]), 'Marmot', '') + '-fw12' AS url_key,
+		dbo.getUrlKey(dbo.getMARName(a.[Style Description]), 'Marmot', '') + '-fw12a' AS url_key,
 		'Catalog, Search' AS visibility,
 		'Z' AS merchandise_priority,
 		0 AS manage_stock

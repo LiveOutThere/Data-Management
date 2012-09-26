@@ -98,7 +98,7 @@ INSERT INTO tbl_LoadFile_F12_MER (
 		image_label,
 		url_key
 )
-SELECT  'FW12-MER' + '-' + REPLACE(dbo.ProperCase(a.Model),' ','') + '-' + CASE WHEN LEFT(a.Grouping,7) = 'WOMEN''S' THEN 'W' WHEN LEFT(a.Grouping,1) = 'J' THEN 'Men' WHEN LEFT(a.Grouping,5) = 'MEN''S' THEN 'M' WHEN LEFT(a.Grouping,3) = 'MEN' THEN 'M' ELSE '' END + '-' + SUBSTRING(a.Material,10,3) + '-' + REPLACE(SKU,'OS','O/S') AS sku,
+SELECT  'FW12A-MER' + '-' + REPLACE(dbo.ProperCase(a.Model),' ','') + '-' + CASE WHEN LEFT(a.Grouping,7) = 'WOMEN''S' THEN 'W' WHEN LEFT(a.Grouping,1) = 'J' THEN 'Men' WHEN LEFT(a.Grouping,5) = 'MEN''S' THEN 'M' WHEN LEFT(a.Grouping,3) = 'MEN' THEN 'M' ELSE '' END + '-' + SUBSTRING(a.Material,10,3) + '-' + REPLACE(SKU,'OS','O/S') AS sku,
 		REPLACE(dbo.ProperCase(a.Model),' ','') AS vendor_product_id,
 		dbo.getMERName(a.Model,a.[Grouping],a.Category) AS name,
 		CASE WHEN LEFT(a.[Grouping],7) = 'Women''s' THEN 'Women' WHEN LEFT(a.[Grouping],5) = 'Men''s' THEN 'Men' WHEN LEFT(a.[Grouping],1) = 'J' THEN 'Men' END AS gender,
@@ -113,7 +113,7 @@ SELECT  'FW12-MER' + '-' + REPLACE(dbo.ProperCase(a.Model),' ','') + '-' + CASE 
 		'simple' AS type,
 		dbo.getMERImage(a.Material) AS image,
 		LTRIM(RTRIM(dbo.ProperCase(a.Color))) AS image_label,
-		dbo.getUrlKey(dbo.getMERName(a.Model,a.[Grouping],a.Category), 'Merrell', LTRIM(RTRIM(dbo.ProperCase(a.Color))) + ' - ' + REPLACE(SKU,'OS','O/S')) + '-fw12' AS url_key
+		dbo.getUrlKey(dbo.getMERName(a.Model,a.[Grouping],a.Category), 'Merrell', LTRIM(RTRIM(dbo.ProperCase(a.Color))) + ' - ' + REPLACE(SKU,'OS','O/S')) + '-fw12a' AS url_key
 FROM tbl_RawData_F12_MER_App AS a
 
 INSERT INTO tbl_LoadFile_F12_MER (
@@ -134,7 +134,7 @@ INSERT INTO tbl_LoadFile_F12_MER (
 		image_label,
 		url_key
 )
-SELECT  'FW12-MER' + '-' + REPLACE(a.Model,' ','') + '-' + CASE WHEN RIGHT(a.Category,7) = 'WOMEN''S' THEN 'W' WHEN RIGHT(a.Category,5) = 'MEN''S' THEN 'M' WHEN RIGHT(a.Category,3) = 'MEN' THEN 'M' ELSE '' END + '-' + REPLACE(a.Color,' ','') + '-' + SUBSTRING(a.SKU,5,4) AS sku,
+SELECT  'FW12A-MER' + '-' + REPLACE(a.Model,' ','') + '-' + CASE WHEN RIGHT(a.Category,7) = 'WOMEN''S' THEN 'W' WHEN RIGHT(a.Category,5) = 'MEN''S' THEN 'M' WHEN RIGHT(a.Category,3) = 'MEN' THEN 'M' ELSE '' END + '-' + REPLACE(a.Color,' ','') + '-' + SUBSTRING(a.SKU,5,4) AS sku,
 		REPLACE(a.Model,' ','') AS vendor_product_id,
 		REPLACE(REPLACE(dbo.getMERName(REPLACE(REPLACE(REPLACE(a.Model,'WTPF','Waterproof'),'SYN','Synthetic'),'LTR','Leather'),a.[Grouping],a.Category),'Gtx','GTX'),'Syntheticc','Sync') AS name,
 		CASE WHEN RIGHT(a.Category,7) = 'Women''s' THEN 'Women' WHEN RIGHT(a.Category,5) = 'Men''s' THEN 'Men' WHEN RIGHT(a.Category,3) = 'Men' THEN 'Men' WHEN RIGHT(a.Category,7) = 'NEUTREL' THEN 'Men|Women' END AS gender,
@@ -149,7 +149,7 @@ SELECT  'FW12-MER' + '-' + REPLACE(a.Model,' ','') + '-' + CASE WHEN RIGHT(a.Cat
 		'simple' AS type,
 		dbo.getMERImage(a.Material) AS image,
 		LTRIM(RTRIM(dbo.ProperCase(a.Color))) AS image_label,
-		dbo.getUrlKey(dbo.getMERName(a.Model,a.[Grouping],a.Category), 'Merrell', LTRIM(RTRIM(dbo.ProperCase(REPLACE(a.Color,' ','')))) + ' - ' + SUBSTRING(SKU,5,4)) + '-f12' AS url_key
+		dbo.getUrlKey(dbo.getMERName(a.Model,a.[Grouping],a.Category), 'Merrell', LTRIM(RTRIM(dbo.ProperCase(REPLACE(a.Color,' ','')))) + ' - ' + SUBSTRING(SKU,5,4)) + '-fw12a' AS url_key
 FROM tbl_RawData_F12_MER_Foot AS a
 
 DELETE FROM tbl_LoadFile_F12_MER WHERE name IS NULL
@@ -171,7 +171,7 @@ INSERT INTO tbl_LoadFile_F12_MER (
 	manage_stock
 )
 SELECT DISTINCT
-	    dbo.getMagentoConfigurableSKU('FW12-MER',REPLACE(dbo.ProperCase(a.Model),' ','')) AS sku,
+	    dbo.getMagentoConfigurableSKU('FW12A-MER',REPLACE(dbo.ProperCase(a.Model),' ','')) AS sku,
 		'choose_color,choose_size' AS configurable_attributes,
 		REPLACE(dbo.ProperCase(a.Model),' ','') AS vendor_product_id,
 		'Uncategorized' AS categories,
@@ -181,7 +181,7 @@ SELECT DISTINCT
 		(SELECT MAX(cost) FROM tbl_LoadFile_F12_MER WHERE vendor_product_id = REPLACE(dbo.ProperCase(a.Model),' ','')) AS cost,
 		'1' AS has_options,
 		'configurable' AS type,
-		dbo.getUrlKey(dbo.getMERName(a.Model,a.[Grouping],a.Category), 'Merrell', '') + '-fw12' AS url_key,
+		dbo.getUrlKey(dbo.getMERName(a.Model,a.[Grouping],a.Category), 'Merrell', '') + '-fw12a' AS url_key,
 		'Catalog, Search' AS visibility,
 		'Z' AS merchandise_priority,
 		0 AS manage_stock
@@ -204,7 +204,7 @@ INSERT INTO tbl_LoadFile_F12_MER (
 	manage_stock
 )
 SELECT DISTINCT
-	    'FW12-MER-' + REPLACE(a.Model,' ','') + '-' + CASE WHEN RIGHT(a.Category,7) = 'WOMEN''S' THEN 'W' WHEN RIGHT(a.Category,5) = 'MEN''S' THEN 'M' WHEN RIGHT(a.Category,3) = 'MEN' THEN 'M' ELSE '' END AS sku,
+	    'FW12A-MER-' + REPLACE(a.Model,' ','') + '-' + CASE WHEN RIGHT(a.Category,7) = 'WOMEN''S' THEN 'W' WHEN RIGHT(a.Category,5) = 'MEN''S' THEN 'M' WHEN RIGHT(a.Category,3) = 'MEN' THEN 'M' ELSE '' END AS sku,
 		'choose_color,choose_size' AS configurable_attributes,
 		REPLACE(a.Model,' ','') AS vendor_product_id,
 		'Uncategorized' AS categories,
@@ -214,7 +214,7 @@ SELECT DISTINCT
 		(SELECT MAX(cost) FROM tbl_LoadFile_F12_MER WHERE vendor_product_id = REPLACE(a.Model,' ','')) AS cost,
 		'1' AS has_options,
 		'configurable' AS type,
-		dbo.getUrlKey(dbo.getMERName(a.Model,a.[Grouping],a.Category), 'Merrell', '') + '-f12' AS url_key,
+		dbo.getUrlKey(dbo.getMERName(a.Model,a.[Grouping],a.Category), 'Merrell', '') + '-fw12a' AS url_key,
 		'Catalog, Search' AS visibility,
 		'Z' AS merchandise_priority,
 		0 AS manage_stock

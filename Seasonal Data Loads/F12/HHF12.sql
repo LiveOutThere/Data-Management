@@ -98,7 +98,7 @@ INSERT INTO tbl_LoadFile_F12_HH (
 		image_label,
 		url_key
 )
-SELECT  dbo.getMagentoSimpleSKU('FW12-HH', LEFT(a.SKU,5), SUBSTRING(a.SKU,7,3), dbo.getHHSize(SUBSTRING(a.SKU,11,7))) AS sku,
+SELECT  dbo.getMagentoSimpleSKU('FW12A-HH', LEFT(a.SKU,5), SUBSTRING(a.SKU,7,3), dbo.getHHSize(SUBSTRING(a.SKU,11,7))) AS sku,
 		LEFT(a.SKU,5) AS vendor_product_id,
 		dbo.getHHName(a.StyleName, a.Gender) AS name,
 		CASE WHEN a.Gender = 'Womens' THEN 'Women' WHEN a.Gender = 'Mens' THEN 'Men' WHEN a.Gender = 'Kid' THEN 'Boy|Girl' WHEN a.Gender = 'Junior' THEN 'Boy|Girl' WHEN a.Gender = 'Unisex' THEN 'Men|Women' END AS gender,
@@ -113,7 +113,7 @@ SELECT  dbo.getMagentoSimpleSKU('FW12-HH', LEFT(a.SKU,5), SUBSTRING(a.SKU,7,3), 
 		'simple' AS type,
 		dbo.getHHImage(a.SKU) AS image,
 		REPLACE(dbo.ProperCase(dbo.getHHColorName(a.ColorName)),'Hh ','HH ') AS image_label,
-		dbo.getUrlKey(dbo.getHHName(a.StyleName, a.Gender), 'Helly Hansen', a.ColorName + ' - ' + SUBSTRING(a.SKU,11,5)) + '-fw12' AS url_key
+		dbo.getUrlKey(dbo.getHHName(a.StyleName, a.Gender), 'Helly Hansen', a.ColorName + ' - ' + SUBSTRING(a.SKU,11,5)) + '-fw12a' AS url_key
 FROM tbl_RawData_F12_HH AS a
 
 INSERT INTO tbl_LoadFile_F12_HH (
@@ -133,7 +133,7 @@ INSERT INTO tbl_LoadFile_F12_HH (
 	manage_stock
 )
 SELECT DISTINCT
-	    dbo.getMagentoConfigurableSKU('FW12-HH', LEFT(a.SKU,5)) AS sku,
+	    dbo.getMagentoConfigurableSKU('FW12A-HH', LEFT(a.SKU,5)) AS sku,
 		'choose_color,choose_size' AS configurable_attributes,
 		LEFT(a.SKU,5) AS vendor_product_id,
 		'Uncategorized' AS categories,
@@ -143,7 +143,7 @@ SELECT DISTINCT
 		(SELECT MAX(cost) FROM tbl_LoadFile_F12_HH WHERE vendor_product_id = LEFT(a.SKU,5)) AS cost,
 		'1' AS has_options,
 		'configurable' AS type,
-		dbo.getUrlKey(dbo.getHHName(a.StyleName, a.Gender), 'Helly Hansen', '') + '-fw12' AS url_key,
+		dbo.getUrlKey(dbo.getHHName(a.StyleName, a.Gender), 'Helly Hansen', '') + '-fw12a' AS url_key,
 		'Catalog, Search' AS visibility,
 		'Z' AS merchandise_priority,
 		0 AS manage_stock

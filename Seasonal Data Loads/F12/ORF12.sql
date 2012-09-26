@@ -98,7 +98,7 @@ INSERT INTO tbl_LoadFile_F12_OR (
 		image_label,
 		url_key		
 )
-SELECT  dbo.getMagentoSimpleSKU('FW12-OR',a.[Style #],dbo.getORColorCode(a.[Color Code]),dbo.getORSize(a.Size)) AS sku,
+SELECT  dbo.getMagentoSimpleSKU('FW12A-OR',a.[Style #],dbo.getORColorCode(a.[Color Code]),dbo.getORSize(a.Size)) AS sku,
 		a.[Style #] AS vendor_product_id,
 		REPLACE(dbo.ProperCase(LTRIM(ISNULL(a.Gender, '') + ' ' + a.[Style Name])),'''S ','''s ') AS name,
 		LTRIM(REPLACE((dbo.ProperCase(ISNULL(a.Gender, 'Men|Women'))),'''S','')) AS Gender,
@@ -113,7 +113,7 @@ SELECT  dbo.getMagentoSimpleSKU('FW12-OR',a.[Style #],dbo.getORColorCode(a.[Colo
 		'simple' AS type,
 		(SELECT TOP 1 Filename FROM [tbl_RawData_F12_OR_Photos] WHERE Filename LIKE '%' + CAST(a.[Style #] AS varchar(5)) + '%' + dbo.getORColorCode(a.[Color Code]) + '%') AS image,
 		dbo.ProperCase(a.[Color Name]) AS image_label,
-		dbo.getUrlKey(REPLACE(dbo.ProperCase(LTRIM(ISNULL(a.Gender, '') + ' ' + a.[Style Name])),'''S ','''s '),'Outdoor Research',dbo.ProperCase(a.[Color Name]) + ' - ' + REPLACE((a.Size),'1SIZE','O/S')) + '-fw12' AS url_key
+		dbo.getUrlKey(REPLACE(dbo.ProperCase(LTRIM(ISNULL(a.Gender, '') + ' ' + a.[Style Name])),'''S ','''s '),'Outdoor Research',dbo.ProperCase(a.[Color Name]) + ' - ' + REPLACE((a.Size),'1SIZE','O/S')) + '-fw12a' AS url_key
 FROM tbl_RawData_F12_OR AS a
 
 UPDATE tbl_LoadFile_F12_OR SET image = 'M-FerrosiPants-Black-55525_001.jpg' WHERE name LIKE '%ferrosi%' AND gender = 'Men' AND vendor_color_code = '001'
@@ -146,7 +146,7 @@ INSERT INTO tbl_LoadFile_F12_OR (
 	manage_stock
 )
 SELECT DISTINCT
-	    dbo.getMagentoConfigurableSKU('FW12-OR',a.[Style #]) AS sku,
+	    dbo.getMagentoConfigurableSKU('FW12A-OR',a.[Style #]) AS sku,
 		'choose_color,choose_size' AS configurable_attributes,
 		a.[Style #] AS vendor_product_id,
 		'Uncategorized' AS categories,
@@ -156,7 +156,7 @@ SELECT DISTINCT
 		(SELECT MAX(cost) FROM tbl_LoadFile_F12_OR WHERE vendor_product_id = a.[Style #]) AS cost,
 		'1' AS has_options,
 		'configurable' AS type,
-		dbo.getUrlKey(REPLACE(dbo.ProperCase(LTRIM(ISNULL(a.Gender, '') + ' ' + a.[Style Name])),'''S ','''s '), 'Outdoor Research', '') + '-fw12' AS url_key,
+		dbo.getUrlKey(REPLACE(dbo.ProperCase(LTRIM(ISNULL(a.Gender, '') + ' ' + a.[Style Name])),'''S ','''s '), 'Outdoor Research', '') + '-fw12a' AS url_key,
 		'Catalog, Search' AS visibility,
 		'Z' AS merchandise_priority,
 		0 AS manage_stock

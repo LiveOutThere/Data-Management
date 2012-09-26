@@ -117,7 +117,7 @@ INSERT INTO tbl_LoadFile_F12_MHW (
 		manage_stock,
 		merchandise_priority
 )
-SELECT  dbo.getMagentoSimpleSKU('FW12-MHW', a.jdeStyleID, RIGHT(a.REI,3), LTRIM(RTRIM(a.jdeSizeID)) + CASE WHEN a.jdeDimensionId IS NOT NULL AND a.jdeDimensionId <> '' THEN '-' + a.jdeDimensionId ELSE '' END) AS sku,
+SELECT  dbo.getMagentoSimpleSKU('FW12A-MHW', a.jdeStyleID, RIGHT(a.REI,3), LTRIM(RTRIM(a.jdeSizeID)) + CASE WHEN a.jdeDimensionId IS NOT NULL AND a.jdeDimensionId <> '' THEN '-' + a.jdeDimensionId ELSE '' END) AS sku,
 		LTRIM(RTRIM(a.jdeStyleID)) AS vendor_product_id,
 		dbo.getMHWName(a.name) AS name,
 		CASE WHEN RIGHT(RTRIM(a.name),3) = '- W' THEN 'Women' WHEN RIGHT(RTRIM(a.name),3) = '- M' THEN 'Men' ELSE 'Men|Women' END AS gender,
@@ -132,7 +132,7 @@ SELECT  dbo.getMagentoSimpleSKU('FW12-MHW', a.jdeStyleID, RIGHT(a.REI,3), LTRIM(
 		'simple' AS type,
 		(SELECT TOP 1 Filename FROM [view_RawData_MHW_Photos] WHERE Filename LIKE '%' + a.jdeStyleId + '[_]' + a.jdeColorID + '%' AND Filename NOT LIKE '%' + a.jdeStyleId + '[_]' + a.jdeColorID + '[_]b%' ORDER BY pos) AS image,
 		LTRIM(RTRIM(a.color)) AS image_label,
-		dbo.getUrlKey(dbo.getMHWName(a.name), 'Mountain Hardwear', LTRIM(RTRIM(a.color)) + ' - ' + LTRIM(RTRIM(a.jdeSizeID)) + CASE WHEN a.jdeDimensionId IS NOT NULL AND a.jdeDimensionId <> '' THEN '-' + a.jdeDimensionId ELSE '' END) + '-fw12' AS url_key,
+		dbo.getUrlKey(dbo.getMHWName(a.name), 'Mountain Hardwear', LTRIM(RTRIM(a.color)) + ' - ' + LTRIM(RTRIM(a.jdeSizeID)) + CASE WHEN a.jdeDimensionId IS NOT NULL AND a.jdeDimensionId <> '' THEN '-' + a.jdeDimensionId ELSE '' END) + '-fw12a' AS url_key,
 		0 AS is_in_stock,
 		1 AS manage_stock,
 		'' AS merchandise_priority
@@ -159,7 +159,7 @@ INSERT INTO tbl_LoadFile_F12_MHW (
 	manage_stock
 )
 SELECT DISTINCT
-	   dbo.getMagentoConfigurableSKU('FW12-MHW', a.vendor_product_id) AS sku,
+	   dbo.getMagentoConfigurableSKU('FW12A-MHW', a.vendor_product_id) AS sku,
 		'choose_color,choose_size' AS configurable_attributes,
 		vendor_product_id,
 		'Uncategorized',
@@ -169,7 +169,7 @@ SELECT DISTINCT
 		(SELECT MAX(cost) FROM tbl_LoadFile_F12_MHW WHERE vendor_product_id = a.vendor_product_id) AS cost,
 		'1' AS has_options,
 		'configurable' AS type,
-		dbo.getUrlKey(name, 'Mountain Hardwear', '') + '-fw12' AS url_key,
+		dbo.getUrlKey(name, 'Mountain Hardwear', '') + '-fw12a' AS url_key,
 		'Catalog, Search' AS visibility,
 		1 AS is_in_stock,
 		0 AS manage_stock

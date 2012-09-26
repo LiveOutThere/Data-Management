@@ -98,7 +98,7 @@ INSERT INTO tbl_LoadFile_F12_LOLE (
 		image_label,
 		url_key
 )
-SELECT  dbo.getMagentoSimpleSKU('FW12-LOLE', a.Style, LEFT(a.Color,4), a.Size) AS sku,
+SELECT  dbo.getMagentoSimpleSKU('FW12A-LOLE', a.Style, LEFT(a.Color,4), a.Size) AS sku,
 		a.Style AS vendor_product_id,
 		'Women''s ' + dbo.ProperCase(a.Description) AS name,
 		'Women' AS gender,
@@ -113,7 +113,7 @@ SELECT  dbo.getMagentoSimpleSKU('FW12-LOLE', a.Style, LEFT(a.Color,4), a.Size) A
 		'simple' AS type,
 		dbo.getLOLEImage(a.Style,a.Color,a.UPC) AS image,
 		dbo.ProperCase(REPLACE(SUBSTRING(a.Color,8,50),'Lt.','Light ')) AS image_label,
-		dbo.getUrlKey('Women''s ' + dbo.ProperCase(a.Description),'Lole',dbo.ProperCase(REPLACE(SUBSTRING(a.Color,8,50),'Lt.','Light ')) + ' - ' + a.Size) + '-fw12' AS url_key
+		dbo.getUrlKey('Women''s ' + dbo.ProperCase(a.Description),'Lole',dbo.ProperCase(REPLACE(SUBSTRING(a.Color,8,50),'Lt.','Light ')) + ' - ' + a.Size) + '-fw12a' AS url_key
 FROM tbl_RawData_F12_LOLE AS a
 LEFT JOIN tbl_RawData_F12_LOLE_Cancelled AS b
 ON a.Style = b.style AND a.Color LIKE '%' + b.code + '%'
@@ -138,7 +138,7 @@ INSERT INTO tbl_LoadFile_F12_LOLE (
 	manage_stock
 )
 SELECT DISTINCT
-	   dbo.getMagentoConfigurableSKU('FW12-LOLE', a.Style) AS sku,
+	   dbo.getMagentoConfigurableSKU('FW12A-LOLE', a.Style) AS sku,
 		'choose_color,choose_size' AS configurable_attributes,
 		a.Style AS vendor_product_id,
 		'Uncategorized' AS categories,
@@ -148,7 +148,7 @@ SELECT DISTINCT
 		(SELECT MAX(cost) FROM tbl_LoadFile_F12_LOLE WHERE vendor_product_id = a.Style) AS cost,
 		'1' AS has_options,
 		'configurable' AS type,
-		dbo.getUrlKey('Women''s ' + dbo.ProperCase(a.Description), 'Lole', '') + '-fw12' AS url_key,
+		dbo.getUrlKey('Women''s ' + dbo.ProperCase(a.Description), 'Lole', '') + '-fw12a' AS url_key,
 		'Catalog, Search' AS visibility,
 		'Z' AS merchandise_priority,
 		0 AS manage_stock

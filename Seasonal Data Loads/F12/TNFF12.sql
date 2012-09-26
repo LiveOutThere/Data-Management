@@ -98,7 +98,7 @@ INSERT INTO tbl_LoadFile_F12_TNF (
 		image_label,
 		url_key
 )
-SELECT  dbo.getMagentoSimpleSKU('FW12-TNF', LEFT(a.[Sty Code],4), RIGHT(a.[Sty Code],3),dbo.getTNFSize(a.Dim1,a.Dim2)) AS sku,
+SELECT  dbo.getMagentoSimpleSKU('FW12A-TNF', LEFT(a.[Sty Code],4), RIGHT(a.[Sty Code],3),dbo.getTNFSize(a.Dim1,a.Dim2)) AS sku,
 		LEFT(a.[Sty Code],4) AS vendor_product_id,
 		dbo.getTNFName(a.[Sty Desc]) AS name,
 		dbo.getTNFGenderFromName(a.[Sty Desc]) AS gender,
@@ -113,7 +113,7 @@ SELECT  dbo.getMagentoSimpleSKU('FW12-TNF', LEFT(a.[Sty Code],4), RIGHT(a.[Sty C
 		'simple' AS type,
 		dbo.getTNFImage(a.[Sty Code], a.[Upc Nbr]) AS image, 
 		dbo.getTNFColor(a.[Color Des]) AS image_label,
-		dbo.getUrlKey(dbo.getTNFName(a.[Sty Desc]), 'The North Face', dbo.getTNFColor(a.[Color Des]) + ' - ' + dbo.getTNFSize(a.Dim1,a.Dim2)) + '-fw12' AS url_key
+		dbo.getUrlKey(dbo.getTNFName(a.[Sty Desc]), 'The North Face', dbo.getTNFColor(a.[Color Des]) + ' - ' + dbo.getTNFSize(a.Dim1,a.Dim2)) + '-fw12a' AS url_key
 FROM tbl_RawData_F12_TNF AS a
 
 DELETE FROM tbl_LoadFile_F12_TNF WHERE name IS NULL
@@ -135,7 +135,7 @@ INSERT INTO tbl_LoadFile_F12_TNF (
 	manage_stock
 )
 SELECT DISTINCT
-	    dbo.getMagentoConfigurableSKU('FW12-TNF', LEFT(a.[Sty Code],4)) AS sku,
+	    dbo.getMagentoConfigurableSKU('FW12A-TNF', LEFT(a.[Sty Code],4)) AS sku,
 		'choose_color,choose_size' AS configurable_attributes,
 		LEFT(a.[Sty Code],4) AS vendor_product_id,
 		'Uncategorized' AS categories,
@@ -145,7 +145,7 @@ SELECT DISTINCT
 		(SELECT MAX(cost) FROM tbl_LoadFile_F12_TNF WHERE vendor_product_id = LEFT(a.[Sty Code],4)) AS cost,
 		'1' AS has_options,
 		'configurable' AS type,
-		dbo.getUrlKey(dbo.getTNFName(a.[Sty Desc]), 'The North Face', '') + '-fw12' AS url_key,
+		dbo.getUrlKey(dbo.getTNFName(a.[Sty Desc]), 'The North Face', '') + '-fw12a' AS url_key,
 		'Catalog, Search' AS visibility,
 		'Z' AS merchandise_priority,
 		0 AS manage_stock

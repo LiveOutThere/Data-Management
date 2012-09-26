@@ -100,7 +100,7 @@ INSERT INTO tbl_LoadFile_F12_PAT (
 		url_key
 		--color_hex_value
 )
-SELECT  dbo.getMagentoSimpleSKU('FW12-PAT',a.[Style #],a.[Color Number],REPLACE(a.Size,'ALL','O/S')) AS sku,
+SELECT  dbo.getMagentoSimpleSKU('FW12A-PAT',a.[Style #],a.[Color Number],REPLACE(a.Size,'ALL','O/S')) AS sku,
 		a.[Style #] AS vendor_product_id,
 		dbo.getPATName(a.[Style Description]) AS name,
 		REPLACE(REPLACE(REPLACE(a.Gender,'Unisex','Men|Women'),'Womens','Women'),'Mens','Men') AS gender,
@@ -115,7 +115,7 @@ SELECT  dbo.getMagentoSimpleSKU('FW12-PAT',a.[Style #],a.[Color Number],REPLACE(
 		'simple' AS type,
 		(SELECT TOP 1 Filename FROM [tbl_RawData_F12_PAT_Photos] WHERE Filename LIKE CAST(a.[Style #] AS varchar(10)) + '[_]' + CAST(a.[Color Number] AS varchar(6)) + '%') AS image,
 		dbo.ProperCase(REPLACE(REPLACE(a.[Color Description],': ','/'),' W/','/')) + CASE WHEN RIGHT(a.[Color Description],3) = 'blu' THEN 'e' ELSE '' END AS image_label,
-		dbo.getUrlKey(dbo.getPATName(a.[Style Description]),'Patagonia',dbo.ProperCase(REPLACE(REPLACE(a.[Color Description],': ','/'),' W/','/')) + CASE WHEN RIGHT(a.[Color Description],3) = 'blu' THEN 'e' ELSE '' END + ' - ' + REPLACE(a.Size,'ALL','O/S')) + '-fw12' AS url_key
+		dbo.getUrlKey(dbo.getPATName(a.[Style Description]),'Patagonia',dbo.ProperCase(REPLACE(REPLACE(a.[Color Description],': ','/'),' W/','/')) + CASE WHEN RIGHT(a.[Color Description],3) = 'blu' THEN 'e' ELSE '' END + ' - ' + REPLACE(a.Size,'ALL','O/S')) + '-fw12a' AS url_key
 		--a.[Hex Code (if solid)] AS color_hex_value
 FROM tbl_RawData_F12_PAT AS a
 
@@ -138,7 +138,7 @@ INSERT INTO tbl_LoadFile_F12_PAT (
 	manage_stock
 )
 SELECT DISTINCT
-	    dbo.getMagentoConfigurableSKU('FW12-PAT',a.[Style #]) AS sku,
+	    dbo.getMagentoConfigurableSKU('FW12A-PAT',a.[Style #]) AS sku,
 		'choose_color,choose_size' AS configurable_attributes,
 		a.[Style #] AS vendor_product_id,
 		'Uncategorized' AS categories,
@@ -148,7 +148,7 @@ SELECT DISTINCT
 		(SELECT MAX(cost) FROM tbl_LoadFile_F12_PAT WHERE vendor_product_id = a.[Style #]) AS cost,
 		'1' AS has_options,
 		'configurable' AS type,
-		dbo.getUrlKey(dbo.getPATName(a.[Style Description]), 'Patagonia', '') + '-fw12' AS url_key,
+		dbo.getUrlKey(dbo.getPATName(a.[Style Description]), 'Patagonia', '') + '-fw12a' AS url_key,
 		'Catalog, Search' AS visibility,
 		'Z' AS merchandise_priority,
 		0 AS manage_stock

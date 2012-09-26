@@ -100,7 +100,7 @@ INSERT INTO tbl_LoadFile_F12_IB (
 		image_label,
 		url_key
 )
-SELECT  dbo.getMagentoSimpleSKU('FW12-IB', LEFT(a.ItemNumber,6), SUBSTRING(a.ItemNumber,7,3), SUBSTRING(a.ItemNumber,10,3)) AS sku, -- can't use a.ColorCode or a.SizeCode because some values are NULL
+SELECT  dbo.getMagentoSimpleSKU('FW12A-IB', LEFT(a.ItemNumber,6), SUBSTRING(a.ItemNumber,7,3), SUBSTRING(a.ItemNumber,10,3)) AS sku, -- can't use a.ColorCode or a.SizeCode because some values are NULL
 		LEFT(a.ItemNumber,6) AS vendor_product_id,
 		dbo.getIBName(a.StyleName) AS name,
 		CASE WHEN a.ColorGender1 = 'Womens' THEN 'Women' WHEN a.ColorGender1 = 'Mens' THEN 'Men' WHEN a.ColorGender1 = 'Girls' THEN 'Girl' WHEN a.ColorGender1 = 'Boys' THEN 'Boy' END AS gender,
@@ -116,7 +116,7 @@ SELECT  dbo.getMagentoSimpleSKU('FW12-IB', LEFT(a.ItemNumber,6), SUBSTRING(a.Ite
 		(SELECT TOP 1 Filename FROM [view_RawData_IB_Photos] WHERE Filename LIKE '%' + LEFT(a.ItemNumber,6) + '%' + SUBSTRING(a.ItemNumber,7,3) + '%1.jpg') AS image,
 		-- even though Icebreaker included the photo names in their raw data they fucked up and included the same photo filename for each color, so we need to figure this out ourselves...
 		a.ColorName AS image_label,
-		dbo.getUrlKey(dbo.getIBName(a.StyleName), 'Icebreaker', a.ColorName + ' - ' + SUBSTRING(a.ItemNumber,10,3)) + '-fw12' AS url_key
+		dbo.getUrlKey(dbo.getIBName(a.StyleName), 'Icebreaker', a.ColorName + ' - ' + SUBSTRING(a.ItemNumber,10,3)) + '-fw12a' AS url_key
 FROM tbl_RawData_F12_IB AS a
 INNER JOIN tbl_RawData_F12_IB_Prices AS b ON a.ItemNumber = b.SKU
 
@@ -138,7 +138,7 @@ INSERT INTO tbl_LoadFile_F12_IB (
 	manage_stock
 )
 SELECT DISTINCT
-	   dbo.getMagentoConfigurableSKU('FW12-IB', LEFT(a.ItemNumber,6)) AS sku,
+	   dbo.getMagentoConfigurableSKU('FW12A-IB', LEFT(a.ItemNumber,6)) AS sku,
 		'choose_color,choose_size' AS configurable_attributes,
 		LEFT(a.ItemNumber,6) AS vendor_product_id,
 		'Uncategorized',
@@ -148,7 +148,7 @@ SELECT DISTINCT
 		(SELECT MAX(cost) FROM tbl_LoadFile_F12_IB WHERE vendor_product_id = LEFT(a.ItemNumber,6)) AS cost,
 		'1' AS has_options,
 		'configurable' AS type,
-		dbo.getUrlKey(dbo.getIBName(a.StyleName), 'Icebreaker', '') + '-fw12' AS url_key,
+		dbo.getUrlKey(dbo.getIBName(a.StyleName), 'Icebreaker', '') + '-fw12a' AS url_key,
 		'Catalog, Search' AS visibility,
 		'Z' AS merchandise_priority,
 		0 AS manage_stock

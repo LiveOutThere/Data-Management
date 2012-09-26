@@ -102,7 +102,7 @@ INSERT INTO tbl_LoadFile_F12_COL (
 		image_label,
 		url_key
 )
-SELECT  dbo.getMagentoSimpleSKU('FW12A-COL', LEFT(a.[Style Number],6), a.Color, a.Size + CASE WHEN a.Dim IS NOT NULL AND a.Dim <> '' THEN '-' + a.Dim ELSE '' END) AS sku,
+SELECT  dbo.getMagentoSimpleSKU('FW12-COL', LEFT(a.[Style Number],6), a.Color, a.Size + CASE WHEN a.Dim IS NOT NULL AND a.Dim <> '' THEN '-' + a.Dim ELSE '' END) AS sku,
 		LEFT(a.[Style Number],6) AS vendor_product_id,
 		CASE WHEN a.[Display Name] IS NOT NULL THEN REPLACE(a.[Display Name],'í','''') ELSE dbo.getCOLName(a.[Long Description], a.Gender) END AS name,
 		CASE WHEN a.Gender = 'Mens' THEN 'Men' WHEN a.Gender = 'Womens' THEN 'Women' WHEN a.Gender LIKE '%Toddler%' OR a.Gender LIKE '%Infant%' THEN 'Toddlers''' WHEN a.Gender LIKE '%Boy%' THEN 'Boy' WHEN a.Gender LIKE '%Girl%' THEN 'Girl' WHEN a.Gender = 'Youth Unisex' THEN 'Boy|Girl' WHEN a.Gender = 'Unisex' THEN 'Men|Women' END AS gender,
@@ -117,7 +117,7 @@ SELECT  dbo.getMagentoSimpleSKU('FW12A-COL', LEFT(a.[Style Number],6), a.Color, 
 		'simple' AS type,
 		(SELECT TOP 1 Filename FROM tbl_RawData_S12_COL_Additional_Photos WHERE Filename LIKE LEFT(a.[Style Number],6) + '[_]' + a.Color + '%' ORDER BY CASE WHEN Filename LIKE '%f.jpg' THEN 'Z' WHEN Filename LIKE '%01.jpg' THEN 'Y' ELSE 'A' END + SUBSTRING(Filename, 8, 3) DESC) AS image, 
 		a.[Color Name] AS image_label,
-		dbo.getUrlKey(CASE WHEN a.[Display Name] IS NOT NULL THEN REPLACE(a.[Display Name],'í','''') ELSE dbo.getCOLName(a.[Long Description], a.Gender) END, 'Columbia', a.[Color Name] + ' - ' + a.Size + CASE WHEN a.Dim IS NOT NULL AND a.Dim <> '' THEN '-' + a.Dim ELSE '' END) + '-fw12a' AS url_key
+		dbo.getUrlKey(CASE WHEN a.[Display Name] IS NOT NULL THEN REPLACE(a.[Display Name],'í','''') ELSE dbo.getCOLName(a.[Long Description], a.Gender) END, 'Columbia', a.[Color Name] + ' - ' + a.Size + CASE WHEN a.Dim IS NOT NULL AND a.Dim <> '' THEN '-' + a.Dim ELSE '' END) + '-fw12' AS url_key
 FROM tbl_RawData_F12_COL AS a
 WHERE a.MSRP IS NOT NULL
 
@@ -140,7 +140,7 @@ INSERT INTO tbl_LoadFile_F12_COL (
 	manage_stock
 )
 SELECT DISTINCT
-	    dbo.getMagentoConfigurableSKU('FW12A-COL', a.vendor_product_id) AS sku,
+	    dbo.getMagentoConfigurableSKU('FW12-COL', a.vendor_product_id) AS sku,
 		'choose_color,choose_size' AS configurable_attributes,
 		a.vendor_product_id AS vendor_product_id,
 		'Uncategorized' AS categories,
@@ -150,7 +150,7 @@ SELECT DISTINCT
 		(SELECT MAX(cost) FROM tbl_LoadFile_F12_COL WHERE vendor_product_id = a.vendor_product_id) AS cost,
 		'1' AS has_options,
 		'configurable' AS type,
-		dbo.getUrlKey(a.name, 'Columbia', '') + '-fw12a' AS url_key,
+		dbo.getUrlKey(a.name, 'Columbia', '') + '-fw12' AS url_key,
 		'Catalog, Search' AS visibility,
 		'Z' AS merchandise_priority,
 		1 AS is_in_stock,

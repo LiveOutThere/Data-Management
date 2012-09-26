@@ -98,7 +98,7 @@ INSERT INTO tbl_LoadFile_F12_DEU (
 		image_label,
 		url_key
 )
-SELECT  dbo.getMagentoSimpleSKU('FW12-DEU',a.Style,a.[Color Code],REPLACE(a.[Size Code],'OS','O/S')) AS sku,
+SELECT  dbo.getMagentoSimpleSKU('FW12A-DEU',a.Style,a.[Color Code],REPLACE(a.[Size Code],'OS','O/S')) AS sku,
 		a.Style AS vendor_product_id,
 		dbo.getDEUName(a.Name) AS name,
 		dbo.getDEUGender(a.Name) AS gender,
@@ -113,7 +113,7 @@ SELECT  dbo.getMagentoSimpleSKU('FW12-DEU',a.Style,a.[Color Code],REPLACE(a.[Siz
 		'simple' AS type,
 		dbo.getDEUImage(a.Name,a.[Color Code]) AS image,
 		dbo.ProperCase(REPLACE(a.[Color & Size],'-','/')) AS image_label,
-		dbo.getUrlKey(dbo.getDEUName(a.Name),'Deuter',CAST(a.[Color Code] AS varchar(7)) + ' - ' + CAST(REPLACE(a.[Size Code],'OS','O/S') AS varchar(4))) + '-fw12' AS url_key
+		dbo.getUrlKey(dbo.getDEUName(a.Name),'Deuter',CAST(a.[Color Code] AS varchar(7)) + ' - ' + CAST(REPLACE(a.[Size Code],'OS','O/S') AS varchar(4))) + '-fw12a' AS url_key
 FROM tbl_RawData_F12_DEU AS a
 
 UPDATE tbl_LoadFile_F12_DEU  SET image = 'MontanaGaiterM_3810_10 copy copy.jpg' WHERE name LIKE '%Montana%'
@@ -181,7 +181,7 @@ INSERT INTO tbl_LoadFile_F12_DEU (
 	manage_stock
 )
 SELECT DISTINCT
-	    dbo.getMagentoConfigurableSKU('DEU',a.Style) AS sku,
+	    dbo.getMagentoConfigurableSKU('FW12A-DEU',a.Style) AS sku,
 		'choose_color,choose_size' AS configurable_attributes,
 		a.Style AS vendor_product_id,
 		'Uncategorized' AS categories,
@@ -191,7 +191,7 @@ SELECT DISTINCT
 		(SELECT MAX(cost) FROM tbl_LoadFile_F12_DEU WHERE vendor_product_id = a.Style) AS cost,
 		1 AS has_options,
 		'configurable' AS type,
-		dbo.getUrlKey(dbo.getDEUName(a.Name), 'Deuter', '') + '-fw12' AS url_key,
+		dbo.getUrlKey(dbo.getDEUName(a.Name), 'Deuter', '') + '-fw12a' AS url_key,
 		'Catalog, Search' AS visibility,
 		'Z' AS merchandise_priority,
 		0 AS manage_stock
@@ -239,11 +239,12 @@ SELECT  '"' + RTRIM(LTRIM(REPLACE(a.store,'"','""'))) + '"','"' + RTRIM(LTRIM(RE
 FROM dbo.tbl_LoadFile_F12_DEU AS a WHERE a.image IS NOT NULL
 GO
 
+SELECT * FROM LOT_Inventory.dbo.view_LoadFile_F12_DEU
+
 DECLARE @sql varchar(1024)
 SELECT @sql = 'bcp "SELECT * FROM LOT_Inventory.dbo.view_LoadFile_F12_DEU" queryout "C:\Data\Shared\DEU.csv" -w -t , -T -S ' + @@servername
 EXEC master..xp_cmdshell @sql
 
-DROP VIEW view_LoadFile_F12_DEU
 
 /* Next steps?
 

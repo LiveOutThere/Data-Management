@@ -107,7 +107,7 @@ INSERT INTO tbl_LoadFile_F12_ARC (
 		url_key
 )
 SELECT DISTINCT
-		dbo.getMagentoSimpleSKU('FW12-ARC', model, b.[Color Code], size) AS sku,
+		dbo.getMagentoSimpleSKU('FW12A-ARC', model, b.[Color Code], size) AS sku,
 		a.model AS vendor_product_id,
 		dbo.getARCName(a.description) AS description,
 		dbo.getARCGenderFromName(a.description) AS gender,
@@ -124,7 +124,7 @@ SELECT DISTINCT
 		[HS Tariff] AS hs_tariff,
 		[Country of Origin] AS origin,
 		REPLACE(a.weight,',','') AS weight,
-		dbo.getUrlKey(dbo.getARCName(a.description), 'Arc''teryx', LTRIM(RTRIM(color)) + ' - ' + LTRIM(RTRIM(size))) + '-fw12' AS url_key
+		dbo.getUrlKey(dbo.getARCName(a.description), 'Arc''teryx', LTRIM(RTRIM(color)) + ' - ' + LTRIM(RTRIM(size))) + '-fw12a' AS url_key
 FROM tbl_RawData_F12_ARC AS a INNER JOIN tbl_RawData_F12_ARC_Color_Codes AS b ON a.Color = b.[Color Name]
 WHERE color NOT LIKE 'SMU%' AND [Description] NOT LIKE '%Replacement%' AND [Description] NOT LIKE '%CMH%' AND [Description] NOT LIKE '%Heli%' AND [Description] NOT LIKE '%Parks%' AND [Description] NOT LIKE '%Patrol%'
 
@@ -191,7 +191,7 @@ INSERT INTO tbl_LoadFile_F12_ARC (
 	manage_stock
 )
 SELECT DISTINCT
-		dbo.getMagentoConfigurableSKU('FW12-ARC', a.vendor_product_id) AS sku,
+		dbo.getMagentoConfigurableSKU('FW12A-ARC', a.vendor_product_id) AS sku,
 		'choose_color,choose_size' AS config_attributes,
 		a.vendor_product_id AS vendor_product_id,
 		'Uncategorized',
@@ -201,7 +201,7 @@ SELECT DISTINCT
 		(SELECT MIN(cost) FROM tbl_LoadFile_F12_ARC WHERE vendor_product_id = a.vendor_product_id) AS price,
 		'1' AS has_options,
 		'configurable' AS type,
-		dbo.getUrlKey(a.name, 'Arc''teryx', '') + '-fw12' AS url_key,
+		dbo.getUrlKey(a.name, 'Arc''teryx', '') + '-fw12a' AS url_key,
 		'Catalog, Search' AS visibility,
 		origin AS origin,
 		a.weight AS weight,

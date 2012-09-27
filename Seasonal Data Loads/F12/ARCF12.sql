@@ -220,7 +220,7 @@ UPDATE a SET
 	image_label = (SELECT TOP 1 image_label FROM tbl_LoadFile_F12_ARC WHERE type = 'simple' AND vendor_product_id = a.vendor_product_id ORDER BY image_label DESC),
 	simples_skus = dbo.getARCAssociatedProducts(a.vendor_product_id)
 FROM tbl_LoadFile_F12_ARC AS a
-LEFT JOIN (SELECT DISTINCT model, [Short Design], [Design], Features, Materials, Volume, [Care Info], Fit FROM tbl_RawData_F12_ARC_Additional) AS b ON a.vendor_product_id = b.Model
+LEFT JOIN (SELECT DISTINCT model, [Short Design], REPLACE(REPLACE([Design],CHAR(13),' '),CHAR(10),' ') AS [Design], Features, Materials, Volume, [Care Info], Fit FROM tbl_RawData_F12_ARC_Additional) AS b ON a.vendor_product_id = b.Model
 WHERE type = 'configurable'
 
 UPDATE tbl_LoadFile_F12_ARC SET image = REPLACE(image,'+',''), small_image = REPLACE(small_image,'+',''), thumbnail = REPLACE(thumbnail,'+','') WHERE image IS NOT NULL

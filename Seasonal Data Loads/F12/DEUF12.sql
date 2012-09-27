@@ -217,7 +217,7 @@ WHERE type = 'configurable'
 UPDATE tbl_LoadFile_F12_DEU SET thumbnail = '+' + image, small_image = '+' + image WHERE image IS NOT NULL
 UPDATE tbl_LoadFile_F12_DEU SET image = '+' + image WHERE image IS NOT NULL
 
-SELECT * FROM tbl_LoadFile_F12_DEU WHERE type = 'configurable' ORDER BY name, type DESC
+SELECT * FROM tbl_LoadFile_F12_DEU
 GO
 
 CREATE VIEW [dbo].[view_LoadFile_F12_DEU]

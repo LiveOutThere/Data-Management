@@ -158,11 +158,11 @@ SELECT DISTINCT
 FROM tbl_LoadFile_F12_COL AS a
 
 UPDATE a SET
-	description = (SELECT DISTINCT TOP 1  CASE WHEN [Display Name] <> [Long Description1] THEN
+	description = REPLACE(REPLACE((SELECT DISTINCT TOP 1  CASE WHEN [Display Name] <> [Long Description1] THEN
 												REPLACE(REPLACE([Short Description], '<div style=îfloat:left;width:33%;î>', '<div>') + CASE WHEN [Long Description1] IS NOT NULL AND 
 												[Long Description1] <> '0' THEN ' ' + REPLACE([Long Description1], '<div style=îfloat:left;width:33%;î>', '<div>') ELSE '' END, '<div>' + CHAR(10) + CHAR(10) 
 												+ '<br /><br />', '<div>') END
-				   FROM tbl_RawData_F12_COL WHERE ID = a.vendor_product_id)
+				   FROM tbl_RawData_F12_COL WHERE ID = a.vendor_product_id),CHAR(13),' '),CHAR(10),' ')
 FROM tbl_LoadFile_F12_COL AS a
 WHERE type = 'configurable' 
    

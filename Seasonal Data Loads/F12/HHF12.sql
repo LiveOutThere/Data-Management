@@ -149,13 +149,12 @@ SELECT DISTINCT
 		0 AS manage_stock
 FROM tbl_RawData_F12_HH AS a
 
-
 UPDATE a SET
 	description = dbo.ProperCase(dbo.toHTMLEntities(REPLACE((SELECT DISTINCT TOP 1 [Product Statement] FROM tbl_RawData_F12_HH WHERE LEFT(SKU,5) LIKE a.vendor_product_id),'#N/A',''))),
 	features = dbo.toHTMLEntities((SELECT DISTINCT TOP 1 [Product Features] FROM tbl_RawData_F12_HH WHERE LEFT(SKU,5) LIKE a.vendor_product_id)),
 	fabric = dbo.ProperCase(REPLACE(REPLACE(REPLACE(REPLACE((SELECT DISTINCT TOP 1 [Fabric Content] FROM tbl_RawData_F12_HH WHERE LEFT(SKU,5) LIKE a.vendor_product_id),',','|'),'WAYS','WAY'),' - ','|'),' / ','|')),
-	image = (SELECT TOP 1 image FROM tbl_LoadFile_F12_HH WHERE vendor_product_id = a.vendor_product_id ORDER BY choose_color DESC),
-	image_label = (SELECT TOP 1 image_label FROM tbl_LoadFile_F12_HH WHERE vendor_product_id = a.vendor_product_id ORDER BY choose_color DESC),
+	image = (SELECT TOP 1 image FROM tbl_LoadFile_F12_HH WHERE vendor_product_id = a.vendor_product_id AND image IS NOT NULL ORDER BY choose_color DESC),
+	image_label = (SELECT TOP 1 image_label FROM tbl_LoadFile_F12_HH WHERE vendor_product_id = a.vendor_product_id AND image IS NOT NULL ORDER BY choose_color DESC),
 	simples_skus = dbo.getHHAssociatedProducts(a.vendor_product_id)
 FROM tbl_LoadFile_F12_HH AS a
 WHERE type = 'configurable'
@@ -168,9 +167,9 @@ WHERE type = 'configurable'
 UPDATE tbl_LoadFile_F12_HH SET thumbnail = '+' + image, small_image = '+' + image WHERE image IS NOT NULL
 UPDATE tbl_LoadFile_F12_HH SET image = '+' + image WHERE image IS NOT NULL
 
-SELECT * FROM tbl_LoadFile_F12_HH WHERE type = 'configurable' ORDER BY name, type DESC
+SELECT * FROM tbl_LoadFile_F12_HH WHERE image IS NULL
 GO
-
+/*
 CREATE VIEW [dbo].[view_LoadFile_F12_HH]
 AS
 SELECT  '"store"' AS store, '"websites"' AS websites, '"type"' AS type, '"sku"' AS sku, '"name"' AS name, '"categories"' AS categories, '"attribute_set"' AS attribute_set, 
@@ -202,4 +201,4 @@ DROP VIEW view_LoadFile_F12_HH
 2. Then move all new products into correct categories
 3. Then use Magmi to load ONLY UPDATED skus but don't include the categories column so we don't overwrite it
 
-*/
+*/*/

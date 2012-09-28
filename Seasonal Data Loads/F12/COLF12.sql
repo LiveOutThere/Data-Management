@@ -115,7 +115,7 @@ SELECT  dbo.getMagentoSimpleSKU('FW12A-COL', LEFT(a.[Style Number],6), a.Color, 
 		a.Base AS cost,
 		0 AS has_options,
 		'simple' AS type,
-		(SELECT TOP 1 Filename FROM tbl_RawData_S12_COL_Additional_Photos WHERE Filename LIKE LEFT(a.[Style Number],6) + '[_]' + a.Color + '%' ORDER BY CASE WHEN Filename LIKE '%f.jpg' THEN 'Z' WHEN Filename LIKE '%01.jpg' THEN 'Y' ELSE 'A' END + SUBSTRING(Filename, 8, 3) DESC) AS image, 
+		(SELECT TOP 1 Filename FROM tbl_RawData_S12_COL_Additional_Photos WHERE Filename LIKE '%' + a.ID + '[_]' + a.Color + '%' ORDER BY CASE WHEN Filename LIKE '%f.jpg' THEN 'Z' WHEN Filename LIKE '%01.jpg' THEN 'Y' ELSE 'A' END + SUBSTRING(Filename, 8, 3) DESC) AS image, 
 		a.[Color Name] AS image_label,
 		dbo.getUrlKey(CASE WHEN a.[Display Name] IS NOT NULL THEN REPLACE(a.[Display Name],'í','''') ELSE dbo.getCOLName(a.[Long Description], a.Gender) END, 'Columbia', a.[Color Name] + ' - ' + a.Size + CASE WHEN a.Dim IS NOT NULL AND a.Dim <> '' THEN '-' + a.Dim ELSE '' END) + '-fw12a' AS url_key
 FROM tbl_RawData_F12_COL AS a
@@ -167,8 +167,8 @@ FROM tbl_LoadFile_F12_COL AS a
 WHERE type = 'configurable' 
    
 UPDATE a SET
-	image = (SELECT TOP 1 image FROM tbl_LoadFile_F12_COL WHERE vendor_product_id = a.vendor_product_id ORDER BY choose_color DESC),
-	image_label = (SELECT TOP 1 image_label FROM tbl_LoadFile_F12_COL WHERE vendor_product_id = a.vendor_product_id ORDER BY choose_color DESC),
+	image = (SELECT TOP 1 image FROM tbl_LoadFile_F12_COL WHERE vendor_product_id = a.vendor_product_id AND image IS NOT NULL ORDER BY choose_color DESC),
+	image_label = (SELECT TOP 1 image_label FROM tbl_LoadFile_F12_COL WHERE vendor_product_id = a.vendor_product_id AND image IS NOT NULL ORDER BY choose_color DESC),
 	simples_skus = dbo.getCOLAssociatedProducts(a.vendor_product_id)
 FROM tbl_LoadFile_F12_COL AS a
 WHERE type = 'configurable'

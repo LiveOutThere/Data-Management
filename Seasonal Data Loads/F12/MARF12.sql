@@ -118,7 +118,6 @@ SELECT  dbo.getMagentoSimpleSKU('FW12A-MAR', a.[Style Number], a.[Color Number],
 		dbo.getUrlKey(dbo.getMARName(a.[Style Description]), 'Marmot', a.[Color Description] + ' - ' + a.Size) + '-fw12a' AS url_key
 FROM tbl_RawData_F12_MAR AS a
 
-
 -- now let's insert configurable SKUs by doing a SELECT DISTINCT on the same data set, this gives us one configurable per product
 INSERT INTO tbl_LoadFile_F12_MAR (
 	sku,
@@ -154,11 +153,6 @@ SELECT DISTINCT
 FROM tbl_RawData_F12_MAR AS a
 
 DELETE FROM tbl_LoadFile_F12_MAR WHERE cost = '0.00'
-
-UPDATE a SET
-	image = (SELECT TOP 1 Filename FROM view_RawData_MAR_Photos WHERE Filename LIKE '%' + a.vendor_product_id + '%' + a.vendor_color_code + '%' AND Filename NOT LIKE '%back%')
-FROM tbl_LoadFile_F12_MAR AS a
-WHERE image LIKE '%back%'
 
 UPDATE tbl_LoadFile_F12_MAR SET name = REPLACE(name,'Men''s ','') WHERE name LIKE '% 1P%' OR name LIKE '% 2P%' OR name LIKE '% 3P%' OR name LIKE '% 4P%' OR name LIKE '% 6P%' OR name LIKE '% 8P%' OR name LIKE '% Fly' OR name LIKE '% Footprint' OR name LIKE '% Tent %' OR name LIKE '% Sack' OR name LIKE '% Loft'
 
@@ -197,15 +191,12 @@ UPDATE a SET
 FROM tbl_LoadFile_F12_MAR AS a
 WHERE type = 'simple' AND image IS NULL AND name NOT LIKE '%long%' AND name NOT LIKE '%short%' AND name NOT LIKE '%tall%' AND name NOT LIKE '%XXL-%'
 
--- Use this to get a final list of missing images
-SELECT DISTINCT vendor_product_id, name, choose_color, vendor_color_code FROM tbl_LoadFile_F12_MAR WHERE type = 'simple' AND image IS NULL ORDER BY name, choose_color
-
 UPDATE a SET
 	description = (SELECT [Positioning Statement] FROM tbl_RawData_F12_MAR_Additional WHERE [Style] = a.vendor_product_id),
 	features = dbo.getMARFeatures(a.vendor_product_id),
 	fabric = (SELECT [Materials] FROM tbl_RawData_F12_MAR_Additional WHERE [Style] = a.vendor_product_id),
-	image = (SELECT TOP 1 image FROM tbl_LoadFile_F12_MAR WHERE vendor_product_id = a.vendor_product_id ORDER BY choose_color DESC),
-	image_label = (SELECT TOP 1 image_label FROM tbl_LoadFile_F12_MAR WHERE vendor_product_id = a.vendor_product_id ORDER BY choose_color DESC),
+	image = (SELECT TOP 1 image FROM tbl_LoadFile_F12_MAR WHERE vendor_product_id = a.vendor_product_id AND a.image IS NOT NULL ORDER BY choose_color DESC),
+	image_label = (SELECT TOP 1 image_label FROM tbl_LoadFile_F12_MAR WHERE vendor_product_id = a.vendor_product_id AND a.image IS NOT NULL ORDER BY choose_color DESC),
 	media_gallery = dbo.getMARMediaGallery(a.vendor_product_id),
 	simples_skus = dbo.getMARAssociatedProducts(a.vendor_product_id)
 FROM tbl_LoadFile_F12_MAR AS a
@@ -215,8 +206,6 @@ WHERE type = 'configurable'
 UPDATE tbl_LoadFile_F12_MAR SET image = REPLACE(image,'+',''), small_image = REPLACE(small_image,'+',''), thumbnail = REPLACE(thumbnail,'+','') WHERE image IS NOT NULL
 UPDATE tbl_LoadFile_F12_MAR SET thumbnail = '+' + image, small_image = '+' + image WHERE image IS NOT NULL
 UPDATE tbl_LoadFile_F12_MAR SET image = '+' + image WHERE image IS NOT NULL
-
-SELECT * FROM tbl_LoadFile_F12_MAR ORDER BY name, type DESC
 GO
 
 CREATE VIEW [dbo].[view_LoadFile_F12_MAR]

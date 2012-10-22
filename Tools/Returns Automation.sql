@@ -69,8 +69,9 @@ BEGIN
 		SET @manufacturer = (SELECT manufacturer FROM @MissingSkus WHERE id = @i)
 		SET @color = (SELECT color FROM @MissingSkus WHERE id = @i)
 		SET @size = (SELECT size FROM @MissingSkus WHERE id = @i)
+		SET @configurableSku = NULL
 		
-		IF (@CheckMagento = 1 ) BEGIN
+		IF (@CheckMagento = 1 AND @color <> '' AND @size <> '') BEGIN
 			SET @simpleSku = (SELECT sku FROM MAGENTO...catalog_product_flat_1 WHERE sku COLLATE SQL_Latin1_General_CP1_CI_AS = (SELECT sku FROM view_Join_F12_LoadFiles WHERE vendor_product_id = @style AND manufacturer = @manufacturer AND choose_color = @color AND choose_size = @size AND type = 'simple'))
 			
 			IF @simpleSku IS NOT NULL BEGIN
@@ -83,52 +84,54 @@ BEGIN
 		-- Let's try to find a simple product row from F12 that matches our criteria to insert into the temporary table
 		INSERT INTO ##skus
 		SELECT TOP 1 store, websites, type, sku, name, attribute_set, configurable_attributes, has_options, price, cost, status, tax_class_id, gender, visibility, image, image_label, small_image, thumbnail, media_gallery, choose_color, choose_size, vendor_sku, vendor_product_id, vendor_color_code, vendor_size_code, season, short_description, description, features, fabric, manufacturer, simples_skus, url_key, NULL
-		FROM view_Join_F12_LoadFiles WHERE vendor_product_id = @style AND manufacturer = @manufacturer AND choose_color = @color AND choose_size = @size
+		FROM view_Join_F12_LoadFiles WHERE vendor_product_id = @style AND manufacturer = @manufacturer AND choose_color = @color AND choose_size = @size AND type = 'simple'
 		
 		SET @simpleSku = (SELECT sku FROM ##skus WHERE vendor_product_id = @style AND manufacturer = @manufacturer AND choose_color = @color AND choose_size = @size)
 		
-		IF (SELECT COUNT(*) FROM ##skus) = 1 BEGIN
+		IF @simpleSku IS NOT NULL OR (@color = '' AND @size = '') BEGIN
 			-- We found a row! Now let's check to see if we need a configurable
 			
 			IF (@CheckMagento = 1) BEGIN
 				SET @configurableSku = (SELECT sku FROM MAGENTO...catalog_product_flat_1 WHERE sku COLLATE SQL_Latin1_General_CP1_CI_AS = (SELECT sku FROM view_Join_F12_LoadFiles WHERE vendor_product_id = @style AND manufacturer = @manufacturer AND type = 'configurable'))
 			END
 			
-			IF (@configurableSku IS NULL) BEGIN
+			IF @configurableSku IS NULL AND (EXISTS (SELECT sku FROM ##skus WHERE vendor_product_id = @style AND manufacturer = @manufacturer AND choose_color = @color AND choose_size = @size AND type = 'simple') OR (@color = '' AND @size = ''))
+										AND NOT EXISTS (SELECT sku FROM ##skus WHERE vendor_product_id = @style AND manufacturer = @manufacturer AND type = 'configurable') BEGIN
 				-- We couldn't find an FW12A configurable for this product, so let's generate a row for the configurable too
 				INSERT INTO ##skus
 				SELECT TOP 1 store, websites, type, sku, name, attribute_set, configurable_attributes, has_options, price, cost, status, tax_class_id, gender, visibility, image, image_label, small_image, thumbnail, media_gallery, choose_color, choose_size, vendor_sku, vendor_product_id, vendor_color_code, vendor_size_code, season, short_description, description, features, fabric, manufacturer, simples_skus, url_key, 'Z'
 				FROM view_Join_F12_LoadFiles WHERE vendor_product_id = @style AND manufacturer = @manufacturer AND type = 'configurable'
 				
-				-- And let's make sure the simples_skus column contains this simple sku!
-				IF (SELECT simples_skus FROM ##skus WHERE type = 'configurable') NOT LIKE '%' + @simpleSku + '%' BEGIN
-					UPDATE ##skus SET simples_skus = simples_skus + ',' + @simpleSku WHERE type = 'configurable'
+				IF (@simpleSku IS NULL AND @color = '' AND @size = '' AND @@ROWCOUNT = 1) BEGIN
+					SET @simpleSku = '' 
 				END
 			END
 		END
 		/*** END FW12 ***/
 		/*** BEGIN SS12 ***/
 		-- If we haven't found anything, it means the product didn't exist in FW12. Let's look in previous seasons. This code block would be duplicated for n seasons
-		IF (SELECT COUNT(*) FROM ##skus) = 0 BEGIN
+		IF (@simpleSku IS NULL) BEGIN
 			INSERT INTO ##skus
 			SELECT TOP 1 store, websites, type, sku, name, attribute_set, configurable_attributes, has_options, price, cost, status, tax_class_id, gender, visibility, image, image_label, small_image, thumbnail, media_gallery, choose_color, choose_size, vendor_sku, vendor_product_id, vendor_color_code, vendor_size_code, season, short_description, description, features, fabric, manufacturer, simples_skus, url_key, NULL
-			FROM view_Join_S12_LoadFiles WHERE vendor_product_id = @style AND manufacturer = @manufacturer AND choose_color = @color AND choose_size = @size
+			FROM view_Join_S12_LoadFiles WHERE vendor_product_id = @style AND manufacturer = @manufacturer AND choose_color = @color AND choose_size = @size AND type = 'simple'
 
 			IF (@CheckMagento = 1) BEGIN
 				SET @configurableSku = (SELECT sku FROM MAGENTO...catalog_product_flat_1 WHERE sku COLLATE SQL_Latin1_General_CP1_CI_AS LIKE 'SS12_-' + (SELECT sku FROM view_Join_S12_LoadFiles WHERE vendor_product_id = @style AND manufacturer = @manufacturer AND type = 'configurable'))
 			END
 			
-			IF (@configurableSku IS NULL) BEGIN
+			IF @configurableSku IS NULL AND (EXISTS (SELECT sku FROM ##skus WHERE vendor_product_id = @style AND manufacturer = @manufacturer AND choose_color = @color AND choose_size = @size AND type = 'simple') OR (@color = '' AND @size = ''))
+										AND NOT EXISTS (SELECT sku FROM ##skus WHERE vendor_product_id = @style AND manufacturer = @manufacturer AND type = 'configurable') BEGIN
 				INSERT INTO ##skus
 				SELECT TOP 1 store, websites, type, sku, name, attribute_set, configurable_attributes, has_options, price, cost, status, tax_class_id, gender, visibility, image, image_label, small_image, thumbnail, media_gallery, choose_color, choose_size, vendor_sku, vendor_product_id, vendor_color_code, vendor_size_code, season, short_description, description, features, fabric, manufacturer, simples_skus, url_key, 'Z'
 				FROM view_Join_S12_LoadFiles WHERE vendor_product_id = @style AND manufacturer = @manufacturer AND type = 'configurable'
-				
-				IF (SELECT simples_skus FROM ##skus WHERE type = 'configurable') NOT LIKE '%' + @simpleSku + '%' BEGIN
-					UPDATE ##skus SET simples_skus = simples_skus + ',' + @simpleSku WHERE type = 'configurable'
-				END
 			END
 		END
 		/*** END SS12 ***/
+
+		-- And let's make sure the simples_skus column for the configurable rows contains this simple sku!
+		IF @simpleSku IS NOT NULL AND EXISTS (SELECT simples_skus FROM ##skus WHERE type = 'configurable' AND vendor_product_id = @style AND simples_skus NOT LIKE '%' + @simpleSku + '%') BEGIN
+			UPDATE ##skus SET simples_skus = simples_skus + ',' + @simpleSku WHERE type = 'configurable' AND vendor_product_id = @style
+		END
 
 		-- Finally, increment the variable that stores our position in the table @MissingSkus, otherwise we'll create an infinite loop
 		SET @i = @i + 1
@@ -141,7 +144,7 @@ BEGIN
 		SET @Filename = 'missing-skus.csv'
 	END
 
-	SET @sql = 'SELECT ''"store"'' AS store, ''"websites"'' AS websites, ''"type"'' AS type, ''"sku"'' AS sku, ''"name"'' AS name, ''"attribute_set"'' AS attribute_set,  ''"configurable_attributes"'' AS configurable_attributes, ''"has_options"'' AS has_options, ''"price"'' AS price, ''"cost"'' AS cost, ''"status"'' AS status, ''"tax_class_id"'' AS tax_class_id, ''"department"'' AS department,  ''"visibility"'' AS visibility, ''"image"'' AS image, ''"image_label"'' AS image_label, ''"small_image"'' AS small_image, ''"thumbnail"'' AS thumbnail, ''"media_gallery"'' AS media_gallery,  ''"choose_color"'' AS choose_color, ''"choose_size"'' AS choose_size, ''"vendor_sku"'' AS vendor_sku, ''"vendor_product_id"'' AS vendor_product_id, ''"vendor_color_code"'' AS vendor_color_code,  ''"vendor_size_code"'' AS vendor_size_code, ''"season"'' AS season, ''"short_description"'' AS short_description, ''"description"'' AS description, ''"features"'' AS features, ''"fabric"'' AS fabric, ''"manufacturer"'' AS manufacturer, ''"simples_skus"'' AS simples_skus, ''"url_key"'' AS url_key, ''"merchandise_priority"'' AS merchandise_priority UNION ALL SELECT * FROM ##skus ORDER BY name, type DESC'
+	SET @sql = 'SELECT 0 AS sort, ''"store"'' AS store, ''"websites"'' AS websites, ''"type"'' AS type, ''"sku"'' AS sku, ''"name"'' AS name, ''"attribute_set"'' AS attribute_set,  ''"configurable_attributes"'' AS configurable_attributes, ''"has_options"'' AS has_options, ''"price"'' AS price, ''"cost"'' AS cost, ''"status"'' AS status, ''"tax_class_id"'' AS tax_class_id, ''"department"'' AS department,  ''"visibility"'' AS visibility, ''"image"'' AS image, ''"image_label"'' AS image_label, ''"small_image"'' AS small_image, ''"thumbnail"'' AS thumbnail, ''"media_gallery"'' AS media_gallery,  ''"choose_color"'' AS choose_color, ''"choose_size"'' AS choose_size, ''"vendor_sku"'' AS vendor_sku, ''"vendor_product_id"'' AS vendor_product_id, ''"vendor_color_code"'' AS vendor_color_code,  ''"vendor_size_code"'' AS vendor_size_code, ''"season"'' AS season, ''"short_description"'' AS short_description, ''"description"'' AS description, ''"features"'' AS features, ''"fabric"'' AS fabric, ''"manufacturer"'' AS manufacturer, ''"simples_skus"'' AS simples_skus, ''"url_key"'' AS url_key, ''"merchandise_priority"'' AS merchandise_priority UNION ALL SELECT 1 AS sort, store, websites, type, sku, name, attribute_set, configurable_attributes, has_options, price, cost, status, tax_class_id, gender, visibility, image, image_label, small_image, thumbnail, media_gallery, choose_color, choose_size, vendor_sku, vendor_product_id, vendor_color_code, vendor_size_code, season, short_description, description, features, fabric, manufacturer, simples_skus, url_key, merchandise_priority FROM ##skus ORDER BY sort, name, type DESC'
 	-- Show the contents of ##skus as the Result set
 	EXEC(@sql)
 
@@ -229,8 +232,8 @@ BEGIN
 	END
 
 	-- Assign all configurable products without a category to Uncategorized
-	INSERT INTO OPENQUERY( MAGENTO, 'SELECT * FROM catalog_category_product' )
-	SELECT (SELECT entity_id FROM MAGENTO...catalog_category_flat_store_1 WHERE name = 'Uncategorized'), entity_id, 100 FROM MAGENTO...catalog_product_entity AS a LEFT JOIN MAGENTO...catalog_category_product AS b ON a.entity_id = b.product_id WHERE a.type_id = 'configurable' AND b.category_id IS NULL
+	--INSERT INTO OPENQUERY( MAGENTO, 'SELECT * FROM catalog_category_product' )
+	--SELECT (SELECT entity_id FROM MAGENTO...catalog_category_flat_store_1 WHERE name = 'Uncategorized'), entity_id, 100 FROM MAGENTO...catalog_product_entity AS a LEFT JOIN MAGENTO...catalog_category_product AS b ON a.entity_id = b.product_id WHERE a.type_id = 'configurable' AND b.category_id IS NULL
 
 END
 GO
@@ -238,9 +241,11 @@ GO
 /*** PROGRAM EXECUTION BEGINS HERE ***/
 -- Create a temporary table variable and insert some data into it. You could also SELECT from another table here, instead of typing, if your missing returned products were in their own table.
 DECLARE @MissingSkus MissingSkuTableType, @CheckMagento bit
-INSERT INTO @MissingSkus (manufacturer, style, color, size) VALUES ('The North Face', 'AYHP', 'TNF Black', 'XS'),
-																   ('The North Face', 'AYHP', 'TNF Black', 'S')
-
+INSERT INTO @MissingSkus (manufacturer, style, color, size) VALUES ('The North Face', 'AWUY', '', ''),
+																   ('Marmot', '80620', '', ''),
+																   ('Marmot', '77660', 'Black', 'M')
+																   
+																   
 -- Call the stored procedure defined above. If CheckMagento = 1 it will check if the configurable exists. If it doesn't, the sproc returns a configurable row too.
 -- It will also dummy-check for you and throw an error if the simple product exists.
-EXEC generateRowsForMagmi @MissingSkus, @CheckMagento = 0, @RunMagmi = 1
+EXEC generateRowsForMagmi @MissingSkus, @CheckMagento = 0, @RunMagmi = 0

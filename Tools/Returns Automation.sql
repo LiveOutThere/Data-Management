@@ -45,8 +45,8 @@ CREATE PROCEDURE generateRowsForMagmi
 AS
 BEGIN
 	BEGIN TRY
-		DROP TABLE ##FTPCommands
 		DROP TABLE ##skus
+		DROP TABLE ##FTPCommands
 	END TRY
 	BEGIN CATCH
 	END CATCH
@@ -55,7 +55,7 @@ BEGIN
 	DECLARE @configurableSku varchar(255), @simpleSku varchar(255), @i int, @rowCount int, @style varchar(128), @manufacturer varchar(128), @color varchar(128), @size varchar(128), @sql varchar(4000), @cmd varchar (4000)
 
 	-- The two ## signifies a global temporary table, as opposed to a local (to the procedure) temporary table. This is so that bcp can find the temp table when we export it as the last step.
-	CREATE TABLE ##skus (store nvarchar(MAX), websites nvarchar(MAX), [type] nvarchar(MAX), sku nvarchar(MAX), name nvarchar(MAX), attribute_set nvarchar(MAX), configurable_attributes nvarchar(MAX), has_options nvarchar(MAX), price nvarchar(MAX), cost nvarchar(MAX), status nvarchar(MAX), tax_class_id nvarchar(MAX), gender nvarchar(MAX), visibility nvarchar(MAX), image nvarchar(MAX), image_label nvarchar(MAX), small_image nvarchar(MAX), thumbnail nvarchar(MAX), media_gallery nvarchar(MAX), choose_color nvarchar(MAX), choose_size nvarchar(MAX), vendor_sku nvarchar(MAX), vendor_product_id nvarchar(MAX), vendor_color_code nvarchar(MAX), vendor_size_code nvarchar(MAX), season nvarchar(MAX), short_description nvarchar(MAX), description nvarchar(MAX), features nvarchar(MAX), fabric nvarchar(MAX), manufacturer nvarchar(MAX), simples_skus nvarchar(MAX), url_key nvarchar(MAX), merchandise_priority nvarchar(MAX));
+	CREATE TABLE ##skus (store nvarchar(MAX), websites nvarchar(MAX), [type] nvarchar(MAX), sku nvarchar(MAX), name nvarchar(MAX), attribute_set nvarchar(MAX), configurable_attributes nvarchar(MAX), has_options nvarchar(MAX), price nvarchar(MAX), cost nvarchar(MAX), status nvarchar(MAX), tax_class_id nvarchar(MAX), gender nvarchar(MAX), visibility nvarchar(MAX), image nvarchar(MAX), image_label nvarchar(MAX), small_image nvarchar(MAX), thumbnail nvarchar(MAX), media_gallery nvarchar(MAX), choose_color nvarchar(MAX), choose_size nvarchar(MAX), vendor_sku nvarchar(MAX), vendor_product_id nvarchar(MAX), vendor_color_code nvarchar(MAX), vendor_size_code nvarchar(MAX), season nvarchar(MAX), short_description nvarchar(MAX), description nvarchar(MAX), features nvarchar(MAX), fabric nvarchar(MAX), manufacturer nvarchar(MAX), simples_skus nvarchar(MAX), url_key nvarchar(MAX), merchandise_priority nvarchar(MAX), backorders char(1), manage_stock char(1), never_backorder char(1));
 	
 	SET @i = 1
 	-- How many times do we have to loop?
@@ -72,7 +72,7 @@ BEGIN
 		SET @configurableSku = NULL
 		
 		IF (@CheckMagento = 1 AND @color <> '' AND @size <> '') BEGIN
-			SET @simpleSku = (SELECT sku FROM MAGENTO...catalog_product_flat_1 WHERE sku COLLATE SQL_Latin1_General_CP1_CI_AS = (SELECT sku FROM view_Join_F12_LoadFiles WHERE vendor_product_id = @style AND manufacturer = @manufacturer AND choose_color = @color AND choose_size = @size AND type = 'simple'))
+			SET @simpleSku = (SELECT sku FROM MAGENTO...catalog_product_flat_1 WHERE sku COLLATE SQL_Latin1_General_CP1_CI_AS = (SELECT sku FROM view_Join_F12_LoadFiles WHERE vendor_product_id = @style AND manufacturer = @manufacturer AND (choose_color = @color OR vendor_color_code = @color) AND choose_size = @size AND type = 'simple'))
 			
 			IF @simpleSku IS NOT NULL BEGIN
 				PRINT @simpleSku
@@ -83,10 +83,10 @@ BEGIN
 		/*** BEGIN FW12 ***/
 		-- Let's try to find a simple product row from F12 that matches our criteria to insert into the temporary table
 		INSERT INTO ##skus
-		SELECT TOP 1 store, websites, type, sku, name, attribute_set, configurable_attributes, has_options, price, cost, status, tax_class_id, gender, visibility, image, image_label, small_image, thumbnail, media_gallery, choose_color, choose_size, vendor_sku, vendor_product_id, vendor_color_code, vendor_size_code, season, short_description, description, features, fabric, manufacturer, simples_skus, url_key, NULL
-		FROM view_Join_F12_LoadFiles WHERE vendor_product_id = @style AND manufacturer = @manufacturer AND choose_color = @color AND choose_size = @size AND type = 'simple'
+		SELECT TOP 1 store, websites, type, sku, name, attribute_set, configurable_attributes, has_options, price, cost, status, tax_class_id, gender, visibility, image, image_label, small_image, thumbnail, media_gallery, choose_color, choose_size, vendor_sku, vendor_product_id, vendor_color_code, vendor_size_code, season, short_description, description, features, fabric, manufacturer, simples_skus, url_key, NULL, '0', '1', '1'
+		FROM view_Join_F12_LoadFiles WHERE vendor_product_id = @style AND manufacturer = @manufacturer AND (choose_color = @color OR vendor_color_code = @color) AND choose_size = @size AND type = 'simple'
 		
-		SET @simpleSku = (SELECT sku FROM ##skus WHERE vendor_product_id = @style AND manufacturer = @manufacturer AND choose_color = @color AND choose_size = @size)
+		SET @simpleSku = (SELECT sku FROM ##skus WHERE vendor_product_id = @style AND manufacturer = @manufacturer AND (choose_color = @color OR vendor_color_code = @color) AND choose_size = @size)
 		
 		IF @simpleSku IS NOT NULL OR (@color = '' AND @size = '') BEGIN
 			-- We found a row! Now let's check to see if we need a configurable
@@ -95,11 +95,11 @@ BEGIN
 				SET @configurableSku = (SELECT sku FROM MAGENTO...catalog_product_flat_1 WHERE sku COLLATE SQL_Latin1_General_CP1_CI_AS = (SELECT sku FROM view_Join_F12_LoadFiles WHERE vendor_product_id = @style AND manufacturer = @manufacturer AND type = 'configurable'))
 			END
 			
-			IF @configurableSku IS NULL AND (EXISTS (SELECT sku FROM ##skus WHERE vendor_product_id = @style AND manufacturer = @manufacturer AND choose_color = @color AND choose_size = @size AND type = 'simple') OR (@color = '' AND @size = ''))
+			IF @configurableSku IS NULL AND (EXISTS (SELECT sku FROM ##skus WHERE vendor_product_id = @style AND manufacturer = @manufacturer AND (choose_color = @color OR vendor_color_code = @color) AND choose_size = @size AND type = 'simple') OR (@color = '' AND @size = ''))
 										AND NOT EXISTS (SELECT sku FROM ##skus WHERE vendor_product_id = @style AND manufacturer = @manufacturer AND type = 'configurable') BEGIN
 				-- We couldn't find an FW12A configurable for this product, so let's generate a row for the configurable too
 				INSERT INTO ##skus
-				SELECT TOP 1 store, websites, type, sku, name, attribute_set, configurable_attributes, has_options, price, cost, status, tax_class_id, gender, visibility, image, image_label, small_image, thumbnail, media_gallery, choose_color, choose_size, vendor_sku, vendor_product_id, vendor_color_code, vendor_size_code, season, short_description, description, features, fabric, manufacturer, simples_skus, url_key, 'Z'
+				SELECT TOP 1 store, websites, type, sku, name, attribute_set, configurable_attributes, has_options, price, cost, status, tax_class_id, gender, visibility, image, image_label, small_image, thumbnail, media_gallery, choose_color, choose_size, vendor_sku, vendor_product_id, vendor_color_code, vendor_size_code, season, short_description, description, features, fabric, manufacturer, simples_skus, url_key, 'Z', '0', '0', '0'
 				FROM view_Join_F12_LoadFiles WHERE vendor_product_id = @style AND manufacturer = @manufacturer AND type = 'configurable'
 				
 				IF (@simpleSku IS NULL AND @color = '' AND @size = '' AND @@ROWCOUNT = 1) BEGIN
@@ -112,17 +112,18 @@ BEGIN
 		-- If we haven't found anything, it means the product didn't exist in FW12. Let's look in previous seasons. This code block would be duplicated for n seasons
 		IF (@simpleSku IS NULL) BEGIN
 			INSERT INTO ##skus
-			SELECT TOP 1 store, websites, type, sku, name, attribute_set, configurable_attributes, has_options, price, cost, status, tax_class_id, gender, visibility, image, image_label, small_image, thumbnail, media_gallery, choose_color, choose_size, vendor_sku, vendor_product_id, vendor_color_code, vendor_size_code, season, short_description, description, features, fabric, manufacturer, simples_skus, url_key, NULL
-			FROM view_Join_S12_LoadFiles WHERE vendor_product_id = @style AND manufacturer = @manufacturer AND choose_color = @color AND choose_size = @size AND type = 'simple'
+			SELECT TOP 1 store, websites, type, 'SS12-' + sku, name, attribute_set, configurable_attributes, has_options, price, cost, status, tax_class_id, gender, REPLACE(visibility,'Nowhere','Not Visible Individually') AS visibility, '+' + image, image_label, '+' + small_image, '+' + thumbnail, media_gallery, choose_color, choose_size, vendor_sku, vendor_product_id, vendor_color_code, vendor_size_code, 'SS12 ASAP', short_description, description, features, fabric, manufacturer, simples_skus, url_key, NULL, '0', '1', '1'
+			FROM view_Join_S12_LoadFiles WHERE vendor_product_id = @style AND manufacturer = @manufacturer AND (choose_color = @color OR vendor_color_code = @color) AND choose_size = @size AND type = 'simple'
 
 			IF (@CheckMagento = 1) BEGIN
 				SET @configurableSku = (SELECT sku FROM MAGENTO...catalog_product_flat_1 WHERE sku COLLATE SQL_Latin1_General_CP1_CI_AS LIKE 'SS12_-' + (SELECT sku FROM view_Join_S12_LoadFiles WHERE vendor_product_id = @style AND manufacturer = @manufacturer AND type = 'configurable'))
 			END
 			
-			IF @configurableSku IS NULL AND (EXISTS (SELECT sku FROM ##skus WHERE vendor_product_id = @style AND manufacturer = @manufacturer AND choose_color = @color AND choose_size = @size AND type = 'simple') OR (@color = '' AND @size = ''))
-										AND NOT EXISTS (SELECT sku FROM ##skus WHERE vendor_product_id = @style AND manufacturer = @manufacturer AND type = 'configurable') BEGIN
+			IF (EXISTS (SELECT sku FROM ##skus WHERE vendor_product_id = @style AND manufacturer = @manufacturer AND (choose_color = @color OR vendor_color_code = @color) AND choose_size = @size AND type = 'simple') OR (@color = '' AND @size = ''))
+				AND NOT EXISTS (SELECT sku FROM ##skus WHERE vendor_product_id = @style AND manufacturer = @manufacturer AND type = 'configurable') BEGIN
+				
 				INSERT INTO ##skus
-				SELECT TOP 1 store, websites, type, sku, name, attribute_set, configurable_attributes, has_options, price, cost, status, tax_class_id, gender, visibility, image, image_label, small_image, thumbnail, media_gallery, choose_color, choose_size, vendor_sku, vendor_product_id, vendor_color_code, vendor_size_code, season, short_description, description, features, fabric, manufacturer, simples_skus, url_key, 'Z'
+				SELECT TOP 1 store, websites, type, CASE WHEN @configurableSku IS NOT NULL THEN @configurableSku ELSE 'SS12-' + sku END AS sku, name, attribute_set, configurable_attributes, has_options, price, cost, status, tax_class_id, gender, visibility, '+' + image, image_label, '+' + small_image, '+' + thumbnail, media_gallery, choose_color, choose_size, vendor_sku, vendor_product_id, vendor_color_code, vendor_size_code, 'SS12 ASAP' AS season_id, short_description, description, features, fabric, manufacturer, REPLACE('SS12-' + simples_skus,',',',SS12-') + ',' + REPLACE('SS12I-' + simples_skus,',',',SS12I-') + ',' + REPLACE('SS12C-' + simples_skus,',',',SS12C-')+ ',' + REPLACE('SS12A-' + simples_skus,',',',SS12A-') AS simples_skus, url_key + '-ss12', 'Z', '0', '0', '0'
 				FROM view_Join_S12_LoadFiles WHERE vendor_product_id = @style AND manufacturer = @manufacturer AND type = 'configurable'
 			END
 		END
@@ -144,7 +145,7 @@ BEGIN
 		SET @Filename = 'missing-skus.csv'
 	END
 
-	SET @sql = 'SELECT 0 AS sort, ''"store"'' AS store, ''"websites"'' AS websites, ''"type"'' AS type, ''"sku"'' AS sku, ''"name"'' AS name, ''"attribute_set"'' AS attribute_set,  ''"configurable_attributes"'' AS configurable_attributes, ''"has_options"'' AS has_options, ''"price"'' AS price, ''"cost"'' AS cost, ''"status"'' AS status, ''"tax_class_id"'' AS tax_class_id, ''"department"'' AS department,  ''"visibility"'' AS visibility, ''"image"'' AS image, ''"image_label"'' AS image_label, ''"small_image"'' AS small_image, ''"thumbnail"'' AS thumbnail, ''"media_gallery"'' AS media_gallery,  ''"choose_color"'' AS choose_color, ''"choose_size"'' AS choose_size, ''"vendor_sku"'' AS vendor_sku, ''"vendor_product_id"'' AS vendor_product_id, ''"vendor_color_code"'' AS vendor_color_code,  ''"vendor_size_code"'' AS vendor_size_code, ''"season"'' AS season, ''"short_description"'' AS short_description, ''"description"'' AS description, ''"features"'' AS features, ''"fabric"'' AS fabric, ''"manufacturer"'' AS manufacturer, ''"simples_skus"'' AS simples_skus, ''"url_key"'' AS url_key, ''"merchandise_priority"'' AS merchandise_priority UNION ALL SELECT 1 AS sort, store, websites, type, sku, name, attribute_set, configurable_attributes, has_options, price, cost, status, tax_class_id, gender, visibility, image, image_label, small_image, thumbnail, media_gallery, choose_color, choose_size, vendor_sku, vendor_product_id, vendor_color_code, vendor_size_code, season, short_description, description, features, fabric, manufacturer, simples_skus, url_key, merchandise_priority FROM ##skus ORDER BY sort, name, type DESC'
+	SET @sql = 'SELECT 0 AS sort, ''"store"'' AS store, ''"websites"'' AS websites, ''"type"'' AS type, ''"sku"'' AS sku, ''"name"'' AS name, ''"attribute_set"'' AS attribute_set,  ''"configurable_attributes"'' AS configurable_attributes, ''"has_options"'' AS has_options, ''"price"'' AS price, ''"cost"'' AS cost, ''"status"'' AS status, ''"tax_class_id"'' AS tax_class_id, ''"department"'' AS department,  ''"visibility"'' AS visibility, ''"image"'' AS image, ''"image_label"'' AS image_label, ''"small_image"'' AS small_image, ''"thumbnail"'' AS thumbnail, ''"media_gallery"'' AS media_gallery,  ''"choose_color"'' AS choose_color, ''"choose_size"'' AS choose_size, ''"vendor_sku"'' AS vendor_sku, ''"vendor_product_id"'' AS vendor_product_id, ''"vendor_color_code"'' AS vendor_color_code,  ''"vendor_size_code"'' AS vendor_size_code, ''"season_id"'' AS season_id, ''"short_description"'' AS short_description, ''"description"'' AS description, ''"features"'' AS features, ''"fabric"'' AS fabric, ''"manufacturer"'' AS manufacturer, ''"simples_skus"'' AS simples_skus, ''"url_key"'' AS url_key, ''"merchandise_priority"'' AS merchandise_priority, ''"backorders"'' AS backorders, ''"manage_stock"'' AS manage_stock, ''"never_backorder"'' AS never_backorder UNION ALL SELECT 1 AS sort, store, websites, type, sku, name, attribute_set, configurable_attributes, has_options, price, cost, status, tax_class_id, gender, visibility, image, image_label, small_image, thumbnail, media_gallery, choose_color, choose_size, vendor_sku, vendor_product_id, vendor_color_code, vendor_size_code, season, short_description, description, features, fabric, manufacturer, simples_skus, url_key, merchandise_priority, backorders, manage_stock, never_backorder FROM ##skus ORDER BY sort, name, type DESC'
 	-- Show the contents of ##skus as the Result set
 	EXEC(@sql)
 
@@ -191,7 +192,7 @@ BEGIN
 		TRUNCATE TABLE ##FTPCommands
 
 		-- Delete the local copy of missing-skus.log if it exists, then download it, then run the type program on the log file to dump its contents the output window
-		EXEC master..xp_cmdshell 'cd C:\Data\Shared & ftp -w:12288 -s:C:\Data\Shared\generateRowsForMagmi.ftp', NO_OUTPUT
+		EXEC master..xp_cmdshell 'cd C:\Data\Shared & del magmistate & ftp -w:12288 -s:C:\Data\Shared\generateRowsForMagmi.ftp', NO_OUTPUT
 		
 		-- Need to get a bit fancy to actually capture the contents of the magmistate file in a variable
 		DECLARE @magmiState varchar(128)
@@ -200,8 +201,8 @@ BEGIN
 		SELECT TOP 1 @magmiState = output FROM #state
 		DROP TABLE #state
 
-		IF (@magmiState = 'idle') BEGIN
-			SET @cmd = 'wget --spider "http://www.liveoutthere.com/utility_o23tsgf/magmi/web/magmi_run.php?mode=create&logfile=missing-skus.log&profile=Missing%20SKUs&engine=magmi_productimportengine:Magmi_ProductImportEngine"'
+		IF (@magmiState <> 'running') BEGIN
+			SET @cmd = 'wget "http://www.liveoutthere.com/utility_o23tsgf/magmi/web/magmi_run.php?mode=create&logfile=missing-skus.log&profile=Missing%20SKUs&engine=magmi_productimportengine:Magmi_ProductImportEngine"'
 			EXEC master..xp_cmdshell @cmd, NO_OUTPUT
 				
 			-- Do you see what xp_cmdshell does now? It is an "extended" stored procedure that allows us to execute commands as if we'd typed them at the terminal
@@ -241,11 +242,8 @@ GO
 /*** PROGRAM EXECUTION BEGINS HERE ***/
 -- Create a temporary table variable and insert some data into it. You could also SELECT from another table here, instead of typing, if your missing returned products were in their own table.
 DECLARE @MissingSkus MissingSkuTableType, @CheckMagento bit
-INSERT INTO @MissingSkus (manufacturer, style, color, size) VALUES ('The North Face', 'AWUY', '', ''),
-																   ('Marmot', '80620', '', ''),
-																   ('Marmot', '77660', 'Black', 'M')
-																   
-																   
+INSERT INTO @MissingSkus (manufacturer, style, color, size) VALUES ('Marmot', '69040', '6659', 'L')
+
 -- Call the stored procedure defined above. If CheckMagento = 1 it will check if the configurable exists. If it doesn't, the sproc returns a configurable row too.
 -- It will also dummy-check for you and throw an error if the simple product exists.
-EXEC generateRowsForMagmi @MissingSkus, @CheckMagento = 0, @RunMagmi = 0
+EXEC generateRowsForMagmi @MissingSkus, @CheckMagento = 1, @RunMagmi = 1

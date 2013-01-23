@@ -97,7 +97,7 @@ INSERT INTO tbl_LoadFile_SS13_LOLE (
 )
 SELECT  dbo.getMagentoSimpleSKU('SS13A-LOLE', a.Style, LEFT(a.Color,4), dbo.getLOLESize(a.Size)) AS sku,
 		a.Style AS vendor_product_id,
-		dbo.ProperCase(a.[Description]) AS name,
+		dbo.getLOLEName(a.[Description]) AS name,
 		'Women' AS department,
 		dbo.ProperCase(SUBSTRING(a.Color,8,4000)) AS choose_color,
 		dbo.getLOLESize(a.Size) AS choose_size,
@@ -108,9 +108,9 @@ SELECT  dbo.getMagentoSimpleSKU('SS13A-LOLE', a.Style, LEFT(a.Color,4), dbo.getL
 		a.[Unit Price] AS cost,
 		0 AS has_options,
 		'simple' AS type,
-		dbo.getLOLEImage(a.Style,LEFT(a.Color,4),a.UPC) AS image,
+		dbo.getLOLEImage(a.Style,LEFT(a.Color,4),CAST(a.UPC AS bigint)) AS image,
 		dbo.ProperCase(SUBSTRING(a.Color,8,4000)) AS image_label,
-		dbo.getUrlKey(a.Description, 'Lole', dbo.ProperCase(SUBSTRING(a.Color,8,4000)) + ' - ' + dbo.getLOLESize(a.Size), a.Gender) + '-ss13a' AS url_key
+		dbo.getUrlKey(dbo.getLOLEName(a.[Description]), 'Lole', dbo.ProperCase(SUBSTRING(a.Color,8,4000)) + ' - ' + dbo.getLOLESize(a.Size), a.Gender) + '-ss13a' AS url_key
 FROM tbl_RawData_SS13_LOLE_UPC AS a
 
 INSERT INTO tbl_LoadFile_SS13_LOLE (
@@ -132,34 +132,37 @@ INSERT INTO tbl_LoadFile_SS13_LOLE (
 	use_config_manage_stock
 )
 SELECT DISTINCT
-	   dbo.getMagentoConfigurableSKU('SS13A-LOLE', a.[STYLE]) AS sku,
+	   dbo.getMagentoConfigurableSKU('SS13A-LOLE', a.Style) AS sku,
 		'choose_color,choose_size' AS configurable_attributes,
-		a.[STYLE] AS vendor_product_id,
+		a.Style AS vendor_product_id,
 		'Uncategorized' AS categories,
-		a.[NAME]) AS name,
-		a.[GENDER] AS gender,
-		(SELECT MAX(price) FROM tbl_LoadFile_SS13_LOLE WHERE vendor_product_id = a.[STYLE]) AS price,
-		(SELECT MAX(cost) FROM tbl_LoadFile_SS13_LOLE WHERE vendor_product_id = a.[STYLE]) AS cost,
+		dbo.getLOLEName(a.[Description]) AS name,
+		a.Gender AS department,
+		(SELECT MAX(price) FROM tbl_LoadFile_SS13_LOLE WHERE vendor_product_id = a.Style) AS price,
+		(SELECT MAX(cost) FROM tbl_LoadFile_SS13_LOLE WHERE vendor_product_id = a.Style) AS cost,
 		'1' AS has_options,
 		'configurable' AS type,
-		dbo.getUrlKey(a.[NAME], 'Lole', '') + '-ss13a' AS url_key,
-		dbo.getMetaTitle(a.[Name], 'Lole', '') AS meta_title,
+		dbo.getUrlKey(dbo.getLOLEName(a.[Description]), 'Lole', '',a.Gender) + '-ss13a' AS url_key,
+		'Lole ' + dbo.getLOLEName(a.[Description]) + ' Women''s' AS meta_title,
 		'Catalog, Search' AS visibility,
 		'Z' AS merchandise_priority,
 		0 AS manage_stock,
 		0 AS use_config_manage_stock
-FROM tbl_RawData_SS13_LOLE_Marketing AS a
+FROM tbl_RawData_SS13_LOLE_UPC AS a
 
 UPDATE a SET
-	categories = (SELECT TOP 1...)
-	description = (SELECT TOP 1...)
-	features = (SELECT TOP 1...)
-	fabric = (SELECT TOP 1...)
-	simples_skus = 
+	categories = (SELECT TOP 1 REPLACE(categories,'"','') FROM LOT_Reporting.dbo.tbl_Categories WHERE vendor_product_id = a.vendor_product_id AND a.type = 'configurable'),
+	short_description = (SELECT TOP 1 [short description] FROM tbl_RawData_SS13_LOLE_Marketing WHERE [style number]= a.vendor_product_id),
+	description = (SELECT TOP 1 dbo.getLOLELDesc([style number]) FROM tbl_RawData_SS13_LOLE_Marketing WHERE [style number] = a.vendor_product_id),
+	features = (SELECT TOP 1 dbo.getLOLEFeatures(STYLE) FROM tbl_RawData_SS13_LOLE_Additional WHERE STYLE = a.vendor_product_id),
+	simples_skus = dbo.getLOLEAssociatedProducts(a.vendor_product_id)
 FROM tbl_LoadFile_SS13_LOLE AS a
 WHERE type = 'configurable'
 GO
 
+UPDATE tbl_LoadFile_SS13_LOLE SET categories = CASE WHEN categories <> 'Uncategorized' AND type = 'configurable' THEN categories + ';;' + manufacturer + '/' + REPLACE(categories,';;',';;' + manufacturer + '/') ELSE 'Uncategorized' END
+UPDATE tbl_LoadFile_SS13_LOLE SET small_image = image, thumbnail = image
+UPDATE tbl_LoadFile_SS13_LOLE SET categories = CASE WHEN type = 'simple' THEN NULL ELSE categories END
 UPDATE tbl_LoadFile_SS13_LOLE SET status = 'Disabled' WHERE image IS NULL AND type = 'simple'
 GO
 

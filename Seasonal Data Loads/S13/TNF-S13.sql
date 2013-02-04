@@ -24,6 +24,7 @@ CREATE TABLE [dbo].[tbl_LoadFile_SS13_TNF](
 	[has_options] [nvarchar](4000) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
 	[price] [nvarchar](4000) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
 	[cost] [nvarchar](4000) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
+	[super_attribute_pricing] [nvarchar](4000) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
 	[status] [nvarchar](4000) COLLATE SQL_Latin1_General_CP1_CI_AS NULL CONSTRAINT [DF_tbl_LoadFile_SS13_TNF_status]  DEFAULT ('Enabled'),
 	[tax_class_id] [nvarchar](4000) COLLATE SQL_Latin1_General_CP1_CI_AS NULL CONSTRAINT [DF_tbl_LoadFile_SS13_TNF_tax_class]  DEFAULT ('Taxable Goods'),
 	[department] [nvarchar](4000) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
@@ -139,8 +140,8 @@ SELECT DISTINCT
 		'Uncategorized' AS categories,
 		dbo.getTNFName(a.[Style Description]) AS name,
 		dbo.getTNFGenderFromName(a.[Style Description]) AS department,
-		(SELECT MAX(price) FROM tbl_LoadFile_SS13_TNF WHERE vendor_product_id = a.Style) AS price,
-		(SELECT MAX(cost) FROM tbl_LoadFile_SS13_TNF WHERE vendor_product_id = a.Style) AS cost,
+		(SELECT MIN(price) FROM tbl_LoadFile_SS13_TNF WHERE vendor_product_id = a.Style) AS price,
+		(SELECT MIN(cost) FROM tbl_LoadFile_SS13_TNF WHERE vendor_product_id = a.Style) AS cost,
 		'1' AS has_options,
 		'configurable' AS type,
 		dbo.getUrlKey(dbo.getTNFName(a.[Style Description]), 'The North Face', '',dbo.getTNFGenderFromName(a.[Style Description])) + '-ss13a' AS url_key,
@@ -152,18 +153,19 @@ FROM tbl_RawData_SS13_TNF_UPC AS a
 
 UPDATE a SET
 	categories = (SELECT TOP 1 REPLACE(categories,'"','') FROM LOT_Reporting.dbo.tbl_Categories WHERE vendor_product_id = a.vendor_product_id AND a.type = 'configurable'),
-	--description = (SELECT TOP 1 dbo.getDEULongDesc([Long Description]) FROM [tbl_RawData_SS13_DEU_UPC+Marketing] WHERE Style = a.vendor_product_id),
+	description = (SELECT TOP 1 dbo.getTNFLDesc(SAP) FROM tbl_RawData_SS13_TNF_Desc WHERE SAP = a.vendor_product_id),
 	features = (SELECT TOP 1 dbo.getTNFFeatures(Style) FROM tbl_RawData_SS13_TNF_Features WHERE Style = a.vendor_product_id),
 	fabric = (SELECT TOP 1 dbo.getTNFFabric(Style) FROM tbl_RawData_SS13_TNF_Specs WHERE Style = a.vendor_product_id),
 	simples_skus = dbo.getTNFAssociatedProducts(a.vendor_product_id),
+	super_attribute_pricing = (SELECT TOP 1 dbo.getTNFSAP(vendor_product_id) FROM tbl_LoadFile_SS13_TNF WHERE vendor_product_id = a.vendor_product_id),
 	meta_title = (SELECT DISTINCT 'The North Face ' + name + '- ' + CASE WHEN department = 'Men' THEN 'Men''s' WHEN department = 'Women' THEN 'Women''s' WHEN department = 'Men|Women' THEN 'Unisex' WHEN department = 'Boy' THEN 'Boy''s' WHEN department = 'Girl' THEN 'Girl''s' WHEN department = 'Boy|Girl' THEN 'Kids''' ELSE '' END WHERE vendor_product_id = a.vendor_product_id)
 FROM tbl_LoadFile_SS13_TNF AS a
 WHERE type = 'configurable'
 GO
 
-UPDATE tbl_LoadFile_SS13_DEU SET categories = CASE WHEN categories <> 'Uncategorized' AND type = 'configurable' THEN categories + ';;' + manufacturer + '/' + REPLACE(categories,';;',';;' + manufacturer + '/') ELSE 'Uncategorized' END
+UPDATE tbl_LoadFile_SS13_TNF SET categories = CASE WHEN categories <> 'Uncategorized' AND type = 'configurable' THEN categories + ';;' + manufacturer + '/' + REPLACE(categories,';;',';;' + manufacturer + '/') ELSE 'Uncategorized' END
 UPDATE tbl_LoadFile_SS13_TNF SET categories = NULL WHERE type = 'simple'
-UPDATE tbl_LoadFile_SS13_DEU SET small_image = image, thumbnail = image
+UPDATE tbl_LoadFile_SS13_TNF SET small_image = image, thumbnail = image
 UPDATE tbl_LoadFile_SS13_TNF SET status = 'Disabled' WHERE image IS NULL AND type = 'simple'
 
 GO

@@ -24,6 +24,7 @@ CREATE TABLE [dbo].[tbl_LoadFile_SS13_MAR](
 	[has_options] [nvarchar](4000) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
 	[price] [nvarchar](4000) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
 	[cost] [nvarchar](4000) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
+	[super_attribute_pricing] [nvarchar](4000) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
 	[status] [nvarchar](4000) COLLATE SQL_Latin1_General_CP1_CI_AS NULL CONSTRAINT [DF_tbl_LoadFile_SS13_MAR_status]  DEFAULT ('Enabled'),
 	[tax_class_id] [nvarchar](4000) COLLATE SQL_Latin1_General_CP1_CI_AS NULL CONSTRAINT [DF_tbl_LoadFile_SS13_MAR_tax_class]  DEFAULT ('Taxable Goods'),
 	[department] [nvarchar](4000) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
@@ -142,8 +143,8 @@ SELECT DISTINCT
 		'Uncategorized' AS categories,
 		dbo.getMARName(a.[Style Name]) AS name,
 		dbo.getMARGender(a.[Style Name], a.[Size Range]) AS gender,
-		(SELECT MAX(price) FROM tbl_LoadFile_SS13_MAR WHERE vendor_product_id = a.style) AS price,
-		(SELECT MAX(cost) FROM tbl_LoadFile_SS13_MAR WHERE vendor_product_id = a.style) AS cost,
+		(SELECT MIN(price) FROM tbl_LoadFile_SS13_MAR WHERE vendor_product_id = a.style) AS price,
+		(SELECT MIN(cost) FROM tbl_LoadFile_SS13_MAR WHERE vendor_product_id = a.style) AS cost,
 		'1' AS has_options,
 		'configurable' AS type,
 		(SELECT 'Marmot ' + dbo.getMARName(a.[Style Name]) + ' - ' + CASE WHEN LEFT(a.[Style Name],4) = 'Wm''s' THEN 'Women''s' WHEN LEFT(a.[Style Name],5) = 'Kid''s' THEN 'Kids''' WHEN LEFT(a.[Style Name],4) = 'Kids' THEN 'Kids''' WHEN LEFT(a.[Style Name],6) = 'Girl''s' THEN 'Girl''s' WHEN LEFT(a.[Style Name],5) = 'Boy''s' THEN 'Boy''s' ELSE 'Unisex' END) AS meta_title,
@@ -161,6 +162,7 @@ UPDATE a SET
 	description = (SELECT [Positioning Statement] FROM tbl_RawData_SS13_MAR_Marketing WHERE style = a.vendor_product_id),
 	features = dbo.getMARFeatures(a.vendor_product_id),
 	fabric = (SELECT [Materials] FROM tbl_RawData_SS13_MAR_Marketing WHERE style = a.vendor_product_id),
+	super_attribute_pricing = (SELECT TOP 1 dbo.getMARSAP(REPLACE(REPLACE(REPLACE(name,' Long X-wide',''),' Short',''),' Long','')) FROM tbl_LoadFile_SS13_MAR WHERE vendor_product_id = a.vendor_product_id),
 	simples_skus = dbo.getMARAssociatedProducts(a.vendor_product_id)
 FROM tbl_LoadFile_SS13_MAR AS a
 WHERE type = 'configurable'

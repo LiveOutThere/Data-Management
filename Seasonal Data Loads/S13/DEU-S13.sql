@@ -24,6 +24,7 @@ CREATE TABLE [dbo].[tbl_LoadFile_SS13_DEU](
 	[has_options] [nvarchar](4000) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
 	[price] [nvarchar](4000) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
 	[cost] [nvarchar](4000) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
+	[super_attribute_pricing] [nvarchar](4000) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
 	[status] [nvarchar](4000) COLLATE SQL_Latin1_General_CP1_CI_AS NULL CONSTRAINT [DF_tbl_LoadFile_SS13_DEU_status]  DEFAULT ('Enabled'),
 	[tax_class_id] [nvarchar](4000) COLLATE SQL_Latin1_General_CP1_CI_AS NULL CONSTRAINT [DF_tbl_LoadFile_SS13_DEU_tax_class]  DEFAULT ('Taxable Goods'),
 	[department] [nvarchar](4000) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
@@ -199,6 +200,8 @@ UPDATE tbl_LoadFile_SS13_DEU SET image = 'neosphereminus10reg_5520_11.jpg' WHERE
 UPDATE tbl_LoadFile_SS13_DEU SET image = 'neosphereminus15reg_4140_11.jpg' WHERE name LIKE 'Neosphere -15%'
 UPDATE tbl_LoadFile_SS13_DEU SET image = 'exosphereminus4_5520.jpg' WHERE name LIKE 'Exosphere -4%'
 UPDATE tbl_LoadFile_SS13_DEU SET image = 'exosphereminus8_4140.jpg' WHERE name LIKE 'Exosphere -8%'
+UPDATE tbl_LoadFile_SS13_DEU SET image = 'TrekLite250_1320_10.jpg' WHERE name = 'Trek Lite 250'
+UPDATE tbl_LoadFile_SS13_DEU SET image = 'TrekLite300_1570_10.jpg' WHERE name = 'Trek Lite 300'
 UPDATE tbl_LoadFile_SS13_DEU SET categories = CASE WHEN categories <> 'Uncategorized' AND type = 'configurable' THEN categories + ';;' + manufacturer + '/' + REPLACE(categories,';;',';;' + manufacturer + '/') ELSE 'Uncategorized' END
 UPDATE tbl_LoadFile_SS13_DEU SET status = 'Disabled' WHERE image IS NULL AND type = 'simple'
 UPDATE tbl_LoadFile_SS13_DEU SET small_image = image, thumbnail = image

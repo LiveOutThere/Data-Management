@@ -98,7 +98,7 @@ INSERT INTO tbl_LoadFile_SS13_OR (
 )
 SELECT  dbo.getMagentoSimpleSKU('SS13A-OR', a.Style, a.Color, REPLACE(a.Size,'1SIZE','O/S')) AS sku,
 		a.Style AS vendor_product_id,
-		a.Name AS name,
+		dbo.getORName(a.Name) AS name,
 		dbo.getORGender(a.Gender) AS gender,
 		a.ColorName AS choose_color,
 		REPLACE(a.Size,'1SIZE','O/S') AS choose_size,
@@ -109,10 +109,10 @@ SELECT  dbo.getMagentoSimpleSKU('SS13A-OR', a.Style, a.Color, REPLACE(a.Size,'1S
 		(SELECT ROUND([CAD Wholesale],2) FROM tbl_RawData_SS13_OR_Pricing WHERE Style = a.Style) AS cost,
 		0 AS has_options,
 		'simple' AS type,
-		dbo.getORImage(a.Style,a.Color) AS image,
+		dbo.getORImage(a.Style,a.Color,a.UPC) AS image,
 		a.ColorName AS image_label,
-		dbo.getUrlKey(a.Name, 'Outdoor Research', a.ColorName + ' - ' + REPLACE(a.Size,'1SIZE','O/S'),dbo.getORGender(a.Gender)) + '-ss13a' AS url_key,
-		ROUND((a.[Weight] * 28.349523),2) AS weight
+		dbo.getUrlKey(dbo.getORName(a.Name), 'Outdoor Research', a.ColorName + ' - ' + REPLACE(a.Size,'1SIZE','O/S'),dbo.getORGender(a.Gender)) + '-ss13a' AS url_key,
+		ROUND((a.[Weight] * 28.349523),0) AS weight
 FROM tbl_RawData_SS13_OR_UPC AS a
 
 INSERT INTO tbl_LoadFile_SS13_OR (
@@ -134,35 +134,58 @@ INSERT INTO tbl_LoadFile_SS13_OR (
 	use_config_manage_stock
 )
 SELECT DISTINCT
-	   dbo.getMagentoConfigurableSKU('SS13A-PAT', a.[STYLE]) AS sku,
+	   dbo.getMagentoConfigurableSKU('SS13A-OR', a.Style) AS sku,
 		'choose_color,choose_size' AS configurable_attributes,
-		a.[STYLE] AS vendor_product_id,
+		a.Style AS vendor_product_id,
 		'Uncategorized' AS categories,
-		a.[NAME]) AS name,
-		a.[GENDER] AS gender,
-		(SELECT MAX(price) FROM tbl_LoadFile_SS13_OR WHERE vendor_product_id = a.[STYLE]) AS price,
-		(SELECT MAX(cost) FROM tbl_LoadFile_SS13_OR WHERE vendor_product_id = a.[STYLE]) AS cost,
+		dbo.getORName(a.Name) AS name,
+		dbo.getORGender(a.Gender) AS gender,
+		(SELECT MAX(price) FROM tbl_LoadFile_SS13_OR WHERE vendor_product_id = a.Style) AS price,
+		(SELECT MAX(cost) FROM tbl_LoadFile_SS13_OR WHERE vendor_product_id = a.Style) AS cost,
 		'1' AS has_options,
 		'configurable' AS type,
-		dbo.getUrlKey(a.[NAME], 'Outdoor Research', '') + '-ss13a' AS url_key,
-		dbo.getMetaTitle(a.[Name], 'Outdoor Research', '') AS meta_title,
+		dbo.getUrlKey(dbo.getORName(a.Name), 'Outdoor Research', '',dbo.getORGender(a.Gender)) + '-ss13a' AS url_key,
+		'Outdoor Research ' + dbo.getORName(a.Name) + CASE WHEN dbo.getORGender(a.Gender) = 'Men' THEN ' - Men''s' WHEN dbo.getORGender(a.Gender) = 'Women' THEN ' - Women''s' WHEN dbo.getORGender(a.Gender) = 'Men|Women' THEN ' - Unisex' WHEN dbo.getORGender(a.Gender) = 'Boy|Girl' THEN ' - Kids''' END AS meta_title,
 		'Catalog, Search' AS visibility,
 		'Z' AS merchandise_priority,
 		0 AS manage_stock,
 		0 AS use_config_manage_stock
-FROM tbl_RawData_SS13_OR_Marketing AS a
+FROM tbl_RawData_SS13_OR_UPC AS a
 
 UPDATE a SET
-	categories = (SELECT TOP 1...)
-	description = (SELECT TOP 1...)
-	features = (SELECT TOP 1...)
-	fabric = (SELECT TOP 1...)
-	simples_skus = 
+	categories = CASE WHEN (SELECT TOP 1 REPLACE(categories,'"','') FROM LOT_Reporting.dbo.tbl_Categories WHERE vendor_product_id = a.vendor_product_id) IS NULL THEN 'Uncategorized' ELSE (SELECT TOP 1 REPLACE(categories,'"','') FROM LOT_Reporting.dbo.tbl_Categories WHERE vendor_product_id = a.vendor_product_id) END,
+	short_description = (SELECT TOP 1 short_description FROM tbl_RawData_SS13_OR_Marketing WHERE style = a.vendor_product_id),
+	description = (SELECT TOP 1 description FROM tbl_RawData_SS13_OR_Marketing WHERE style = a.vendor_product_id),
+	features = (SELECT dbo.getORFeatures(style) FROM tbl_RawData_SS13_OR_Marketing WHERE style = a.vendor_product_id),
+	simples_skus = dbo.getORAssociatedProducts(a.vendor_product_id)
 FROM tbl_LoadFile_SS13_OR AS a
 WHERE type = 'configurable'
 GO
 
+DECLARE @stylenumber varchar(1024), @styledesc varchar(1024), @color varchar(1024), @features varchar(1024), @description varchar(1024), @sku varchar(1024)
+
+DECLARE alike_styles CURSOR FOR
+SELECT DISTINCT vendor_product_id, name, choose_color, features, description FROM tbl_LoadFile_SS13_OR
+
+OPEN alike_styles
+
+FETCH NEXT FROM alike_styles INTO @stylenumber, @styledesc, @color, @features, @description
+
+WHILE @@FETCH_STATUS = 0
+BEGIN
+	SELECT @sku = sku FROM tbl_LoadFile_SS13_OR WHERE name LIKE @styledesc + '%' AND choose_color = @color AND features IS NULL OR description IS NULL
+	UPDATE tbl_LoadFile_SS13_OR SET features = @features, description = @description WHERE sku = @sku
+	FETCH NEXT FROM alike_styles  INTO @stylenumber, @styledesc, @color, @features, @description
+END
+
+CLOSE alike_styles
+DEALLOCATE alike_styles
+GO
+
+UPDATE tbl_LoadFile_SS13_OR SET categories = CASE WHEN categories <> 'Uncategorized' THEN categories + ';;' + manufacturer + '/' + REPLACE(categories,';;',';;' + manufacturer + '/') ELSE 'Uncategorized' END
+UPDATE tbl_LoadFile_SS13_OR SET categories = NULL WHERE type = 'simple'
 UPDATE tbl_LoadFile_SS13_OR SET status = 'Disabled' WHERE image IS NULL AND type = 'simple'
+UPDATE tbl_LoadFile_SS13_OR SET thumbnail = image, small_image = image
 GO
 
 CREATE VIEW [dbo].[view_LoadFile_SS13_OR]

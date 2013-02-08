@@ -91,28 +91,32 @@ INSERT INTO tbl_LoadFile_SS13_COL (
 		cost,
 		has_options,
 		[type],
-		[image],
 		image_label,
 		url_key
 )
-SELECT  dbo.getMagentoSimpleSKU('SS13A-COL', a.ID, a.[Color Code], dbo.getCOLSize(a.Size,a.Dim,a.Gender)) AS sku,
+SELECT  dbo.getMagentoSimpleSKU('SS13A-COL', a.ID, a.[Color Code], a.Size + ISNULL('-' + a.Dim,'')) AS sku,
 		a.ID AS vendor_product_id,
 		dbo.getCOLName(a.[Display Name]) AS name,
 		a.Gender AS gender,
 		REPLACE(a.[Color Name],', ','/') AS choose_color,
-		dbo.getCOLSize(a.Size,a.Dim,a.Gender) AS choose_size,
+		dbo.getCOLSize(a.Size,a.Dim,a.Gender) + ISNULL('-' + a.Dim,'') AS choose_size,
 		a.[Color Code] AS vendor_color_code,
-		dbo.getCOLSize(a.Size,a.Dim,a.Gender) AS vendor_size_code,
+		a.Size + ISNULL('-' + a.Dim,'') AS vendor_size_code,
 		CAST(a.UPC AS bigint) AS vendor_sku,
 		CAST(CEILING(a.MSRP) AS float) - 0.01 AS price,
 		a.Base AS cost,
 		0 AS has_options,
 		'simple' AS type,
-		dbo.getCOLImage(a.ID,a.[Color Code],a.UPC) AS image,
 		REPLACE(a.[Color Name],', ','/') AS image_label,
 		dbo.getUrlKey(dbo.getCOLName(a.[Display Name]), 'Columbia', REPLACE(a.[Color Name],', ','/') + ' - ' + dbo.getCOLSize(a.Size,a.Dim,a.Gender) ,a.Gender) + '-ss13a' AS url_key
-FROM tbl_RawData_SS13_COL_UPC_Marketing AS a
+FROM tbl_RawData_SS13_COL AS a WHERE brand = 'Columbia'
 
+UPDATE a SET image = b.Filename
+FROM tbl_LoadFile_SS13_COL AS a
+INNER JOIN tbl_RawData_SS13_Image_Filenames AS b
+ON b.Filename LIKE vendor_product_id + '[_]' + vendor_color_code + '[_]f.jpg' AND b.Brand = 'COL'
+WHERE a.type = 'simple'
+                                                      
 INSERT INTO tbl_LoadFile_SS13_COL (
 	sku,
 	configurable_attributes,
@@ -132,36 +136,36 @@ INSERT INTO tbl_LoadFile_SS13_COL (
 	use_config_manage_stock
 )
 SELECT DISTINCT
-	   dbo.getMagentoConfigurableSKU('SS13A-COL', a.ID) AS sku,
+	   dbo.getMagentoConfigurableSKU('SS13A-COL', a.vendor_product_id) AS sku,
 		'choose_color,choose_size' AS configurable_attributes,
-		a.ID AS vendor_product_id,
+		a.vendor_product_id AS vendor_product_id,
 		'Uncategorized' AS categories,
-		dbo.getCOLName(a.[Display Name]) AS name,
-		a.Gender AS gender,
-		(SELECT MAX(price) FROM tbl_LoadFile_SS13_COL WHERE vendor_product_id = a.ID) AS price,
-		(SELECT MAX(cost) FROM tbl_LoadFile_SS13_COL WHERE vendor_product_id = a.ID) AS cost,
+		a.name AS name,
+		a.department AS gender,
+		(SELECT MIN(price) FROM tbl_LoadFile_SS13_COL WHERE vendor_product_id = a.vendor_product_id) AS price,
+		(SELECT MIN(cost) FROM tbl_LoadFile_SS13_COL WHERE vendor_product_id = a.vendor_product_id) AS cost,
 		'1' AS has_options,
 		'configurable' AS type,
-		dbo.getUrlKey(dbo.getCOLName(a.[Display Name]), 'Columbia', '',a.Gender) + '-ss13a' AS url_key,
-		(SELECT 'Columbia ' + dbo.getCOLName(a.[Display Name]) + CASE WHEN a.Gender = 'Men|Women' THEN ' Unisex' WHEN a.Gender = 'Women' THEN ' Women''s' WHEN a.Gender = 'Boy|Girl' THEN ' Kids''' WHEN a.Gender = 'Girl' THEN ' Girl''s' WHEN a.Gender = 'Boy' THEN ' Boy''s' WHEN a.Gender = 'Men' THEN ' Men''s' WHEN a.Gender = 'Toddlers''' THEN ' Toddlers''' END) AS meta_title,
+		dbo.getUrlKey(a.name, 'Columbia', '', a.department) + '-ss13a' AS url_key,
+		'Columbia ' + a.name + ' - ' + CASE WHEN department = 'Men' THEN 'Men''s' WHEN department = 'Women' THEN 'Women''s' WHEN department = 'Boy' OR department = 'Girl' THEN 'Kids''' ELSE 'Unisex' END AS meta_title,
 		'Catalog, Search' AS visibility,
 		'Z' AS merchandise_priority,
 		0 AS manage_stock,
 		0 AS use_config_manage_stock
-FROM tbl_RawData_SS13_COL_UPC_Marketing AS a
-
+FROM tbl_LoadFile_SS13_COL AS a
+WHERE type = 'simple'
+ 
 UPDATE a SET
 	categories = (SELECT TOP 1 REPLACE(categories,'"','') FROM LOT_Reporting.dbo.tbl_Categories WHERE vendor_product_id = a.vendor_product_id AND a.type = 'configurable'),
-	description = (SELECT TOP 1 [Short Description] FROM tbl_RawData_SS13_COL_UPC_Marketing WHERE ID = a.vendor_product_id),
-	features = (SELECT TOP 1 [Long Description1] FROM tbl_RawData_SS13_COL_UPC_Marketing WHERE ID = a.vendor_product_id),
+	description = (SELECT TOP 1 [Short Description] FROM tbl_RawData_SS13_COL WHERE ID = a.vendor_product_id),
+	features = (SELECT TOP 1 [Long Description1] FROM tbl_RawData_SS13_COL WHERE ID = a.vendor_product_id),
 	simples_skus = dbo.getCOLAssociatedProducts(a.vendor_product_id)
 FROM tbl_LoadFile_SS13_COL AS a
 WHERE type = 'configurable'
 GO
 
-UPDATE tbl_LoadFile_SS13_COL SET categories = CASE WHEN categories <> 'Uncategorized' AND type = 'configurable' THEN categories + ';;' + manufacturer + '/' + REPLACE(categories,';;',';;' + manufacturer + '/') ELSE 'Uncategorized' END
+UPDATE tbl_LoadFile_SS13_COL SET categories = CASE WHEN categories <> 'Uncategorized' AND type = 'configurable' THEN categories + ';;' + manufacturer + '/' + REPLACE(categories,';;',';;' + manufacturer + '/') ELSE 'Uncategorized' END WHERE type = 'configurable'
 UPDATE tbl_LoadFile_SS13_COL SET small_image = image, thumbnail = image
-UPDATE tbl_LoadFile_SS13_COL SET categories = CASE WHEN type = 'simple' THEN NULL ELSE categories END
 UPDATE tbl_LoadFile_SS13_COL SET status = 'Disabled' WHERE image IS NULL AND type = 'simple'
 GO
 

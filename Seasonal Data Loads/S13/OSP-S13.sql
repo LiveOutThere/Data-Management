@@ -158,6 +158,7 @@ SELECT DISTINCT
 		0 AS manage_stock,
 		0 AS use_config_manage_stock
 FROM tbl_LoadFile_SS13_OSP AS a
+WHERE type = 'simple'
 
 UPDATE a SET
 	categories = CASE WHEN (SELECT TOP 1 REPLACE(categories,'"','') FROM LOT_Reporting.dbo.tbl_Categories WHERE vendor_product_id = a.vendor_product_id) IS NULL THEN 'Uncategorized' ELSE (SELECT TOP 1 REPLACE(categories,'"','') FROM LOT_Reporting.dbo.tbl_Categories WHERE vendor_product_id = a.vendor_product_id) END,

@@ -143,6 +143,7 @@ SELECT  'SS13A-MER-' + a.Material + '-' + RIGHT(a.SKU,4) AS sku,
 		dbo.getUrlKey(REPLACE(REPLACE(REPLACE(REPLACE(LTRIM(RTRIM(a.[Final Pattern name])),' Kids',''),'Wtpf','Waterproof'),' Mj ',' MJ '),'WTPF','Waterproof'), 'Merrell', a.[Final Color] + ' - ' + RIGHT(a.SKU,4), CASE WHEN [Men's sizes] <> '' THEN 'Men' WHEN [Women's sizes] <> '' THEN 'Women' WHEN [Men's sizes] = '' AND [Women's sizes] = '' THEN 'Boy|Girl' END) + '-ss13a' AS url_key
 FROM tbl_RawData_SS13_MER_FOOT_UPC AS a
 
+-- This method of matching images is going to be a lot faster than a sub-select since tbl_RawData_SS13_Image_Filenames is really big:
 UPDATE a SET image = b.Filename
 FROM tbl_LoadFile_SS13_MER AS a
 INNER JOIN tbl_RawData_SS13_Image_Filenames AS b
@@ -189,6 +190,7 @@ INSERT INTO tbl_LoadFile_SS13_MER (
 	use_config_manage_stock
 )
 SELECT DISTINCT
+		-- What I've done here is generate a random number for a "style" since Merrell doesn't have common style numbers for their footwear. The way it works it will always generate the same number given the same Name and Gender input
 	   'SS13A-MER-' + CAST(ABS(CAST(HASHBYTES('MD5', a.name + a.department) AS smallint)) AS varchar(50)) AS sku,
 		'choose_color,choose_size' AS configurable_attributes,
 		'Uncategorized' AS categories,
@@ -208,11 +210,13 @@ FROM tbl_LoadFile_SS13_MER AS a
 
 UPDATE a SET
 	categories = ISNULL((SELECT TOP 1 REPLACE(categories,'"','') FROM LOT_Reporting.dbo.tbl_Categories WHERE vendor_product_id = REPLACE(a.name,' ','') + '-' + CASE WHEN a.department = 'Men' THEN 'M' WHEN a.department = 'Women' THEN 'W' END), 'Uncategorized'),
+	-- I've modified this function to take the Name and the Gender/Department as inputs, this allows us to associate simples to configurables even though the vendor_product_id isn't the same
 	simples_skus = dbo.getMERAssociatedProducts(a.name, a.department) 
 FROM tbl_LoadFile_SS13_MER AS a
 WHERE type = 'configurable'
 GO
 
+-- Create a temp table to store features and description for each style. We aren't using a view because a view in this case would be really slow.
 CREATE TABLE #temp_RawData_MER_Description_Features (name varchar(max), description varchar(max), features varchar(max), gender varchar(max))
 
 INSERT INTO #temp_RawData_MER_Description_Features
@@ -227,6 +231,7 @@ FROM tbl_RawData_SS13_MER_FOOT_Marketing AS a
 INNER JOIN tbl_RawData_SS13_MER_FOOT_UPC AS b ON a.Material = b.Material
 WHERE a.[Tech Bullet-Anglais] IS NOT NULL OR a.[Intro-Anglais] IS NOT NULL
 
+-- Notice the keys to the temp table are now Name and Gender:
 UPDATE a SET
 	description = (SELECT TOP 1 description FROM #temp_RawData_MER_Description_Features WHERE name = a.name COLLATE Latin1_General_CI_AS AND gender = a.department COLLATE Latin1_General_CI_AS),
 	features = (SELECT TOP 1 features FROM #temp_RawData_MER_Description_Features WHERE name = a.name COLLATE Latin1_General_CI_AS AND gender = a.department COLLATE Latin1_General_CI_AS)

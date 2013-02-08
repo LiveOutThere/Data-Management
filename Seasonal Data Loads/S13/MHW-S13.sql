@@ -77,6 +77,7 @@ CREATE NONCLUSTERED INDEX [IX_tbl_LoadFile_SS13_MHW] ON [dbo].[tbl_LoadFile_SS13
 )WITH (PAD_INDEX  = OFF, STATISTICS_NORECOMPUTE  = OFF, SORT_IN_TEMPDB = OFF, IGNORE_DUP_KEY = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS  = ON, ALLOW_PAGE_LOCKS  = ON) ON [PRIMARY]
 GO
 
+-- Drop some objects if they exist so we can just press the Execute button and not get errors
 IF EXISTS (SELECT * FROM sysobjects WHERE id = object_id(N'[dbo].[sproc_temp_Add_Feature_Fabric_Columns]'))
 DROP PROCEDURE sproc_temp_Add_Feature_Fabric_Columns
 GO
@@ -85,6 +86,7 @@ IF EXISTS (SELECT * FROM sysobjects WHERE id = object_id(N'[dbo].[view_RawData_M
 DROP VIEW view_RawData_MHW_Features_Fabric
 GO
 
+-- This procedure builds and executes a long SQL program. The @table_name input is one of Mountain Hardwear's feature/spec tables (there were five separate tables in 2013)
 CREATE PROCEDURE sproc_temp_Add_Feature_Fabric_Columns (@table_name varchar(255)) AS
 BEGIN
 	DECLARE @sql varchar(max)
@@ -142,21 +144,26 @@ BEGIN
 	CLOSE c
 	DEALLOCATE c
 	'
+	-- To see what's really going on here, add a PRINT @sql and examine it in the messages window. You'll see that there is dynamic SQL within the dynamically generated SQL. As convoluted as this seems, it is necessary because OPENROWSET and DECLARE CURSOR don't accept strings for their query parameter, so we have to cheat.
 	EXEC(@sql)
 END
 GO
 
 DECLARE @table_name varchar(255), @view_definition varchar(max)
 
+-- We are going to dynamically generate a single view for all the specs and features
 SET @view_definition = 'CREATE VIEW view_RawData_MHW_Features_Fabric AS '
 
+-- Loop through each of the Mountain Hardwear feature/spec tables
 DECLARE c2 CURSOR FOR SELECT TABLE_NAME FROM information_schema.tables WHERE TABLE_NAME LIKE 'tbl_RawData_SS13_MHW_%'
 OPEN C2
 
 FETCH NEXT FROM c2 INTO @table_name
 WHILE @@FETCH_STATUS = 0 BEGIN
 
+	-- And execute the SQL stored procedure above which will concatenate all of the fields into the new Features and Fabric columns. It adds every column starting with Feature to the Features column and every column starting with Fabric to the Fabric column.
 	EXEC sproc_temp_Add_Feature_Fabric_Columns @table_name
+	-- Add on to our view definition
 	SET @view_definition = @view_definition + ' SELECT jdeStyleId AS Style, Name, Features, Fabric FROM ' + @table_name + ' WHERE Language = ''ENG'' UNION ALL '
 
 	FETCH NEXT FROM c2 INTO @table_name
@@ -166,6 +173,7 @@ CLOSE c2
 DEALLOCATE c2
 
 SET @view_definition = LEFT(@view_definition, LEN(@view_definition) - LEN(' UNION ALL '))
+-- Create the view
 EXEC(@view_definition)
 GO
 

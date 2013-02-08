@@ -91,7 +91,6 @@ INSERT INTO tbl_LoadFile_SS13_MER (
 		cost,
 		has_options,
 		[type],
-		[image],
 		image_label,
 		url_key
 )
@@ -108,46 +107,8 @@ SELECT  dbo.getMagentoSimpleSKU('SS13A-MER', LEFT(a.Material,8), RIGHT(a.Materia
 		REPLACE(a.Wholesale,'$','') AS cost,
 		0 AS has_options,
 		'simple' AS type,
-		dbo.getMERImage(a.Material,a.UPC) AS image,
 		a.[Color-Couleur] AS image_label,
 		dbo.getUrlKey(a.Model, 'Merrell', a.[Color-Couleur] + ' - ' + a.SKU,dbo.getMERGender(a.Category)) + '-ss13a' AS url_key
-FROM tbl_RawData_SS13_MER_APP_UPC AS a
-
-INSERT INTO tbl_LoadFile_SS13_MER (
-	sku,
-	configurable_attributes,
-	vendor_product_id,
-	categories,
-	name,
-	department,
-	price,
-	cost,
-	has_options,
-	type,
-	url_key,
-	meta_title,
-	visibility,
-	merchandise_priority,
-	manage_stock,
-	use_config_manage_stock
-)
-SELECT DISTINCT
-	   dbo.getMagentoConfigurableSKU('SS13A-MER', LEFT(a.Material,8)) AS sku,
-		'choose_color,choose_size' AS configurable_attributes,
-		LEFT(a.Material,8) AS vendor_product_id,
-		'Uncategorized' AS categories,
-		a.Model AS name,
-		dbo.getMERGender(a.Category) AS gender,
-		(SELECT MAX(price) FROM tbl_LoadFile_SS13_MER WHERE vendor_product_id = LEFT(a.Material,8)) AS price,
-		(SELECT MAX(cost) FROM tbl_LoadFile_SS13_MER WHERE vendor_product_id = LEFT(a.Material,8)) AS cost,
-		'1' AS has_options,
-		'configurable' AS type,
-		dbo.getUrlKey(a.Model, 'Merrell', '',dbo.getMERGender(a.Category)) + '-ss13a' AS url_key,
-		'Merrell ' + a.Model + CASE WHEN dbo.getMERGender(a.Category) = 'Men' THEN ' - Men''s' WHEN dbo.getMERGender(a.Category) = 'Women' THEN ' - Women''s' WHEN dbo.getMERGender(a.Category) = 'Men|Women' THEN ' - Unisex' END AS meta_title,
-		'Catalog, Search' AS visibility,
-		'Z' AS merchandise_priority,
-		0 AS manage_stock,
-		0 AS use_config_manage_stock
 FROM tbl_RawData_SS13_MER_APP_UPC AS a
 
 INSERT INTO tbl_LoadFile_SS13_MER (
@@ -157,39 +118,62 @@ INSERT INTO tbl_LoadFile_SS13_MER (
 		department,
 		choose_color,
 		choose_size,
-		vendor_color_code,
 		vendor_size_code,
 		vendor_sku,
 		price,
 		cost,
 		has_options,
 		[type],
-		[image],
 		image_label,
 		url_key
 )
 SELECT  'SS13A-MER-' + a.Material + '-' + RIGHT(a.SKU,4) AS sku,
-		REPLACE(REPLACE(REPLACE(REPLACE(LTRIM(RTRIM(a.[Final Pattern name])),' Kids',''),'Wtpf','Waterproof'),' Mj ',' MJ '),'WTPF','Waterproof') AS vendor_product_id,
+		a.Material AS vendor_product_id,
 		REPLACE(REPLACE(REPLACE(REPLACE(LTRIM(RTRIM(a.[Final Pattern name])),' Kids',''),'Wtpf','Waterproof'),' Mj ',' MJ '),'WTPF','Waterproof') AS name,
-		dbo.getMERGenderFoot(a.Material,a.[Final Pattern name]) AS gender,
+		CASE WHEN [Men's sizes] <> '' THEN 'Men' WHEN [Women's sizes] <> '' THEN 'Women' WHEN [Men's sizes] = '' AND [Women's sizes] = '' THEN 'Boy|Girl' END AS gender,
 		a.[Final Color] AS choose_color,
 		RIGHT(a.SKU,4) AS choose_size,
-		a.Material AS vendor_color_code,
 		RIGHT(a.SKU,4) AS vendor_size_code,
 		a.UPC AS vendor_sku,
 		CAST(REPLACE(a.[Retail price],'$','') AS float) - 0.01 AS price,
 		REPLACE(a.[WHLS Price],'$','') AS cost,
 		0 AS has_options,
 		'simple' AS type,
-		dbo.getMERImageFoot(a.Material,a.UPC) AS image,
 		a.[Final Color] AS image_label,
-		dbo.getUrlKey(REPLACE(REPLACE(REPLACE(REPLACE(LTRIM(RTRIM(a.[Final Pattern name])),' Kids',''),'Wtpf','Waterproof'),' Mj ',' MJ '),'WTPF','Waterproof'), 'Merrell', a.[Final Color] + ' - ' + RIGHT(a.SKU,4),dbo.getMERGenderFoot(a.Material,a.[Final Pattern name])) + '-ss13a' AS url_key
+		dbo.getUrlKey(REPLACE(REPLACE(REPLACE(REPLACE(LTRIM(RTRIM(a.[Final Pattern name])),' Kids',''),'Wtpf','Waterproof'),' Mj ',' MJ '),'WTPF','Waterproof'), 'Merrell', a.[Final Color] + ' - ' + RIGHT(a.SKU,4), CASE WHEN [Men's sizes] <> '' THEN 'Men' WHEN [Women's sizes] <> '' THEN 'Women' WHEN [Men's sizes] = '' AND [Women's sizes] = '' THEN 'Boy|Girl' END) + '-ss13a' AS url_key
 FROM tbl_RawData_SS13_MER_FOOT_UPC AS a
+
+UPDATE a SET image = b.Filename
+FROM tbl_LoadFile_SS13_MER AS a
+INNER JOIN tbl_RawData_SS13_Image_Filenames AS b
+ON b.Brand = 'MER' AND (
+	b.Filename LIKE vendor_product_id + '-' + vendor_color_code + '%P%'
+	OR
+	b.Filename LIKE vendor_product_id + '-' + vendor_color_code + '%F%'
+)
+WHERE a.type = 'simple' AND image IS NULL
+
+UPDATE a SET image = b.Filename
+FROM tbl_LoadFile_SS13_MER AS a
+INNER JOIN tbl_RawData_SS13_Image_Filenames AS b
+ON b.Filename LIKE vendor_product_id + '%' AND b.Brand = 'MER'
+WHERE a.type = 'simple' AND a.image IS NULL
+
+UPDATE a SET image = b.image
+FROM tbl_LoadFile_SS13_MER AS a
+INNER JOIN tbl_LoadFile_F12_MER AS b
+ON a.vendor_sku = b.vendor_sku
+WHERE a.type = 'simple' AND a.image IS NULL
+
+UPDATE a SET image = b.image
+FROM tbl_LoadFile_SS13_MER AS a
+INNER JOIN tbl_LoadFile_S12_MER AS b
+ON a.vendor_sku = b.vendor_sku
+WHERE a.type = 'simple' AND a.image IS NULL
 
 INSERT INTO tbl_LoadFile_SS13_MER (
 	sku,
 	configurable_attributes,
-	vendor_product_id,
 	categories,
 	name,
 	department,
@@ -205,43 +189,54 @@ INSERT INTO tbl_LoadFile_SS13_MER (
 	use_config_manage_stock
 )
 SELECT DISTINCT
-	   dbo.getMagentoConfigurableSKU('SS13A-MER', REPLACE(REPLACE(REPLACE(REPLACE(LTRIM(RTRIM(a.[Final Pattern name])),' Kids',''),'Wtpf','Waterproof'),' Mj ',' MJ '),'WTPF','Waterproof')) AS sku,
+	   'SS13A-MER-' + CAST(ABS(CAST(HASHBYTES('MD5', a.name + a.department) AS smallint)) AS varchar(50)) AS sku,
 		'choose_color,choose_size' AS configurable_attributes,
-		REPLACE(REPLACE(REPLACE(REPLACE(LTRIM(RTRIM(a.[Final Pattern name])),' Kids',''),'Wtpf','Waterproof'),' Mj ',' MJ '),'WTPF','Waterproof') AS vendor_product_id,
 		'Uncategorized' AS categories,
-		REPLACE(REPLACE(REPLACE(REPLACE(LTRIM(RTRIM(a.[Final Pattern name])),' Kids',''),'Wtpf','Waterproof'),' Mj ',' MJ '),'WTPF','Waterproof') AS name,
-		dbo.getMERGenderFoot(a.Material,a.[Final Pattern name]) AS gender,
-		(SELECT MAX(price) FROM tbl_LoadFile_SS13_MER WHERE vendor_product_id = a.Material) AS price,
-		(SELECT MAX(cost) FROM tbl_LoadFile_SS13_MER WHERE vendor_product_id = a.Material) AS cost,
+		a.name AS name,
+		a.department AS gender,
+		(SELECT MIN(price) FROM tbl_LoadFile_SS13_MER WHERE vendor_product_id = a.vendor_product_id) AS price,
+		(SELECT MIN(cost) FROM tbl_LoadFile_SS13_MER WHERE vendor_product_id = a.vendor_product_id) AS cost,
 		'1' AS has_options,
 		'configurable' AS type,
-		dbo.getUrlKey(REPLACE(REPLACE(REPLACE(REPLACE(LTRIM(RTRIM(a.[Final Pattern name])),' Kids',''),'Wtpf','Waterproof'),' Mj ',' MJ '),'WTPF','Waterproof'), 'Merrell', '',dbo.getMERGenderFoot(a.Material,a.[Final Pattern name])) + '-ss13a' AS url_key,
-		'Merrell ' + REPLACE(REPLACE(REPLACE(REPLACE(LTRIM(RTRIM(a.[Final Pattern name])),' Kids',''),'Wtpf','Waterproof'),' Mj ',' MJ '),'WTPF','Waterproof') + CASE WHEN dbo.getMERGenderFoot(a.Material,a.[Final Pattern name]) = 'Men' THEN ' - Men''s' WHEN dbo.getMERGenderFoot(a.Material,a.[Final Pattern name]) = 'Women' THEN ' - Women''s' WHEN dbo.getMERGenderFoot(a.Material,a.[Final Pattern name]) = 'Men|Women' THEN ' - Unisex' WHEN dbo.getMERGenderFoot(a.Material,a.[Final Pattern name]) = 'Boy|Girl' THEN ' - Kids''' END AS meta_title,
+		dbo.getUrlKey(a.name, 'Merrell', '', a.department) + '-ss13a' AS url_key,
+		'Merrell ' + a.name + CASE WHEN a.department = 'Men' THEN ' - Men''s' WHEN a.department = 'Women' THEN ' - Women''s' WHEN a.department = 'Men|Women' THEN ' - Unisex' ELSE '' END AS meta_title,
 		'Catalog, Search' AS visibility,
 		'Z' AS merchandise_priority,
 		0 AS manage_stock,
 		0 AS use_config_manage_stock
-FROM tbl_RawData_SS13_MER_FOOT_UPC AS a
+FROM tbl_LoadFile_SS13_MER AS a
 
 UPDATE a SET
-	categories = CASE WHEN (SELECT TOP 1 REPLACE(categories,'"','') FROM LOT_Reporting.dbo.tbl_Categories WHERE vendor_product_id = a.vendor_product_id) IS NULL THEN 'Uncategorized' ELSE (SELECT TOP 1 REPLACE(categories,'"','') FROM LOT_Reporting.dbo.tbl_Categories WHERE vendor_product_id = a.vendor_product_id) END,
-	description = (SELECT TOP 1 [tech bullets- English] FROM tbl_RawData_SS13_MER_APP_Marketing WHERE LEFT([Stock #],8) = a.vendor_product_id),
-	simples_skus = dbo.getMERAssociatedProducts(a.vendor_product_id) 
+	categories = ISNULL((SELECT TOP 1 REPLACE(categories,'"','') FROM LOT_Reporting.dbo.tbl_Categories WHERE vendor_product_id = REPLACE(a.name,' ','') + '-' + CASE WHEN a.department = 'Men' THEN 'M' WHEN a.department = 'Women' THEN 'W' END), 'Uncategorized'),
+	simples_skus = dbo.getMERAssociatedProducts(a.name, a.department) 
 FROM tbl_LoadFile_SS13_MER AS a
-WHERE type = 'configurable' AND LEN(a.sku) > 16
+WHERE type = 'configurable'
 GO
+
+CREATE TABLE #temp_RawData_MER_Description_Features (name varchar(max), description varchar(max), features varchar(max), gender varchar(max))
+
+INSERT INTO #temp_RawData_MER_Description_Features
+SELECT DISTINCT b.Model AS name, ISNULL(RTRIM(a.Description) + '. ','') + a.[tech bullets- English] AS description, '' AS features, dbo.getMERGender(b.Category) AS gender
+FROM tbl_RawData_SS13_MER_APP_Marketing AS a
+INNER JOIN tbl_RawData_SS13_MER_APP_UPC AS b ON a.[Stock #] = b.Material
+WHERE a.Description IS NOT NULL OR a.[tech bullets- English] IS NOT NULL
+
+INSERT INTO #temp_RawData_MER_Description_Features
+SELECT DISTINCT REPLACE(REPLACE(REPLACE(REPLACE(LTRIM(RTRIM(b.[Final Pattern name])),' Kids',''),'Wtpf','Waterproof'),' Mj ',' MJ '),'WTPF','Waterproof') AS name, a.[Intro-Anglais] AS description, REPLACE(REPLACE(REPLACE(a.[Tech Bullet-Anglais],'UPPER/LINING',''),'MIDSOLE/OUTSOLE',''),'•','|') AS features, CASE WHEN [Men's sizes] <> '' THEN 'Men' WHEN [Women's sizes] <> '' THEN 'Women' WHEN [Men's sizes] = '' AND [Women's sizes] = '' THEN 'Boy|Girl' END AS gender
+FROM tbl_RawData_SS13_MER_FOOT_Marketing AS a
+INNER JOIN tbl_RawData_SS13_MER_FOOT_UPC AS b ON a.Material = b.Material
+WHERE a.[Tech Bullet-Anglais] IS NOT NULL OR a.[Intro-Anglais] IS NOT NULL
 
 UPDATE a SET
-	categories = CASE WHEN (SELECT TOP 1 REPLACE(categories,'"','') FROM LOT_Reporting.dbo.tbl_Categories WHERE vendor_product_id = a.vendor_product_id) IS NULL THEN 'Uncategorized' ELSE (SELECT TOP 1 REPLACE(categories,'"','') FROM LOT_Reporting.dbo.tbl_Categories WHERE vendor_product_id = a.vendor_product_id) END,
-	description = (SELECT TOP 1 [Intro-Anglais] FROM tbl_RawData_SS13_MER_FOOT_Marketing WHERE Material = SUBSTRING(a.sku,11,6)),
-	features = (SELECT TOP 1 [Tech Bullet-Anglais] FROM tbl_RawData_SS13_MER_FOOT_Marketing WHERE Material = SUBSTRING(a.sku,11,6)),
-	simples_skus = dbo.getMERAssociatedProductsFoot(a.name) 
+	description = (SELECT TOP 1 description FROM #temp_RawData_MER_Description_Features WHERE name = a.name COLLATE Latin1_General_CI_AS AND gender = a.department COLLATE Latin1_General_CI_AS),
+	features = (SELECT TOP 1 features FROM #temp_RawData_MER_Description_Features WHERE name = a.name COLLATE Latin1_General_CI_AS AND gender = a.department COLLATE Latin1_General_CI_AS)
 FROM tbl_LoadFile_SS13_MER AS a
-WHERE type = 'configurable' AND LEN(a.sku) = 16
+WHERE type = 'configurable'
+
+DROP TABLE #temp_RawData_MER_Description_Features
 GO
 
-UPDATE tbl_LoadFile_SS13_MER SET categories = CASE WHEN categories <> 'Uncategorized' THEN categories + ';;' + manufacturer + '/' + REPLACE(categories,';;',';;' + manufacturer + '/') ELSE 'Uncategorized' END
-UPDATE tbl_LoadFile_SS13_MER SET categories = NULL WHERE type = 'simple'
+UPDATE tbl_LoadFile_SS13_MER SET categories = CASE WHEN categories <> 'Uncategorized' THEN categories + ';;' + manufacturer + '/' + REPLACE(categories,';;',';;' + manufacturer + '/') ELSE 'Uncategorized' END WHERE type = 'configurable'
 UPDATE tbl_LoadFile_SS13_MER SET status = 'Disabled' WHERE image IS NULL AND type = 'simple'
 UPDATE tbl_LoadFile_SS13_MER SET thumbnail = image, small_image = image
 GO

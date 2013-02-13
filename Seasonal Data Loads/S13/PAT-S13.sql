@@ -147,7 +147,7 @@ SELECT DISTINCT
 		(SELECT MAX(cost) FROM tbl_LoadFile_SS13_PAT WHERE vendor_product_id = a.style) AS cost,
 		'1' AS has_options,
 		'configurable' AS type,
-		(SELECT 'Patagonia ' + dbo.getPATName(a.name) + ' - ' + CASE WHEN LEFT(a.name,3) = 'M''S' THEN 'Men''s' WHEN LEFT(a.name,3) = 'W''S' THEN 'Women''s' WHEN LEFT(a.name,4) = 'BABY' THEN 'Infant' WHEN LEFT(a.name,4) = 'BOYS' THEN 'Boy''s' WHEN LEFT(a.name,5) = 'GIRLS' THEN 'Girl''s' WHEN LEFT(a.name,6) = 'INFANT' THEN 'Infant' ELSE 'Unisex' END) AS meta_title,
+		(SELECT 'Patagonia ' + dbo.getPATName(a.name) + ' - ' + CASE WHEN dbo.getPATGender(a.name) = 'Men|Women' THEN 'Unisex' WHEN dbo.getPATGender(a.name) = 'Boy|Girl' THEN 'Kids''' WHEN dbo.getPATGender(a.name) = 'Infant' THEN 'Infant' ELSE dbo.getPATGender(a.name) + '''s' END) AS meta_title,
 		dbo.getUrlKey(dbo.getPATName(a.name), 'Patagonia', '', dbo.getPATGender(a.name)) + '-ss13a' AS url_key,
 		'Catalog, Search' AS visibility,
 		'Z' AS merchandise_priority,

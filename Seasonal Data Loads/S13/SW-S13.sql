@@ -149,7 +149,7 @@ SELECT DISTINCT
 		'1' AS has_options,
 		'configurable' AS type,
 		dbo.getUrlKey(dbo.getSWName(a.[Style Name]), 'SmartWool', '',dbo.getSWGender(a.[Style Name])) + '-ss13a' AS url_key,
-		(SELECT 'SmartWool ' + dbo.getSWName(a.[Style Name]) + CASE WHEN dbo.getSWGender(a.[Style Name]) LIKE '%|%' THEN  ' - ' + dbo.getSWGender(a.[Style Name]) ELSE ' - ' + dbo.getSWGender(a.[Style Name]) + '''s' END) AS meta_title,
+		(SELECT 'SmartWool ' + dbo.getSWName(a.[Style Name]) + CASE WHEN dbo.getSWGender(a.[Style Name]) = 'Boy|Girl' THEN ' - Kids''' WHEN dbo.getSWGender(a.[Style Name]) = 'Men|Women' THEN ' - Unisex' ELSE ' - ' + dbo.getSWGender(a.[Style Name]) + '''s' END) AS meta_title,
 		'Catalog, Search' AS visibility,
 		'Z' AS merchandise_priority,
 		0 AS manage_stock,

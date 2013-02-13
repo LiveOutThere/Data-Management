@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 USE [LOT_Inventory]
 GO
 SET ANSI_NULLS ON

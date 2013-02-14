@@ -51,8 +51,8 @@ CREATE TABLE [dbo].[tbl_LoadFile_SS13_DEU](
 	[fit] [nvarchar](4000) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
 	[volume] [nvarchar](4000) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
 	[manufacturer] [nvarchar](4000) COLLATE SQL_Latin1_General_CP1_CI_AS NULL CONSTRAINT [DF_tbl_LoadFile_SS13_DEU_manufacturer]  DEFAULT ('Deuter'),
-	[qty] [nvarchar](4000) COLLATE SQL_Latin1_General_CP1_CI_AS NULL CONSTRAINT [DF_tbl_LoadFile_SS13_DEU_qty]  DEFAULT ((1)),
-	[is_in_stock] [nvarchar](4000) COLLATE SQL_Latin1_General_CP1_CI_AS NULL CONSTRAINT [DF_tbl_LoadFile_SS13_DEU_is_in_stock]  DEFAULT ((1)),
+	[qty] [nvarchar](4000) COLLATE SQL_Latin1_General_CP1_CI_AS NULL CONSTRAINT [DF_tbl_LoadFile_SS13_DEU_qty]  DEFAULT ((0)),
+	[is_in_stock] [nvarchar](4000) COLLATE SQL_Latin1_General_CP1_CI_AS NULL CONSTRAINT [DF_tbl_LoadFile_SS13_DEU_is_in_stock]  DEFAULT ((0)),
 	[simples_skus] [nvarchar](4000) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
 	[url_key] [nvarchar](4000) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
 	[meta_title] [nvarchar](4000) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
@@ -100,7 +100,7 @@ INSERT INTO tbl_LoadFile_SS13_DEU (
 SELECT  dbo.getMagentoSimpleSKU('SS13A-DEU', a.Style, a.[Color Code], a.[Size Code]) AS sku,
 		a.Style AS vendor_product_id,
 		REPLACE(a.Name,' + ','+') AS name,
-		dbo.getDEUGender(a.Name) AS gender,
+		dbo.getDEUGender(REPLACE(a.Name,' + ','+')) AS gender,
 		dbo.getDEUColor(a.[Color & Size]) AS choose_color,
 		a.[Size Code] AS choose_size,
 		a.[Color Code] AS vendor_color_code,
@@ -147,7 +147,7 @@ SELECT DISTINCT
 		'1' AS has_options,
 		'configurable' AS type,
 		dbo.getUrlKey(REPLACE(a.Name,' + ','+'), 'Deuter', '', dbo.getDEUGender(REPLACE(a.Name,' + ','+'))) + '-ss13a' AS url_key,
-		(SELECT 'Deuter ' + REPLACE(a.Name,' + ','+') + CASE WHEN dbo.getDEUGender(REPLACE(a.Name,' + ','+')) = 'Men|Women' THEN ' Unisex' WHEN dbo.getDEUGender(REPLACE(a.Name,' + ','+')) = 'Women' THEN ' Women''s' WHEN dbo.getDEUGender(REPLACE(a.Name,' + ','+')) = 'Boy|Girl' THEN ' Kids''' ELSE '' END) AS meta_title,
+		(SELECT 'Deuter ' + REPLACE(a.Name,' + ','+') + CASE WHEN dbo.getDEUGender(REPLACE(a.Name,' + ','+')) = 'Men|Women' THEN ' - Unisex' WHEN dbo.getDEUGender(REPLACE(a.Name,' + ','+')) = 'Women' THEN ' - Women''s' WHEN dbo.getDEUGender(REPLACE(a.Name,' + ','+')) = 'Men' THEN ' - Men''s' WHEN dbo.getDEUGender(REPLACE(a.Name,' + ','+')) = 'Boy|Girl' THEN ' - Kids''' END) AS meta_title,
 		'Catalog, Search' AS visibility,
 		'Z' AS merchandise_priority,
 		0 AS manage_stock,
@@ -206,6 +206,7 @@ UPDATE tbl_LoadFile_SS13_DEU SET categories = CASE WHEN categories <> 'Uncategor
 UPDATE tbl_LoadFile_SS13_DEU SET status = 'Disabled' WHERE image IS NULL AND type = 'simple'
 UPDATE tbl_LoadFile_SS13_DEU SET small_image = image, thumbnail = image
 UPDATE tbl_LoadFile_SS13_DEU SET categories = CASE WHEN type = 'simple' THEN NULL ELSE categories END
+UPDATE tbl_LoadFile_SS13_DEU SET description = CASE WHEN description IS NULL AND short_description IS NOT NULL THEN short_description ELSE description END
 GO
 
 CREATE VIEW [dbo].[view_LoadFile_SS13_DEU]

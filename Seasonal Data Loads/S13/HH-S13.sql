@@ -146,7 +146,7 @@ SELECT DISTINCT
 		'1' AS has_options,
 		'configurable' AS type,
 		dbo.getUrlKey(a.name, 'Helly Hansen', '',a.department) + '-ss13a' AS url_key,
-		'Helly Hansen ' + a.name + CASE WHEN a.department = 'Men' THEN ' - Men''s' WHEN a.department = 'Women' THEN ' - Women''s' WHEN a.department = 'Men|Women' THEN ' - Unisex' WHEN a.department = 'Boy|Girl' THEN ' - Kids''' END  AS meta_title,
+		'Helly Hansen ' + a.name + CASE WHEN a.department = 'Boy|Girl' THEN ' - Kids''' WHEN a.department = 'Men|Women' THEN ' - Unisex' ELSE ' - ' + a.department + '''s' END  AS meta_title,
 		'Catalog, Search' AS visibility,
 		'Z' AS merchandise_priority,
 		0 AS manage_stock,

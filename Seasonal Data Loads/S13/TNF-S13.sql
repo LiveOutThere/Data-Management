@@ -158,7 +158,7 @@ UPDATE a SET
 	fabric = (SELECT TOP 1 dbo.getTNFFabric(Style) FROM tbl_RawData_SS13_TNF_Specs WHERE Style = a.vendor_product_id),
 	simples_skus = dbo.getTNFAssociatedProducts(a.vendor_product_id),
 	super_attribute_pricing = (SELECT TOP 1 dbo.getTNFSAP(vendor_product_id) FROM tbl_LoadFile_SS13_TNF WHERE vendor_product_id = a.vendor_product_id),
-	meta_title = (SELECT DISTINCT 'The North Face ' + name + '- ' + CASE WHEN department = 'Men' THEN 'Men''s' WHEN department = 'Women' THEN 'Women''s' WHEN department = 'Men|Women' THEN 'Unisex' WHEN department = 'Boy' THEN 'Boy''s' WHEN department = 'Girl' THEN 'Girl''s' WHEN department = 'Infant' THEN 'Infant' WHEN department = 'Boy|Girl' THEN 'Kids''' ELSE '' END WHERE vendor_product_id = a.vendor_product_id)
+	meta_title = (SELECT DISTINCT 'The North Face ' + name + ' - ' + CASE WHEN department = 'Men' THEN 'Men''s' WHEN department = 'Women' THEN 'Women''s' WHEN department = 'Men|Women' THEN 'Unisex' WHEN department = 'Boy' THEN 'Boy''s' WHEN department = 'Girl' THEN 'Girl''s' WHEN department = 'Infant' THEN 'Infant' WHEN department = 'Boy|Girl' THEN 'Kids''' ELSE '' END WHERE vendor_product_id = a.vendor_product_id)
 FROM tbl_LoadFile_SS13_TNF AS a
 WHERE type = 'configurable'
 GO

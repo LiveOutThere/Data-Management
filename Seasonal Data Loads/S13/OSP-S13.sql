@@ -113,11 +113,10 @@ SELECT  dbo.getMagentoSimpleSKU('SS13A-OSP', a.[Style1], a.[StyleColor], a.Size)
 		'simple' AS type,
 		c.Filename AS image,
 		dbo.ProperCase(a.Style_Color_Desc) AS image_label,
-		dbo.getUrlKey(b.Product, 'Osprey', a.Style_Color_Desc + ' - ' + a.Size, b.Gender) + '-ss13a' AS url_key
+		dbo.getUrlKey(b.Product, 'Osprey', a.Style_Color_Desc + ' - ' + a.Size, ISNULL(b.Gender,'Men|Women')) + '-ss13a' AS url_key
 FROM tbl_RawData_SS13_OSP_UPC AS a
 LEFT JOIN tbl_RawData_SS13_OSP_Marketing AS b ON a.[Style1] = b.Style
 LEFT JOIN tbl_RawData_SS13_Image_Filenames AS c ON a.[FILE NAME] + '.jpg' = c.Filename 
-ORDER BY name
 
 UPDATE tbl_LoadFile_SS13_OSP SET thumbnail = image, small_image = image WHERE image IS NOT NULL
 
@@ -153,7 +152,7 @@ SELECT DISTINCT
 		'1' AS has_options,
 		'configurable' AS type,
 		dbo.getUrlKey(a.name, 'Osprey', '', '') + '-ss13a' AS url_key,
-		'Osprey ' + a.name + ' - ' + CASE WHEN department = 'Men' THEN 'Men''s' WHEN department = 'Women' THEN 'Women''s' WHEN department = 'Boy' OR department = 'Girl' THEN 'Kids''' ELSE 'Unisex' END AS meta_title,
+		'Osprey ' + a.name + ' - ' + CASE WHEN a.department = 'Men' THEN 'Men''s' WHEN a.department = 'Women' THEN 'Women''s' WHEN a.department = 'Boy' OR a.department = 'Girl' OR a.department = 'Boy|Girl' THEN 'Kids''' ELSE 'Unisex' END AS meta_title,
 		'Catalog, Search' AS visibility,
 		'Z' AS merchandise_priority,
 		0 AS manage_stock,
@@ -167,14 +166,12 @@ UPDATE a SET
 	description = (SELECT TOP 1 Description FROM tbl_RawData_SS13_OSP_Marketing WHERE Style = a.vendor_product_id),
 	fabric = (SELECT TOP 1 ISNULL([Fabrics/Materials] + '|', '') + ISNULL([F/M2] + '|', '') + ISNULL([F/M3] + '|', '') + ISNULL([F/M4] + '|', '') FROM tbl_RawData_SS13_OSP_Marketing WHERE Style = a.vendor_product_id),
 	features = (SELECT TOP 1  + ISNULL([Unique Features] + '|', '') + ISNULL([UF2] + '|', '') + ISNULL([UF3] + '|', '') + ISNULL([UF4] + '|', '') + ISNULL([UF5] + '|', '') + ISNULL([UF6] + '|', '') + ISNULL([UF7] + '|', '') + ISNULL([UF8] + '|', '') + ISNULL([UF9] + '|', '') + ISNULL([UF10] + '|', '') + ISNULL([UF11] + '|', '') + ISNULL([UF12] + '|', '') + ISNULL([UF13] + '|', '') + ISNULL([UF14] + '|', '') + ISNULL([Shared Features] + '|', '') + ISNULL([SF2] + '|', '') + ISNULL([SF3] + '|', '') + ISNULL([SF4] + '|', '') + ISNULL([SF5] + '|', '') + ISNULL([SF6] + '|', '') + ISNULL([SF7] + '|', '') + ISNULL([SF8] + '|', '') + ISNULL([SF9] + '|', '') + ISNULL([SF10] + '|', '') + ISNULL([SF11] + '|', '') + ISNULL([SF12] + '|', '') + ISNULL([SF13] + '|', '') + ISNULL([SF14] + '|', '') + ISNULL([SF15] + '|', '') + ISNULL([SF16] + '|', '') + ISNULL([SF17] + '|', '') + ISNULL([SF18] + '|', '') + ISNULL([SF19] + '|', '') FROM tbl_RawData_SS13_OSP_Marketing WHERE Style = a.vendor_product_id),
-	image = (SELECT TOP 1 image FROM tbl_LoadFile_SS13_OSP WHERE vendor_product_id = a.vendor_product_id ORDER BY choose_color DESC),
-	image_label = (SELECT TOP 1 image_label FROM tbl_LoadFile_SS13_OSP WHERE vendor_product_id = a.vendor_product_id ORDER BY choose_color DESC),
 	simples_skus = dbo.getOSPAssociatedProducts(a.vendor_product_id)
 FROM tbl_LoadFile_SS13_OSP AS a
 WHERE type = 'configurable'
 
-UPDATE tbl_LoadFile_SS13_MER SET categories = CASE WHEN categories <> 'Uncategorized' THEN categories + ';;' + manufacturer + '/' + REPLACE(categories,';;',';;' + manufacturer + '/') ELSE 'Uncategorized' END WHERE type = 'configurable'
-UPDATE tbl_LoadFile_SS13_MER SET status = 'Disabled' WHERE image IS NULL AND type = 'simple'
+UPDATE tbl_LoadFile_SS13_OSP SET categories = CASE WHEN categories <> 'Uncategorized' THEN categories + ';;' + manufacturer + '/' + REPLACE(categories,';;',';;' + manufacturer + '/') ELSE 'Uncategorized' END WHERE type = 'configurable'
+UPDATE tbl_LoadFile_SS13_OSP SET status = 'Disabled' WHERE image IS NULL AND type = 'simple'
 GO
 
 CREATE VIEW [dbo].[view_LoadFile_SS13_OSP]

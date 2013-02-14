@@ -175,6 +175,7 @@ UPDATE tbl_LoadFile_SS13_PAT SET categories = CASE WHEN categories <> 'Uncategor
 UPDATE tbl_LoadFile_SS13_PAT SET categories = NULL WHERE type = 'simple'
 UPDATE tbl_LoadFile_SS13_PAT SET status = 'Disabled' WHERE image IS NULL AND type = 'simple'
 UPDATE tbl_LoadFile_SS13_PAT SET thumbnail = image, small_image = image
+DELETE FROM tbl_LoadFile_SS13_PAT WHERE price IS NULL OR cost IS NULL
 GO
 
 CREATE VIEW [dbo].[view_LoadFile_SS13_PAT]

@@ -146,7 +146,7 @@ SELECT DISTINCT
 		'1' AS has_options,
 		'configurable' AS type,
 		dbo.getUrlKey(dbo.getARCName(a.Description), 'Arc''teryx', '',dbo.getARCGenderFromName(a.Description)) + '-ss13a' AS url_key,
-		(SELECT 'Arc''teryx ' + dbo.getARCName(a.Description) + CASE WHEN dbo.getARCGenderFromName(a.Description) = 'Women' THEN ' Women''s' WHEN dbo.getARCGenderFromName(a.Description) = 'Men' THEN ' Men''s' WHEN dbo.getARCGenderFromName(a.Description) = 'Men|Women' THEN ' Unisex' END) AS meta_title,
+		(SELECT 'Arc''teryx ' + dbo.getARCName(a.Description) + CASE WHEN dbo.getARCGenderFromName(a.Description) = 'Women' THEN ' - Women''s' WHEN dbo.getARCGenderFromName(a.Description) = 'Men' THEN ' - Men''s' WHEN dbo.getARCGenderFromName(a.Description) = 'Men|Women' THEN ' - Unisex' END) AS meta_title,
 		'Catalog, Search' AS visibility,
 		'Z' AS merchandise_priority,
 		0 AS manage_stock,

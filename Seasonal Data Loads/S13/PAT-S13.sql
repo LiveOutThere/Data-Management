@@ -171,7 +171,7 @@ GO
 
 DELETE FROM tbl_LoadFile_SS13_PAT WHERE price IS NULL OR price = ''
 
-UPDATE tbl_LoadFile_SS13_PAT SET categories = CASE WHEN categories <> 'Uncategorized' THEN categories + ';;' + manufacturer + '/' + REPLACE(categories,';;',';;' + manufacturer + '/') ELSE 'Uncategorized' END
+UPDATE tbl_LoadFile_SS13_PAT SET categories = dbo.getCategory(categories,manufacturer,department) WHERE type = 'configurable'
 UPDATE tbl_LoadFile_SS13_PAT SET categories = NULL WHERE type = 'simple'
 UPDATE tbl_LoadFile_SS13_PAT SET status = 'Disabled' WHERE image IS NULL AND type = 'simple'
 UPDATE tbl_LoadFile_SS13_PAT SET thumbnail = image, small_image = image

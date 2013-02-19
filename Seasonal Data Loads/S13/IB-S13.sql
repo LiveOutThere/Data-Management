@@ -220,7 +220,7 @@ INNER JOIN tbl_LoadFile_F12_IB AS b
 ON b.vendor_sku = a.vendor_sku
 WHERE a.type = 'simple' AND a.description IS NULL
 
-UPDATE tbl_LoadFile_SS13_IB SET categories = CASE WHEN categories <> 'Uncategorized' THEN categories + ';;' + manufacturer + '/' + REPLACE(categories,';;',';;' + manufacturer + '/') ELSE 'Uncategorized' END
+UPDATE tbl_LoadFile_SS13_IB SET categories = dbo.getCategory(categories,manufacturer,department)
 UPDATE tbl_LoadFile_SS13_IB SET categories = NULL WHERE type = 'simple'
 UPDATE tbl_LoadFile_SS13_IB SET status = 'Disabled' WHERE image IS NULL AND type = 'simple'
 UPDATE tbl_LoadFile_SS13_IB SET thumbnail = image, small_image = image

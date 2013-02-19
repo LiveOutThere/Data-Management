@@ -105,7 +105,7 @@ SELECT  dbo.getMagentoSimpleSKU('SS13A-TNF', a.Style, RIGHT(a.[Sty Code],3), dbo
 		dbo.getTNFSize(a.[Dim1 Description],a.[Dim2 Description]) AS choose_size,
 		RIGHT(a.[Sty Code],3) AS vendor_color_code,
 		dbo.getTNFSize(a.[Dim1 Description],a.[Dim2 Description]) AS vendor_size_code,
-		CAST(a.[UPC] AS bigint) AS vendor_sku,
+		b.UPC AS vendor_sku,
 		CAST(a.[MSRP] AS float) - 0.01 AS price,
 		a.[Wholesale Price] AS cost,
 		0 AS has_options,
@@ -115,7 +115,8 @@ SELECT  dbo.getMagentoSimpleSKU('SS13A-TNF', a.Style, RIGHT(a.[Sty Code],3), dbo
 		dbo.getUrlKey(dbo.getTNFName(a.[Style Description]), 'The North Face', dbo.getTNFColor(a.[Color Description]) + ' - ' + dbo.getTNFSize(a.[Dim1 Description],a.[Dim2 Description]), dbo.getTNFGenderFromName(a.[Style Description])) + '-ss13a' AS url_key,
 		(SELECT TOP 1 dbo.getTNFWeight([Spec Value]) FROM tbl_RawData_SS13_TNF_Specs WHERE [Spec Value] LIKE 'Avg Weight:%' AND a.Style = Style) AS weight
 FROM tbl_RawData_SS13_TNF_UPC AS a
-
+INNER JOIN tbl_RawData_SS13_TNF_UPC2 AS b
+ON a.Style = b.Style AND a.[Sty Code] = b.[Sty Code] AND a.[Dim1 Description] = b.Dim1 AND a.[Dim2 Description] = b.Dim2
 INSERT INTO tbl_LoadFile_SS13_TNF (
 	sku,
 	configurable_attributes,
@@ -134,22 +135,22 @@ INSERT INTO tbl_LoadFile_SS13_TNF (
 	use_config_manage_stock
 )
 SELECT DISTINCT
-	   dbo.getMagentoConfigurableSKU('SS13A-TNF', a.Style) AS sku,
+	   dbo.getMagentoConfigurableSKU('SS13A-TNF', a.vendor_product_id) AS sku,
 		'choose_color,choose_size' AS configurable_attributes,
-		a.Style AS vendor_product_id,
+		a.vendor_product_id AS vendor_product_id,
 		'Uncategorized' AS categories,
-		dbo.getTNFName(a.[Style Description]) AS name,
-		dbo.getTNFGenderFromName(a.[Style Description]) AS department,
-		(SELECT MIN(price) FROM tbl_LoadFile_SS13_TNF WHERE vendor_product_id = a.Style) AS price,
-		(SELECT MIN(cost) FROM tbl_LoadFile_SS13_TNF WHERE vendor_product_id = a.Style) AS cost,
+		a.name AS name,
+		a.department AS department,
+		(SELECT MIN(price) FROM tbl_LoadFile_SS13_TNF WHERE vendor_product_id = a.vendor_product_id) AS price,
+		(SELECT MIN(cost) FROM tbl_LoadFile_SS13_TNF WHERE vendor_product_id = a.vendor_product_id) AS cost,
 		'1' AS has_options,
 		'configurable' AS type,
-		dbo.getUrlKey(dbo.getTNFName(a.[Style Description]), 'The North Face', '',dbo.getTNFGenderFromName(a.[Style Description])) + '-ss13a' AS url_key,
+		dbo.getUrlKey(a.name, 'The North Face', '',a.department) + '-ss13a' AS url_key,
 		'Catalog, Search' AS visibility,
 		'Z' AS merchandise_priority,
 		0 AS manage_stock,
 		0 AS use_config_manage_stock
-FROM tbl_RawData_SS13_TNF_UPC AS a
+FROM tbl_LoadFile_SS13_TNF AS a
 
 UPDATE a SET
 	categories = (SELECT TOP 1 REPLACE(categories,'"','') FROM LOT_Reporting.dbo.tbl_Categories WHERE vendor_product_id = a.vendor_product_id AND a.type = 'configurable'),
@@ -163,7 +164,7 @@ FROM tbl_LoadFile_SS13_TNF AS a
 WHERE type = 'configurable'
 GO
 
-UPDATE tbl_LoadFile_SS13_TNF SET categories = CASE WHEN categories <> 'Uncategorized' AND type = 'configurable' THEN categories + ';;' + manufacturer + '/' + REPLACE(categories,';;',';;' + manufacturer + '/') ELSE 'Uncategorized' END
+UPDATE tbl_LoadFile_SS13_TNF SET categories = dbo.getCategory(categories,manufacturer,department) WHERE type = 'configurable'
 UPDATE tbl_LoadFile_SS13_TNF SET categories = NULL WHERE type = 'simple'
 UPDATE tbl_LoadFile_SS13_TNF SET small_image = image, thumbnail = image
 UPDATE tbl_LoadFile_SS13_TNF SET status = 'Disabled' WHERE image IS NULL AND type = 'simple'

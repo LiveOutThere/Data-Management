@@ -242,7 +242,7 @@ WHERE type = 'configurable'
 DROP TABLE #temp_RawData_MER_Description_Features
 GO
 
-UPDATE tbl_LoadFile_SS13_MER SET categories = CASE WHEN categories <> 'Uncategorized' THEN categories + ';;' + manufacturer + '/' + REPLACE(categories,';;',';;' + manufacturer + '/') ELSE 'Uncategorized' END WHERE type = 'configurable'
+UPDATE tbl_LoadFile_SS13_MER SET categories = dbo.getCategory(categories,manufacturer,department) WHERE type = 'configurable'
 UPDATE tbl_LoadFile_SS13_MER SET status = 'Disabled' WHERE image IS NULL AND type = 'simple'
 UPDATE tbl_LoadFile_SS13_MER SET thumbnail = image, small_image = image
 GO

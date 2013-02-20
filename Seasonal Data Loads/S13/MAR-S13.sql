@@ -162,7 +162,7 @@ UPDATE a SET
 	description = (SELECT [Positioning Statement] FROM tbl_RawData_SS13_MAR_Marketing WHERE style = a.vendor_product_id),
 	features = dbo.getMARFeatures(a.vendor_product_id),
 	fabric = (SELECT [Materials] FROM tbl_RawData_SS13_MAR_Marketing WHERE style = a.vendor_product_id),
-	super_attribute_pricing = (SELECT TOP 1 dbo.getMARSAP(REPLACE(REPLACE(REPLACE(name,' Long X-wide',''),' Short',''),' Long','')) FROM tbl_LoadFile_SS13_MAR WHERE vendor_product_id = a.vendor_product_id),
+	--super_attribute_pricing = (SELECT TOP 1 dbo.getMARSAP(REPLACE(REPLACE(REPLACE(name,' Long X-wide',''),' Short',''),' Long','')) FROM tbl_LoadFile_SS13_MAR WHERE vendor_product_id = a.vendor_product_id),
 	simples_skus = dbo.getMARAssociatedProducts(a.vendor_product_id)
 FROM tbl_LoadFile_SS13_MAR AS a
 WHERE type = 'configurable'
@@ -187,7 +187,7 @@ CLOSE alike_styles
 DEALLOCATE alike_styles
 GO
 
-UPDATE tbl_LoadFile_SS13_MAR SET categories = CASE WHEN categories <> 'Uncategorized' THEN categories + ';;' + manufacturer + '/' + REPLACE(categories,';;',';;' + manufacturer + '/') ELSE 'Uncategorized' END
+UPDATE tbl_LoadFile_SS13_MAR SET categories = dbo.getCategory(categories,manufacturer,department) WHERE type = 'configurable'
 UPDATE tbl_LoadFile_SS13_MAR SET categories = NULL WHERE type = 'simple'
 UPDATE tbl_LoadFile_SS13_MAR SET status = 'Disabled' WHERE image IS NULL AND type = 'simple'
 UPDATE tbl_LoadFile_SS13_MAR SET thumbnail = image, small_image = image

@@ -130,48 +130,37 @@ INSERT INTO tbl_LoadFile_SS13_MER (
 )
 SELECT  'SS13A-MER-' + a.Material + '-' + RIGHT(a.SKU,4) AS sku,
 		a.Material AS vendor_product_id,
-		REPLACE(REPLACE(REPLACE(REPLACE(LTRIM(RTRIM(a.[Final Pattern name])),' Kids',''),'Wtpf','Waterproof'),' Mj ',' MJ '),'WTPF','Waterproof') AS name,
-		CASE WHEN [Men's sizes] <> '' THEN 'Men' WHEN [Women's sizes] <> '' THEN 'Women' WHEN [Men's sizes] = '' AND [Women's sizes] = '' THEN 'Boy|Girl' END AS gender,
-		a.[Final Color] AS choose_color,
+		REPLACE(REPLACE(REPLACE(REPLACE(LTRIM(RTRIM(a.Model)),' Kids',''),'Wtpf','Waterproof'),' Mj ',' MJ '),'WTPF','Waterproof') AS name,
+		CASE WHEN a.Category LIKE '% MEN%' THEN 'Men' WHEN a.Category LIKE '% WOMEN%' THEN 'Women' WHEN a.Category LIKE '%KIDS%' THEN 'Boy|Girl' END AS gender,
+		SUBSTRING(a.[Color-Couleur],0,CHARINDEX(' / ',a.[Color-Couleur])) AS choose_color,
 		RIGHT(a.SKU,4) AS choose_size,
 		RIGHT(a.SKU,4) AS vendor_size_code,
-		a.UPC AS vendor_sku,
-		CAST(REPLACE(a.[Retail price],'$','') AS float) - 0.01 AS price,
-		REPLACE(a.[WHLS Price],'$','') AS cost,
+		a.upc AS vendor_sku,
+		CAST(REPLACE(a.[S# Retail],'$','') AS float) - 0.01 AS price,
+		REPLACE(a.Wholesale,'$','') AS cost,
 		0 AS has_options,
 		'simple' AS type,
-		a.[Final Color] AS image_label,
-		dbo.getUrlKey(REPLACE(REPLACE(REPLACE(REPLACE(LTRIM(RTRIM(a.[Final Pattern name])),' Kids',''),'Wtpf','Waterproof'),' Mj ',' MJ '),'WTPF','Waterproof'), 'Merrell', a.[Final Color] + ' - ' + RIGHT(a.SKU,4), CASE WHEN [Men's sizes] <> '' THEN 'Men' WHEN [Women's sizes] <> '' THEN 'Women' WHEN [Men's sizes] = '' AND [Women's sizes] = '' THEN 'Boy|Girl' END) + '-ss13a' AS url_key
-FROM tbl_RawData_SS13_MER_FOOT_UPC AS a
+		SUBSTRING(a.[Color-Couleur],0,CHARINDEX(' / ',a.[Color-Couleur])) AS image_label,
+		dbo.getUrlKey(REPLACE(REPLACE(REPLACE(REPLACE(LTRIM(RTRIM(a.Model)),' Kids',''),'Wtpf','Waterproof'),' Mj ',' MJ '),'WTPF','Waterproof'), 'Merrell', SUBSTRING(a.[Color-Couleur],0,CHARINDEX(' / ',a.[Color-Couleur])) + ' - ' + RIGHT(a.SKU,4), CASE WHEN a.Category LIKE '% MEN%' THEN 'Men' WHEN a.Category LIKE '% WOMEN%' THEN 'Women' WHEN a.Category LIKE '%KIDS%' THEN 'Boy|Girl' END) + '-ss13a' AS url_key
+FROM tbl_RawData_SS13_MER_FOOT_UPC2 AS a
 
 -- This method of matching images is going to be a lot faster than a sub-select since tbl_RawData_SS13_Image_Filenames is really big:
 UPDATE a SET image = b.Filename
 FROM tbl_LoadFile_SS13_MER AS a
 INNER JOIN tbl_RawData_SS13_Image_Filenames AS b
 ON b.Brand = 'MER' AND (
-	b.Filename LIKE vendor_product_id + '-' + vendor_color_code + '%P%'
+	b.Filename LIKE vendor_product_id + '-' + vendor_color_code + '%P.jpg'
 	OR
-	b.Filename LIKE vendor_product_id + '-' + vendor_color_code + '%F%'
+	b.Filename LIKE vendor_product_id + '-' + vendor_color_code + '%F.jpg'
 )
 WHERE a.type = 'simple' AND image IS NULL
 
 UPDATE a SET image = b.Filename
 FROM tbl_LoadFile_SS13_MER AS a
 INNER JOIN tbl_RawData_SS13_Image_Filenames AS b
-ON b.Filename LIKE vendor_product_id + '%' AND b.Brand = 'MER'
-WHERE a.type = 'simple' AND a.image IS NULL
-
-UPDATE a SET image = b.image
-FROM tbl_LoadFile_SS13_MER AS a
-INNER JOIN tbl_LoadFile_F12_MER AS b
-ON a.vendor_sku = b.vendor_sku
-WHERE a.type = 'simple' AND a.image IS NULL
-
-UPDATE a SET image = b.image
-FROM tbl_LoadFile_SS13_MER AS a
-INNER JOIN tbl_LoadFile_S12_MER AS b
-ON a.vendor_sku = b.vendor_sku
-WHERE a.type = 'simple' AND a.image IS NULL
+ON b.Brand = 'MER' AND (
+	b.Filename LIKE vendor_product_id + '.jpg')
+WHERE a.type = 'simple' AND image IS NULL
 
 INSERT INTO tbl_LoadFile_SS13_MER (
 	sku,
@@ -227,15 +216,15 @@ INNER JOIN tbl_RawData_SS13_MER_APP_UPC AS b ON a.[Stock #] = b.Material
 WHERE a.Description IS NOT NULL OR a.[tech bullets- English] IS NOT NULL
 
 INSERT INTO #temp_RawData_MER_Description_Features
-SELECT DISTINCT REPLACE(REPLACE(REPLACE(REPLACE(LTRIM(RTRIM(b.[Final Pattern name])),' Kids',''),'Wtpf','Waterproof'),' Mj ',' MJ '),'WTPF','Waterproof') AS name, a.[Intro-Anglais] AS description, REPLACE(REPLACE(REPLACE(a.[Tech Bullet-Anglais],'UPPER/LINING',''),'MIDSOLE/OUTSOLE',''),'•','|') AS features, CASE WHEN [Men's sizes] <> '' THEN 'Men' WHEN [Women's sizes] <> '' THEN 'Women' WHEN [Men's sizes] = '' AND [Women's sizes] = '' THEN 'Boy|Girl' END AS gender
+SELECT DISTINCT REPLACE(REPLACE(REPLACE(REPLACE(LTRIM(RTRIM(b.Model)),' Kids',''),'Wtpf','Waterproof'),' Mj ',' MJ '),'WTPF','Waterproof') AS name, a.[Intro-Anglais] AS description, REPLACE(REPLACE(REPLACE(a.[Tech Bullet-Anglais],'UPPER/LINING',''),'MIDSOLE/OUTSOLE',''),'•','|') AS features, CASE WHEN b.Category LIKE '% MEN%' THEN 'Men' WHEN b.Category LIKE '% WOMEN%' THEN 'Women' WHEN b.Category LIKE '%KIDS%' THEN 'Boy|Girl' END AS gender
 FROM tbl_RawData_SS13_MER_FOOT_Marketing AS a
-INNER JOIN tbl_RawData_SS13_MER_FOOT_UPC AS b ON a.Material = b.Material
+INNER JOIN tbl_RawData_SS13_MER_FOOT_UPC2 AS b ON a.Material = b.Material
 WHERE a.[Tech Bullet-Anglais] IS NOT NULL OR a.[Intro-Anglais] IS NOT NULL
 
 -- Notice the keys to the temp table are now Name and Gender:
 UPDATE a SET
-	description = (SELECT TOP 1 description FROM #temp_RawData_MER_Description_Features WHERE name = a.name COLLATE Latin1_General_CI_AS AND gender = a.department COLLATE Latin1_General_CI_AS),
-	features = (SELECT TOP 1 features FROM #temp_RawData_MER_Description_Features WHERE name = a.name COLLATE Latin1_General_CI_AS AND gender = a.department COLLATE Latin1_General_CI_AS)
+	description = (SELECT TOP 1 REPLACE(REPLACE(description,CHAR(13),''),CHAR(10),'') FROM #temp_RawData_MER_Description_Features WHERE name = a.name COLLATE Latin1_General_CI_AS AND gender = a.department COLLATE Latin1_General_CI_AS),
+	features = (SELECT TOP 1 REPLACE(REPLACE(features,CHAR(13),''),CHAR(10),'') FROM #temp_RawData_MER_Description_Features WHERE name = a.name COLLATE Latin1_General_CI_AS AND gender = a.department COLLATE Latin1_General_CI_AS)
 FROM tbl_LoadFile_SS13_MER AS a
 WHERE type = 'configurable'
 

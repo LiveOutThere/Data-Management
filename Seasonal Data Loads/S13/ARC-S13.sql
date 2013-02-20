@@ -62,7 +62,7 @@ CREATE TABLE [dbo].[tbl_LoadFile_SS13_ARC](
 	[never_backorder] [nvarchar](4000) COLLATE SQL_Latin1_General_CP1_CI_AS NULL CONSTRAINT [DF_tbl_LoadFile_SS13_ARC_never_backorder]  DEFAULT ((0)),
 	[backorders] [nvarchar](4000) COLLATE SQL_Latin1_General_CP1_CI_AS NULL CONSTRAINT [DF_tbl_LoadFile_SS13_ARC_backorders]  DEFAULT ((0)),
 	[manage_stock] [nvarchar](4000) COLLATE SQL_Latin1_General_CP1_CI_AS NULL CONSTRAINT [DF_tbl_LoadFile_SS13_ARC_manage_stock]  DEFAULT ((1)),
-	[use_config_backorders] [nvarchar](4000) COLLATE SQL_Latin1_General_CP1_CI_AS NULL CONSTRAINT [DF_tbl_LoadFile_SS13_ARC_use_config_backorders]  DEFAULT ((1)),
+	[use_config_backorders] [nvarchar](4000) COLLATE SQL_Latin1_General_CP1_CI_AS NULL CONSTRAINT [DF_tbl_LoadFile_SS13_ARC_use_config_backorders]  DEFAULT ((0)),
 	[use_config_manage_stock] [nvarchar](4000) COLLATE SQL_Latin1_General_CP1_CI_AS NULL CONSTRAINT [DF_tbl_LoadFile_SS13_ARC_use_config_manage_stock]  DEFAULT ((1))
  CONSTRAINT [PK_tbl_LoadFile_SS13_ARC] PRIMARY KEY CLUSTERED 
 (
@@ -167,7 +167,7 @@ FROM tbl_LoadFile_SS13_ARC AS a
 WHERE type = 'configurable'
 GO
 
-UPDATE tbl_LoadFile_SS13_ARC SET categories = CASE WHEN categories <> 'Uncategorized' AND type = 'configurable' THEN categories + ';;' + manufacturer + '/' + REPLACE(categories,';;',';;' + manufacturer + '/') ELSE 'Uncategorized' END
+UPDATE tbl_LoadFile_SS13_ARC SET categories = dbo.getCategory(categories,manufacturer,department)
 UPDATE tbl_LoadFile_SS13_ARC SET small_image = image, thumbnail = image
 UPDATE tbl_LoadFile_SS13_ARC SET categories = CASE WHEN type = 'simple' THEN NULL ELSE categories END
 UPDATE tbl_LoadFile_SS13_ARC SET status = 'Disabled' WHERE image IS NULL AND type = 'simple'

@@ -202,7 +202,7 @@ UPDATE tbl_LoadFile_SS13_DEU SET image = 'exosphereminus4_5520.jpg' WHERE name L
 UPDATE tbl_LoadFile_SS13_DEU SET image = 'exosphereminus8_4140.jpg' WHERE name LIKE 'Exosphere -8%'
 UPDATE tbl_LoadFile_SS13_DEU SET image = 'TrekLite250_1320_10.jpg' WHERE name = 'Trek Lite 250'
 UPDATE tbl_LoadFile_SS13_DEU SET image = 'TrekLite300_1570_10.jpg' WHERE name = 'Trek Lite 300'
-UPDATE tbl_LoadFile_SS13_DEU SET categories = CASE WHEN categories <> 'Uncategorized' AND type = 'configurable' THEN categories + ';;' + manufacturer + '/' + REPLACE(categories,';;',';;' + manufacturer + '/') ELSE 'Uncategorized' END
+UPDATE tbl_LoadFile_SS13_DEU SET categories = dbo.getCategory(categories,manufacturer,department) WHERE type = 'configurable'
 UPDATE tbl_LoadFile_SS13_DEU SET status = 'Disabled' WHERE image IS NULL AND type = 'simple'
 UPDATE tbl_LoadFile_SS13_DEU SET small_image = image, thumbnail = image
 UPDATE tbl_LoadFile_SS13_DEU SET categories = CASE WHEN type = 'simple' THEN NULL ELSE categories END

@@ -183,7 +183,7 @@ CLOSE alike_styles
 DEALLOCATE alike_styles
 GO
 
-UPDATE tbl_LoadFile_SS13_OR SET categories = CASE WHEN categories <> 'Uncategorized' THEN categories + ';;' + manufacturer + '/' + REPLACE(categories,';;',';;' + manufacturer + '/') ELSE 'Uncategorized' END
+UPDATE tbl_LoadFile_SS13_OR SET categories = dbo.getCategory(categories,manufacturer,department) WHERE type = 'configurable'
 UPDATE tbl_LoadFile_SS13_OR SET categories = NULL WHERE type = 'simple'
 UPDATE tbl_LoadFile_SS13_OR SET status = 'Disabled' WHERE image IS NULL AND type = 'simple'
 UPDATE tbl_LoadFile_SS13_OR SET thumbnail = image, small_image = image

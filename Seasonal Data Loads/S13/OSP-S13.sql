@@ -170,7 +170,7 @@ UPDATE a SET
 FROM tbl_LoadFile_SS13_OSP AS a
 WHERE type = 'configurable'
 
-UPDATE tbl_LoadFile_SS13_OSP SET categories = CASE WHEN categories <> 'Uncategorized' THEN categories + ';;' + manufacturer + '/' + REPLACE(categories,';;',';;' + manufacturer + '/') ELSE 'Uncategorized' END WHERE type = 'configurable'
+UPDATE tbl_LoadFile_SS13_OSP SET categories = dbo.getCategory(categories,manufacturer,department) WHERE type = 'configurable'
 UPDATE tbl_LoadFile_SS13_OSP SET status = 'Disabled' WHERE image IS NULL AND type = 'simple'
 GO
 

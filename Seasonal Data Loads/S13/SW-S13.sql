@@ -167,7 +167,7 @@ FROM tbl_LoadFile_SS13_SW AS a
 WHERE type = 'configurable'
 GO
 
-UPDATE tbl_LoadFile_SS13_SW SET categories = CASE WHEN categories <> 'Uncategorized' AND type = 'configurable' THEN categories + ';;' + manufacturer + '/' + REPLACE(categories,';;',';;' + manufacturer + '/') ELSE 'Uncategorized' END
+UPDATE tbl_LoadFile_SS13_SW SET categories = dbo.getCategory(categories,manufacturer,department) WHERE type = 'configurable'
 UPDATE tbl_LoadFile_SS13_SW SET small_image = image, thumbnail = image
 UPDATE tbl_LoadFile_SS13_SW SET categories = CASE WHEN type = 'simple' THEN NULL ELSE categories END
 UPDATE tbl_LoadFile_SS13_SW SET status = 'Disabled' WHERE image IS NULL AND type = 'simple'

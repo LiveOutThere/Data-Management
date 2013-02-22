@@ -159,7 +159,6 @@ SELECT DISTINCT
 		(SELECT TOP 1 Filename FROM tbl_RawData_S12_MER_Photos WHERE Filename LIKE '%' + RIGHT(a.Material,5) + '%' ORDER BY Color DESC) AS image,
 		(SELECT TOP 1 Color FROM tbl_RawData_S12_MER_Photos WHERE Filename LIKE '%' + RIGHT(a.Material,5) + '%' ORDER BY Color DESC) AS image_label
 FROM tbl_RawData_S12_MER2 AS a
-WHERE (SELECT TOP 1 Filename FROM tbl_RawData_S12_MER_Photos WHERE Filename LIKE '%' + RIGHT(a.Material,5) + '%' ORDER BY Color DESC) IS NOT NULL
 GO
 
 ALTER FUNCTION getMER2Features (
@@ -232,7 +231,7 @@ DELETE FROM tbl_LoadFile_S12_MER2 WHERE type = 'configurable' AND price IS NULL
 UPDATE a SET
 	image = (SELECT TOP 1 image FROM tbl_LoadFile_S12_MER2 WHERE type = 'simple' AND vendor_product_id = a.vendor_product_id ORDER BY image_label DESC),
 	image_label = (SELECT TOP 1 image_label FROM tbl_LoadFile_S12_MER2 WHERE type = 'simple' AND vendor_product_id = a.vendor_product_id ORDER BY image_label DESC),
-	simples_skus = dbo.getMERAssociatedProducts(a.vendor_product_id),
+	simples_skus = dbo.getMERAssociatedProducts(a.name,a.gender),
 	url_key = LOWER(manufacturer) + '-' + LOWER(REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(name,'Women''s ',''),'Men''s ',''),' ','-'),'''',''),'/',''))
 FROM tbl_LoadFile_S12_MER2 AS a
 WHERE type = 'configurable'

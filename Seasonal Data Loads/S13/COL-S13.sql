@@ -97,8 +97,8 @@ INSERT INTO tbl_LoadFile_SS13_COL (
 )
 SELECT DISTINCT dbo.getMagentoSimpleSKU('SS13A-COL', LEFT(a.[JDE Style Color],6), a.[PDM Color], dbo.getCOLSize(a.Size,a.Dimension)) AS sku,
 		LEFT(a.[JDE Style Color],6) AS vendor_product_id,
-		c.Name AS name,
-		dbo.getCOLGender(c.Collection) AS gender,
+		dbo.getCOLName(c.Name) AS name,
+		dbo.getCOLGender(c.Collection,c.Name) AS gender,
 		a.[PDM Color Description] AS choose_color,
 		dbo.getCOLSize(a.Size,a.Dimension) AS choose_size,
 		a.[PDM Color] AS vendor_color_code,
@@ -109,7 +109,7 @@ SELECT DISTINCT dbo.getMagentoSimpleSKU('SS13A-COL', LEFT(a.[JDE Style Color],6)
 		0 AS has_options,
 		'simple' AS type,
 		a.[PDM Color Description] AS image_label,
-		dbo.getUrlKey(c.Name, 'Columbia', a.[PDM Color Description] + ' - ' + dbo.getCOLSize(a.Size,a.Dimension), dbo.getCOLGender(c.Collection)) + '-ss13a' AS url_key
+		dbo.getUrlKey(dbo.getCOLName(c.Name), 'Columbia', a.[PDM Color Description] + ' - ' + dbo.getCOLSize(a.Size,a.Dimension), dbo.getCOLGender(c.Collection,c.Name)) + '-ss13a' AS url_key
 FROM tbl_RawData_SS13_COL_MHW_UPC AS a
 INNER JOIN tbl_RawData_SS13_COL_PriceList AS c
 ON LEFT(a.[Material Number],7) = c.SAP WHERE a.[Sub Brand] = 'Columbia' AND LEFT(a.[Material Number],7) IN('0442161',
@@ -660,7 +660,7 @@ ON LEFT(a.[Material Number],7) = c.SAP WHERE a.[Sub Brand] = 'Columbia' AND LEFT
 UPDATE a SET image = b.Filename
 FROM tbl_LoadFile_SS13_COL AS a
 INNER JOIN tbl_RawData_SS13_Image_Filenames AS b
-ON b.Filename LIKE vendor_product_id + '[_]' + vendor_color_code + '[_]f.jpg' AND b.Brand = 'COL'
+ON b.Filename LIKE vendor_product_id + '_' + vendor_color_code + '_f.jpg' AND b.Brand = 'COL'
 WHERE a.type = 'simple'
                                                       
 INSERT INTO tbl_LoadFile_SS13_COL (
@@ -703,8 +703,9 @@ WHERE type = 'simple'
  
 UPDATE a SET
 	categories = (SELECT TOP 1 REPLACE(categories,'"','') FROM LOT_Reporting.dbo.tbl_Categories WHERE vendor_product_id = a.vendor_product_id AND a.type = 'configurable'),
-	--description = (SELECT TOP 1 [Short Description] FROM tbl_RawData_SS13_COL WHERE ID = a.vendor_product_id),
-	--features = (SELECT TOP 1 [Long Description1] FROM tbl_RawData_SS13_COL WHERE ID = a.vendor_product_id),
+	short_description = (SELECT TOP 1 REPLACE(REPLACE([Short Description],CHAR(10),''),CHAR(13),'') FROM tbl_RawData_SS13_COL_MHW_Catalog WHERE Style = a.vendor_product_id),
+	description = (SELECT TOP 1 REPLACE(REPLACE([Long Description],CHAR(10),''),CHAR(13),'') FROM tbl_RawData_SS13_COL_MHW_Catalog WHERE Style = a.vendor_product_id),
+	fabric = (SELECT TOP 1 [Material %] FROM tbl_RawData_SS13_COL_MHW_Catalog WHERE Style = a.vendor_product_id AND [Material %] IS NOT NULL AND [Material %] <> 0), 
 	simples_skus = dbo.getCOLAssociatedProducts(a.vendor_product_id)
 FROM tbl_LoadFile_SS13_COL AS a
 WHERE type = 'configurable'

@@ -104,7 +104,7 @@ SELECT DISTINCT dbo.getMagentoSimpleSKU('SS13A-MHW', LEFT(a.[JDE Style Color],6)
 		a.[PDM Color] AS vendor_color_code,
 		dbo.getMHWSize(a.Size,a.Dimension) AS vendor_size_code,
 		a.UPC AS vendor_sku,
-		a.MSRP AS price,
+		CAST(a.MSRP AS float) - 0.01 AS price,
 		a.Wholesale AS cost,
 		0 AS has_options,
 		'simple' AS type,
@@ -456,8 +456,8 @@ SELECT DISTINCT
 		'Uncategorized' AS categories,
 		a.name AS name,
 		a.department AS gender,
-		(SELECT MAX(price) FROM tbl_LoadFile_SS13_IB WHERE vendor_product_id = a.vendor_product_id) AS price,
-		(SELECT MAX(cost) FROM tbl_LoadFile_SS13_IB WHERE vendor_product_id = a.vendor_product_id) AS cost,
+		(SELECT MAX(price) FROM tbl_LoadFile_SS13_MHW WHERE vendor_product_id = a.vendor_product_id) AS price,
+		(SELECT MAX(cost) FROM tbl_LoadFile_SS13_MHW WHERE vendor_product_id = a.vendor_product_id) AS cost,
 		'1' AS has_options,
 		'configurable' AS type,
 		dbo.getUrlKey(a.name, 'Mountain Hardwear', '',a.department) + '-ss13a' AS url_key,
@@ -470,8 +470,9 @@ FROM tbl_LoadFile_SS13_MHW AS a
 
 UPDATE a SET
 	categories = CASE WHEN (SELECT TOP 1 REPLACE(categories,'"','') FROM LOT_Reporting.dbo.tbl_Categories WHERE vendor_product_id = a.vendor_product_id) IS NULL THEN 'Uncategorized' ELSE (SELECT TOP 1 REPLACE(categories,'"','') FROM LOT_Reporting.dbo.tbl_Categories WHERE vendor_product_id = a.vendor_product_id) END,
-	--description = 
-	--fabric = 
+	description = (SELECT TOP 1 REPLACE(REPLACE([Long Description],CHAR(13),''),CHAR(10),'') FROM tbl_RawData_SS13_COL_MHW_Catalog WHERE Style = a.vendor_product_id),
+	features = (SELECT TOP 1 Features FROM view_RawData_MHW_Features_Fabric WHERE Style = a.vendor_product_id),
+	fabric = (SELECT TOP 1 Fabric FROM view_RawData_MHW_Features_Fabric WHERE Style = a.vendor_product_id),
 	simples_skus = dbo.getMHWAssociatedProducts(a.vendor_product_id)
 FROM tbl_LoadFile_SS13_MHW AS a
 WHERE type = 'configurable'
@@ -556,7 +557,7 @@ DECLARE @table_name varchar(255), @view_definition varchar(max)
 SET @view_definition = 'CREATE VIEW view_RawData_MHW_Features_Fabric AS '
 
 -- Loop through each of the Mountain Hardwear feature/spec tables
-DECLARE c2 CURSOR FOR SELECT TABLE_NAME FROM information_schema.tables WHERE TABLE_NAME LIKE 'tbl_RawData_SS13_MHW_%' AND TABLE_NAME NOT LIKE '%PriceList%'
+DECLARE c2 CURSOR FOR SELECT TABLE_NAME FROM information_schema.tables WHERE TABLE_NAME LIKE 'tbl_RawData_SS13_MHW_%' AND TABLE_NAME NOT LIKE '%PriceList%' AND TABLE_NAME NOT LIKE '%COL_UPC%'
 OPEN C2
 
 FETCH NEXT FROM c2 INTO @table_name

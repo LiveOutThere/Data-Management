@@ -1,0 +1,30 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<SharedDataSet xmlns:rd="http://schemas.microsoft.com/SQLServer/reporting/reportdesigner" xmlns="http://schemas.microsoft.com/sqlserver/reporting/2010/01/shareddatasetdefinition">
+  <DataSet Name="">
+    <Query>
+      <DataSourceReference>LOT_Reporting</DataSourceReference>
+      <CommandText>SELECT CurrentPeriodKey, FullYear, BiWeekNumber, Period FROM date_Cashflow_Periods
+UNION ALL
+SELECT NULL, NULL, NULL, NULL
+ORDER BY FullYear, BiWeekNumber</CommandText>
+    </Query>
+    <Fields>
+      <Field Name="FullYear">
+        <DataField>FullYear</DataField>
+        <rd:TypeName>System.String</rd:TypeName>
+      </Field>
+      <Field Name="CurrentPeriodKey">
+        <DataField>CurrentPeriodKey</DataField>
+        <rd:TypeName>System.String</rd:TypeName>
+      </Field>
+      <Field Name="BiWeekNumber">
+        <DataField>BiWeekNumber</DataField>
+        <rd:TypeName>System.Byte</rd:TypeName>
+      </Field>
+      <Field Name="Period">
+        <DataField>Period</DataField>
+        <rd:TypeName>System.String</rd:TypeName>
+      </Field>
+    </Fields>
+  </DataSet>
+</SharedDataSet>

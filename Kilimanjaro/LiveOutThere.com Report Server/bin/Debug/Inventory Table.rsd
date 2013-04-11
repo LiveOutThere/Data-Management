@@ -1,0 +1,11 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<SharedDataSet xmlns:rd="http://schemas.microsoft.com/SQLServer/reporting/reportdesigner" xmlns="http://schemas.microsoft.com/sqlserver/reporting/2010/01/shareddatasetdefinition">
+  <DataSet Name="">
+    <Query>
+      <DataSourceReference>LOT_Inventory</DataSourceReference>
+      <CommandText>SELECT    name, sku, type, season
+FROM     LOT_Inventory
+WHERE   type &lt;&gt; 'configurable' AND season = 'Spring/Summer 2012'</CommandText>
+    </Query>
+  </DataSet>
+</SharedDataSet>

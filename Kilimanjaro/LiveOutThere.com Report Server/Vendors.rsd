@@ -1,0 +1,15 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<SharedDataSet xmlns:rd="http://schemas.microsoft.com/SQLServer/reporting/reportdesigner" xmlns="http://schemas.microsoft.com/sqlserver/reporting/2010/01/shareddatasetdefinition">
+  <DataSet Name="">
+    <Query>
+      <DataSourceReference>LOT_Reporting</DataSourceReference>
+      <CommandText>SELECT DISTINCT Vendor FROM [LOT_Reporting].[dbo].[tbl_Magento_PO_Items]ORDER BY Vendor</CommandText>
+    </Query>
+    <Fields>
+      <Field Name="Vendor">
+        <DataField>Vendor</DataField>
+        <rd:TypeName>System.String</rd:TypeName>
+      </Field>
+    </Fields>
+  </DataSet>
+</SharedDataSet>

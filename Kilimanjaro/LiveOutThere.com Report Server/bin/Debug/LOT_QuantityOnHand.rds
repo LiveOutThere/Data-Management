@@ -1,0 +1,8 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<RptDataSource xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" Name="LOT_QuantityOnHand">
+  <ConnectionProperties>
+    <Extension>SQL</Extension>
+    <ConnectString>Data Source=lot.dyndns.org;Initial Catalog=LOT_QuantityOnHand</ConnectString>
+  </ConnectionProperties>
+  <DataSourceID>e7c054cd-6577-4dc6-a4ec-5f277848bf39</DataSourceID>
+</RptDataSource>

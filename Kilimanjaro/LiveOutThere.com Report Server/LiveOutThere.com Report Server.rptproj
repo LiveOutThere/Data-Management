@@ -154,6 +154,58 @@
       <Name>Vocalocity Log.rdl</Name>
       <FullPath>Vocalocity Log.rdl</FullPath>
     </ProjectItem>
+    <ProjectItem>
+      <Name>Deal vs. Non-Deal Revenue.rdl</Name>
+      <FullPath>Deal vs. Non-Deal Revenue.rdl</FullPath>
+    </ProjectItem>
+    <ProjectItem>
+      <Name>OOS Customers.rdl</Name>
+      <FullPath>OOS Customers.rdl</FullPath>
+    </ProjectItem>
+    <ProjectItem>
+      <Name>ASAP Bins.rdl</Name>
+      <FullPath>ASAP Bins.rdl</FullPath>
+    </ProjectItem>
+    <ProjectItem>
+      <Name>Upcoming Deals.rdl</Name>
+      <FullPath>Upcoming Deals.rdl</FullPath>
+    </ProjectItem>
+    <ProjectItem>
+      <Name>Coupon Codes.rdl</Name>
+      <FullPath>Coupon Codes.rdl</FullPath>
+    </ProjectItem>
+    <ProjectItem>
+      <Name>RMA Types Summary.rdl</Name>
+      <FullPath>RMA Types Summary.rdl</FullPath>
+    </ProjectItem>
+    <ProjectItem>
+      <Name>Net Customer Value.rdl</Name>
+      <FullPath>Net Customer Value.rdl</FullPath>
+    </ProjectItem>
+    <ProjectItem>
+      <Name>Locations Log.rdl</Name>
+      <FullPath>Locations Log.rdl</FullPath>
+    </ProjectItem>
+    <ProjectItem>
+      <Name>Brand Sales.rdl</Name>
+      <FullPath>Brand Sales.rdl</FullPath>
+    </ProjectItem>
+    <ProjectItem>
+      <Name>Category QOH.rdl</Name>
+      <FullPath>Category QOH.rdl</FullPath>
+    </ProjectItem>
+    <ProjectItem>
+      <Name>Supplier Inventory Levels.rdl</Name>
+      <FullPath>Supplier Inventory Levels.rdl</FullPath>
+    </ProjectItem>
+    <ProjectItem>
+      <Name>Oversold Items.rdl</Name>
+      <FullPath>Oversold Items.rdl</FullPath>
+    </ProjectItem>
+    <ProjectItem>
+      <Name>Order Grouping.rdl</Name>
+      <FullPath>Order Grouping.rdl</FullPath>
+    </ProjectItem>
   </Reports>
   <Configurations>
     <Configuration>

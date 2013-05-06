@@ -91,10 +91,6 @@
       <FullPath>Inventory Balance.rdl</FullPath>
     </ProjectItem>
     <ProjectItem>
-      <Name>Inventory Sell-Through.rdl</Name>
-      <FullPath>Inventory Sell-Through.rdl</FullPath>
-    </ProjectItem>
-    <ProjectItem>
       <Name>Invoice Reconciliation.rdl</Name>
       <FullPath>Invoice Reconciliation.rdl</FullPath>
     </ProjectItem>
@@ -139,6 +135,14 @@
       <FullPath>Received On Date.rdl</FullPath>
     </ProjectItem>
     <ProjectItem>
+      <Name>Sell-Through by Brand.rdl</Name>
+      <FullPath>Sell-Through by Brand.rdl</FullPath>
+    </ProjectItem>
+    <ProjectItem>
+      <Name>Sell-Through by Season.rdl</Name>
+      <FullPath>Sell-Through by Season.rdl</FullPath>
+    </ProjectItem>
+    <ProjectItem>
       <Name>Stock Movements On Date.rdl</Name>
       <FullPath>Stock Movements On Date.rdl</FullPath>
     </ProjectItem>
@@ -154,6 +158,10 @@
       <Name>Vocalocity Log.rdl</Name>
       <FullPath>Vocalocity Log.rdl</FullPath>
     </ProjectItem>
+    <ProjectItem>
+      <Name>Sell-Through (Not Invoiced).rdl</Name>
+      <FullPath>Sell-Through (Not Invoiced).rdl</FullPath>
+    </ProjectItem>
   </Reports>
   <Configurations>
     <Configuration>
@@ -163,7 +171,7 @@
         <OutputPath>bin\Debug</OutputPath>
         <TargetServerVersion>SSRS2008R2</TargetServerVersion>
         <TargetServerURL>http://lot.dyndns.org/ReportServer</TargetServerURL>
-        <TargetFolder>Finance/Reconciliation</TargetFolder>
+        <TargetFolder>Purchasing</TargetFolder>
         <TargetDataSourceFolder>Data Sources</TargetDataSourceFolder>
         <OverwriteDataSources>true</OverwriteDataSources>
         <TargetDatasetFolder>Datasets</TargetDatasetFolder>

@@ -40,7 +40,7 @@ CREATE TABLE [dbo].[tbl_LoadFile_SS13_ARC](
 	[vendor_color_code] [nvarchar](4000) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
 	[vendor_size_code] [nvarchar](4000) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
 	[season_id] [nvarchar](4000) COLLATE SQL_Latin1_General_CP1_CI_AS NULL CONSTRAINT [DF_tbl_LoadFile_SS13_ARC_season]  DEFAULT (N'SS13 ASAP'),
-	[short_description] [nvarchar](4000) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
+	[meta_description] [nvarchar](4000) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
 	[description] [nvarchar](4000) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
 	[features] [nvarchar](4000) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
 	[activities] [nvarchar](4000) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
@@ -155,7 +155,7 @@ FROM tbl_RawData_SS13_ARC_UPC AS a
 
 UPDATE a SET
 	categories = (SELECT TOP 1 REPLACE(categories,'"','') FROM LOT_Reporting.dbo.tbl_Categories WHERE vendor_product_id = a.vendor_product_id AND a.type = 'configurable'),
-	short_description = (SELECT TOP 1 [Short Design] FROM tbl_RawData_SS13_ARC_Marketing WHERE Model = a.vendor_product_id),
+	meta_description = (SELECT TOP 1 [Short Design] FROM tbl_RawData_SS13_ARC_Marketing WHERE Model = a.vendor_product_id),
 	description = (SELECT TOP 1 Design FROM tbl_RawData_SS13_ARC_Marketing WHERE Model = a.vendor_product_id),
 	features = (SELECT TOP 1 Features FROM tbl_RawData_SS13_ARC_Marketing WHERE Model = a.vendor_product_id),
 	fabric = (SELECT TOP 1 Materials FROM tbl_RawData_SS13_ARC_Marketing WHERE Model = a.vendor_product_id),

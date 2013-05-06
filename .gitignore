@@ -3,3 +3,4 @@
 *.rptproj.user
 .DS_store
 *.obj
+*.sln

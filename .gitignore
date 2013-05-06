@@ -1,3 +1,4 @@
 *.suo
 *.rptproj
 *.rptproj.user
+.DS_store

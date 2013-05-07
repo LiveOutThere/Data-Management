@@ -3996,8 +3996,16 @@
             <Value>=Parameters!end_date.Value</Value>
             <rd:UserDefined>true</rd:UserDefined>
           </QueryParameter>
+          <QueryParameter Name="@brand">
+            <Value>=Parameters!brand.Value</Value>
+            <rd:UserDefined>true</rd:UserDefined>
+          </QueryParameter>
+          <QueryParameter Name="@season">
+            <Value>=Parameters!season.Value</Value>
+            <rd:UserDefined>true</rd:UserDefined>
+          </QueryParameter>
         </QueryParameters>
-        <CommandText>EXEC report_Sell_Through_Not_Invoiced @start_date, @end_date</CommandText>
+        <CommandText>EXEC report_Sell_Through_Not_Invoiced @start_date, @end_date, @brand, @season</CommandText>
         <rd:UseGenericDesigner>true</rd:UseGenericDesigner>
       </Query>
       <Fields>
@@ -4095,6 +4103,40 @@
         </Field>
       </Fields>
     </DataSet>
+    <DataSet Name="DataSet2">
+      <Query>
+        <DataSourceName>LOT_Reporting</DataSourceName>
+        <CommandText>SELECT * FROM OPENQUERY(MAGENTO,'SELECT DISTINCT manufacturer_value FROM catalog_product_flat_1 WHERE manufacturer_value IS NOT NULL ORDER BY manufacturer_value')
+UNION ALL
+SELECT NULL</CommandText>
+      </Query>
+      <Fields>
+        <Field Name="manufacturer_value">
+          <DataField>manufacturer_value</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+      </Fields>
+    </DataSet>
+    <DataSet Name="DataSet3">
+      <Query>
+        <DataSourceName>LOT_Reporting</DataSourceName>
+        <CommandText>SELECT * FROM OPENQUERY(MAGENTO,
+'SELECT DISTINCT b.value 
+FROM catalog_product_flat_1 AS a
+INNER JOIN eav_attribute_option_value AS b 
+ON a.season_id = b.option_id 
+AND b.store_id = 0
+ORDER BY b.value')
+UNION ALL
+SELECT NULL</CommandText>
+      </Query>
+      <Fields>
+        <Field Name="value">
+          <DataField>value</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+      </Fields>
+    </DataSet>
   </DataSets>
   <ReportParameters>
     <ReportParameter Name="start_date">
@@ -4104,6 +4146,30 @@
     <ReportParameter Name="end_date">
       <DataType>DateTime</DataType>
       <Prompt>End Date</Prompt>
+    </ReportParameter>
+    <ReportParameter Name="brand">
+      <DataType>String</DataType>
+      <Nullable>true</Nullable>
+      <Prompt>Brand: </Prompt>
+      <ValidValues>
+        <DataSetReference>
+          <DataSetName>DataSet2</DataSetName>
+          <ValueField>manufacturer_value</ValueField>
+          <LabelField>manufacturer_value</LabelField>
+        </DataSetReference>
+      </ValidValues>
+    </ReportParameter>
+    <ReportParameter Name="season">
+      <DataType>String</DataType>
+      <Nullable>true</Nullable>
+      <Prompt>Season: </Prompt>
+      <ValidValues>
+        <DataSetReference>
+          <DataSetName>DataSet3</DataSetName>
+          <ValueField>value</ValueField>
+          <LabelField>value</LabelField>
+        </DataSetReference>
+      </ValidValues>
     </ReportParameter>
   </ReportParameters>
   <Language>en-US</Language>

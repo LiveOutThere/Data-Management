@@ -6,10 +6,16 @@
         <TablixBody>
           <TablixColumns>
             <TablixColumn>
-              <Width>1.64583in</Width>
+              <Width>2.30208in</Width>
             </TablixColumn>
             <TablixColumn>
-              <Width>2.92708in</Width>
+              <Width>1in</Width>
+            </TablixColumn>
+            <TablixColumn>
+              <Width>1in</Width>
+            </TablixColumn>
+            <TablixColumn>
+              <Width>1in</Width>
             </TablixColumn>
           </TablixColumns>
           <TablixRows>
@@ -25,7 +31,7 @@
                         <Paragraph>
                           <TextRuns>
                             <TextRun>
-                              <Value>Section</Value>
+                              <Value>Cycle Count Name</Value>
                               <Style>
                                 <FontWeight>Bold</FontWeight>
                               </Style>
@@ -36,9 +42,6 @@
                       </Paragraphs>
                       <rd:DefaultName>textbox2</rd:DefaultName>
                       <Style>
-                        <Border>
-                          <Style>None</Style>
-                        </Border>
                         <PaddingLeft>2pt</PaddingLeft>
                         <PaddingRight>2pt</PaddingRight>
                         <PaddingTop>2pt</PaddingTop>
@@ -56,7 +59,7 @@
                         <Paragraph>
                           <TextRuns>
                             <TextRun>
-                              <Value>Location</Value>
+                              <Value>Date</Value>
                               <Style>
                                 <FontWeight>Bold</FontWeight>
                               </Style>
@@ -75,6 +78,64 @@
                     </Textbox>
                   </CellContents>
                 </TablixCell>
+                <TablixCell>
+                  <CellContents>
+                    <Textbox Name="textbox4">
+                      <CanGrow>true</CanGrow>
+                      <KeepTogether>true</KeepTogether>
+                      <Paragraphs>
+                        <Paragraph>
+                          <TextRuns>
+                            <TextRun>
+                              <Value>Location</Value>
+                              <Style>
+                                <FontWeight>Bold</FontWeight>
+                              </Style>
+                            </TextRun>
+                          </TextRuns>
+                          <Style />
+                        </Paragraph>
+                      </Paragraphs>
+                      <rd:DefaultName>textbox4</rd:DefaultName>
+                      <Style>
+                        <PaddingLeft>2pt</PaddingLeft>
+                        <PaddingRight>2pt</PaddingRight>
+                        <PaddingTop>2pt</PaddingTop>
+                        <PaddingBottom>2pt</PaddingBottom>
+                      </Style>
+                    </Textbox>
+                  </CellContents>
+                </TablixCell>
+                <TablixCell>
+                  <CellContents>
+                    <Textbox Name="textbox5">
+                      <CanGrow>true</CanGrow>
+                      <KeepTogether>true</KeepTogether>
+                      <Paragraphs>
+                        <Paragraph>
+                          <TextRuns>
+                            <TextRun>
+                              <Value>QTY</Value>
+                              <Style>
+                                <FontWeight>Bold</FontWeight>
+                              </Style>
+                            </TextRun>
+                          </TextRuns>
+                          <Style>
+                            <TextAlign>Left</TextAlign>
+                          </Style>
+                        </Paragraph>
+                      </Paragraphs>
+                      <rd:DefaultName>textbox5</rd:DefaultName>
+                      <Style>
+                        <PaddingLeft>2pt</PaddingLeft>
+                        <PaddingRight>2pt</PaddingRight>
+                        <PaddingTop>2pt</PaddingTop>
+                        <PaddingBottom>2pt</PaddingBottom>
+                      </Style>
+                    </Textbox>
+                  </CellContents>
+                </TablixCell>
               </TablixCells>
             </TablixRow>
             <TablixRow>
@@ -82,21 +143,51 @@
               <TablixCells>
                 <TablixCell>
                   <CellContents>
-                    <Textbox Name="Section">
+                    <Textbox Name="ei_name">
                       <CanGrow>true</CanGrow>
                       <KeepTogether>true</KeepTogether>
                       <Paragraphs>
                         <Paragraph>
                           <TextRuns>
                             <TextRun>
-                              <Value>=Fields!Section.Value</Value>
+                              <Value>=Fields!ei_name.Value</Value>
                               <Style />
                             </TextRun>
                           </TextRuns>
                           <Style />
                         </Paragraph>
                       </Paragraphs>
-                      <rd:DefaultName>Section</rd:DefaultName>
+                      <rd:DefaultName>ei_name</rd:DefaultName>
+                      <Style>
+                        <PaddingLeft>2pt</PaddingLeft>
+                        <PaddingRight>2pt</PaddingRight>
+                        <PaddingTop>2pt</PaddingTop>
+                        <PaddingBottom>2pt</PaddingBottom>
+                      </Style>
+                    </Textbox>
+                  </CellContents>
+                </TablixCell>
+                <TablixCell>
+                  <CellContents>
+                    <Textbox Name="ei_date">
+                      <CanGrow>true</CanGrow>
+                      <KeepTogether>true</KeepTogether>
+                      <Paragraphs>
+                        <Paragraph>
+                          <TextRuns>
+                            <TextRun>
+                              <Value>=Fields!ei_date.Value</Value>
+                              <Style>
+                                <Format>MM/dd/yyyy</Format>
+                              </Style>
+                            </TextRun>
+                          </TextRuns>
+                          <Style>
+                            <TextAlign>Left</TextAlign>
+                          </Style>
+                        </Paragraph>
+                      </Paragraphs>
+                      <rd:DefaultName>ei_date</rd:DefaultName>
                       <Style>
                         <Border>
                           <Style>None</Style>
@@ -111,21 +202,51 @@
                 </TablixCell>
                 <TablixCell>
                   <CellContents>
-                    <Textbox Name="Location">
+                    <Textbox Name="eip_shelf_location">
                       <CanGrow>true</CanGrow>
                       <KeepTogether>true</KeepTogether>
                       <Paragraphs>
                         <Paragraph>
                           <TextRuns>
                             <TextRun>
-                              <Value>=Fields!Location.Value</Value>
+                              <Value>=Fields!eip_shelf_location.Value</Value>
                               <Style />
                             </TextRun>
                           </TextRuns>
-                          <Style />
+                          <Style>
+                            <TextAlign>Left</TextAlign>
+                          </Style>
                         </Paragraph>
                       </Paragraphs>
-                      <rd:DefaultName>Location</rd:DefaultName>
+                      <rd:DefaultName>eip_shelf_location</rd:DefaultName>
+                      <Style>
+                        <PaddingLeft>2pt</PaddingLeft>
+                        <PaddingRight>2pt</PaddingRight>
+                        <PaddingTop>2pt</PaddingTop>
+                        <PaddingBottom>2pt</PaddingBottom>
+                      </Style>
+                    </Textbox>
+                  </CellContents>
+                </TablixCell>
+                <TablixCell>
+                  <CellContents>
+                    <Textbox Name="eip_qty">
+                      <CanGrow>true</CanGrow>
+                      <KeepTogether>true</KeepTogether>
+                      <Paragraphs>
+                        <Paragraph>
+                          <TextRuns>
+                            <TextRun>
+                              <Value>=Fields!eip_qty.Value</Value>
+                              <Style />
+                            </TextRun>
+                          </TextRuns>
+                          <Style>
+                            <TextAlign>Left</TextAlign>
+                          </Style>
+                        </Paragraph>
+                      </Paragraphs>
+                      <rd:DefaultName>eip_qty</rd:DefaultName>
                       <Style>
                         <PaddingLeft>2pt</PaddingLeft>
                         <PaddingRight>2pt</PaddingRight>
@@ -143,6 +264,8 @@
           <TablixMembers>
             <TablixMember />
             <TablixMember />
+            <TablixMember />
+            <TablixMember />
           </TablixMembers>
         </TablixColumnHierarchy>
         <TablixRowHierarchy>
@@ -156,11 +279,6 @@
               <Group Name="table1_Details_Group">
                 <DataElementName>Detail</DataElementName>
               </Group>
-              <SortExpressions>
-                <SortExpression>
-                  <Value>=Fields!Section.Value</Value>
-                </SortExpression>
-              </SortExpressions>
               <TablixMembers>
                 <TablixMember />
               </TablixMembers>
@@ -170,10 +288,10 @@
             </TablixMember>
           </TablixMembers>
         </TablixRowHierarchy>
-        <DataSetName>EmptyLocations</DataSetName>
+        <DataSetName>DataSet1</DataSetName>
         <Top>0.21in</Top>
         <Height>0.42in</Height>
-        <Width>4.57292in</Width>
+        <Width>5.30208in</Width>
         <Style />
       </Tablix>
       <Textbox Name="textbox1">
@@ -183,10 +301,9 @@
           <Paragraph>
             <TextRuns>
               <TextRun>
-                <Value>Empty Locations</Value>
+                <Value>Location Log</Value>
                 <Style>
-                  <FontSize>12pt</FontSize>
-                  <FontWeight>Bold</FontWeight>
+                  <FontSize>16pt</FontSize>
                 </Style>
               </TextRun>
             </TextRuns>
@@ -205,10 +322,10 @@
         </Style>
       </Textbox>
     </ReportItems>
-    <Height>0.88in</Height>
+    <Height>0.63in</Height>
     <Style />
   </Body>
-  <Width>5in</Width>
+  <Width>5.30208in</Width>
   <Page>
     <LeftMargin>1in</LeftMargin>
     <RightMargin>1in</RightMargin>
@@ -221,88 +338,49 @@
     <DataSource Name="LOT_Reporting">
       <DataSourceReference>LOT_Reporting</DataSourceReference>
       <rd:SecurityType>None</rd:SecurityType>
-      <rd:DataSourceID>d8b7050b-e105-43f7-91c0-06da081404d4</rd:DataSourceID>
+      <rd:DataSourceID>82a613fe-b03c-4e93-b552-d0142ef4a946</rd:DataSourceID>
     </DataSource>
   </DataSources>
   <DataSets>
-    <DataSet Name="EmptyLocations">
+    <DataSet Name="DataSet1">
       <Query>
         <DataSourceName>LOT_Reporting</DataSourceName>
         <QueryParameters>
-          <QueryParameter Name="@Section">
-            <Value>=Parameters!Section.Value</Value>
-          </QueryParameter>
-          <QueryParameter Name="@Location">
-            <Value>=Parameters!Location.Value</Value>
+          <QueryParameter Name="@sku">
+            <Value>=Parameters!sku.Value</Value>
           </QueryParameter>
         </QueryParameters>
-        <CommandText>SELECT * FROM report_Ops_Empty_Locations WHERE Section LIKE @Section AND Location LIKE ISNULL(@Location,'') + '%'  ORDER BY Location</CommandText>
+        <CommandText>EXEC report_Ops_Cycle_Count_Log @sku</CommandText>
         <rd:UseGenericDesigner>true</rd:UseGenericDesigner>
       </Query>
       <Fields>
-        <Field Name="item_id">
-          <DataField>item_id</DataField>
-          <rd:TypeName>System.Decimal</rd:TypeName>
-        </Field>
-        <Field Name="qty">
-          <DataField>qty</DataField>
-          <rd:TypeName>System.Decimal</rd:TypeName>
-        </Field>
-        <Field Name="shelf_location">
-          <DataField>shelf_location</DataField>
+        <Field Name="ei_name">
+          <DataField>ei_name</DataField>
           <rd:TypeName>System.String</rd:TypeName>
         </Field>
-        <Field Name="Location">
-          <DataField>Location</DataField>
+        <Field Name="ei_date">
+          <DataField>ei_date</DataField>
+          <rd:TypeName>System.DateTime</rd:TypeName>
+        </Field>
+        <Field Name="eip_shelf_location">
+          <DataField>eip_shelf_location</DataField>
           <rd:TypeName>System.String</rd:TypeName>
         </Field>
-        <Field Name="Section">
-          <DataField>Section</DataField>
-          <rd:TypeName>System.String</rd:TypeName>
-        </Field>
-      </Fields>
-    </DataSet>
-    <DataSet Name="Sections">
-      <Query>
-        <DataSourceName>LOT_Reporting</DataSourceName>
-        <CommandText>SELECT DISTINCT Section AS label, Section AS value
-FROM         tbl_Warehouse_Locations
-UNION ALL
-SELECT 'All' AS label, '%' AS value</CommandText>
-      </Query>
-      <Fields>
-        <Field Name="label">
-          <DataField>label</DataField>
-          <rd:TypeName>System.String</rd:TypeName>
-        </Field>
-        <Field Name="value">
-          <DataField>value</DataField>
-          <rd:TypeName>System.String</rd:TypeName>
+        <Field Name="eip_qty">
+          <DataField>eip_qty</DataField>
+          <rd:TypeName>System.Int32</rd:TypeName>
         </Field>
       </Fields>
     </DataSet>
   </DataSets>
   <ReportParameters>
-    <ReportParameter Name="Section">
+    <ReportParameter Name="sku">
       <DataType>String</DataType>
-      <Prompt>Section</Prompt>
-      <ValidValues>
-        <DataSetReference>
-          <DataSetName>Sections</DataSetName>
-          <ValueField>value</ValueField>
-          <LabelField>label</LabelField>
-        </DataSetReference>
-      </ValidValues>
-    </ReportParameter>
-    <ReportParameter Name="Location">
-      <DataType>String</DataType>
-      <Nullable>true</Nullable>
-      <AllowBlank>true</AllowBlank>
-      <Prompt>Location</Prompt>
+      <Prompt>SKU:</Prompt>
     </ReportParameter>
   </ReportParameters>
   <Language>en-US</Language>
   <ConsumeContainerWhitespace>true</ConsumeContainerWhitespace>
   <rd:ReportUnitType>Inch</rd:ReportUnitType>
-  <rd:ReportID>562d8461-858a-4944-9438-2100d68895b6</rd:ReportID>
+  <rd:ReportID>b0a71a5d-b00e-439b-b137-37b248ead3a9</rd:ReportID>
 </Report>

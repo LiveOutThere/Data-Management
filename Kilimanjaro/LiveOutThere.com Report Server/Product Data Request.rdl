@@ -27,7 +27,7 @@
           </QueryParameter>
         </QueryParameters>
         <CommandText>SELECT    a.sku, name, vendor_product_id,  season_id, 
-                      short_description, description, features,  fabric,  manufacturer,  url_key, 
+                      description, features,  fabric,  manufacturer,  url_key, 
                       meta_title, videos, department, categories, b.checked_out, b.updated, b.author FROM         view_Join_S13_Loadfiles AS a LEFT JOIN tbl_SEO_Status AS b on a.sku = b.sku  WHERE type = 'configurable' AND categories LIKE '%' + ISNULL(@Categories,'') + '%' AND department LIKE ISNULL(@Department,'') + '%' AND manufacturer LIKE ISNULL(@Manufacturer,'') + '%' AND CASE WHEN @Status = 'Checked Out' THEN '2020-01-03' WHEN @Status = 'Any' THEN '2020-01-02' WHEN @Status = 'Updated' THEN '2020-01-03' END &gt;= CASE WHEN @Status = 'Checked Out' THEN ISNULL(b.checked_out,'2020-01-04') WHEN @Status = 'Any' THEN '2020-01-01' WHEN @Status = 'Updated' THEN ISNULL(b.updated,'2020-01-04') END</CommandText>
       </Query>
       <Fields>
@@ -45,10 +45,6 @@
         </Field>
         <Field Name="season_id">
           <DataField>season_id</DataField>
-          <rd:TypeName>System.String</rd:TypeName>
-        </Field>
-        <Field Name="short_description">
-          <DataField>short_description</DataField>
           <rd:TypeName>System.String</rd:TypeName>
         </Field>
         <Field Name="description">
@@ -171,9 +167,6 @@
                 </TablixColumn>
                 <TablixColumn>
                   <Width>2.54167in</Width>
-                </TablixColumn>
-                <TablixColumn>
-                  <Width>2.97917in</Width>
                 </TablixColumn>
                 <TablixColumn>
                   <Width>3.16667in</Width>
@@ -463,34 +456,6 @@
                             </Paragraph>
                           </Paragraphs>
                           <rd:DefaultName>Textbox16</rd:DefaultName>
-                          <Style>
-                            <PaddingLeft>2pt</PaddingLeft>
-                            <PaddingRight>2pt</PaddingRight>
-                            <PaddingTop>2pt</PaddingTop>
-                            <PaddingBottom>2pt</PaddingBottom>
-                          </Style>
-                        </Textbox>
-                      </CellContents>
-                    </TablixCell>
-                    <TablixCell>
-                      <CellContents>
-                        <Textbox Name="textbox9">
-                          <CanGrow>true</CanGrow>
-                          <KeepTogether>true</KeepTogether>
-                          <Paragraphs>
-                            <Paragraph>
-                              <TextRuns>
-                                <TextRun>
-                                  <Value>Meta Description</Value>
-                                  <Style>
-                                    <FontWeight>Bold</FontWeight>
-                                  </Style>
-                                </TextRun>
-                              </TextRuns>
-                              <Style />
-                            </Paragraph>
-                          </Paragraphs>
-                          <rd:DefaultName>textbox9</rd:DefaultName>
                           <Style>
                             <PaddingLeft>2pt</PaddingLeft>
                             <PaddingRight>2pt</PaddingRight>
@@ -903,33 +868,6 @@
                     </TablixCell>
                     <TablixCell>
                       <CellContents>
-                        <Textbox Name="short_description">
-                          <KeepTogether>true</KeepTogether>
-                          <Paragraphs>
-                            <Paragraph>
-                              <TextRuns>
-                                <TextRun>
-                                  <Value>=Fields!short_description.Value</Value>
-                                  <Style />
-                                </TextRun>
-                              </TextRuns>
-                              <Style>
-                                <TextAlign>Left</TextAlign>
-                              </Style>
-                            </Paragraph>
-                          </Paragraphs>
-                          <rd:DefaultName>short_description</rd:DefaultName>
-                          <Style>
-                            <PaddingLeft>2pt</PaddingLeft>
-                            <PaddingRight>2pt</PaddingRight>
-                            <PaddingTop>2pt</PaddingTop>
-                            <PaddingBottom>2pt</PaddingBottom>
-                          </Style>
-                        </Textbox>
-                      </CellContents>
-                    </TablixCell>
-                    <TablixCell>
-                      <CellContents>
                         <Textbox Name="description">
                           <KeepTogether>true</KeepTogether>
                           <Paragraphs>
@@ -1056,7 +994,6 @@
                 <TablixMember />
                 <TablixMember />
                 <TablixMember />
-                <TablixMember />
               </TablixMembers>
             </TablixColumnHierarchy>
             <TablixRowHierarchy>
@@ -1082,7 +1019,7 @@
             <DataSetName>S13_Products</DataSetName>
             <Top>0.27944in</Top>
             <Height>0.42in</Height>
-            <Width>31.85418in</Width>
+            <Width>28.87502in</Width>
             <Style />
           </Tablix>
           <Textbox Name="textbox1">
@@ -1117,7 +1054,7 @@
         <Height>0.69944in</Height>
         <Style />
       </Body>
-      <Width>31.85418in</Width>
+      <Width>31.85419in</Width>
       <Page>
         <LeftMargin>1in</LeftMargin>
         <RightMargin>1in</RightMargin>

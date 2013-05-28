@@ -282,7 +282,7 @@
             <Value>=Parameters!Search.Value</Value>
           </QueryParameter>
         </QueryParameters>
-        <CommandText>SELECT * FROM view_Supplier_Inventory_Levels
+        <CommandText>SELECT * FROM report_Supplier_Inventory_Levels
 WHERE SKU LIKE '%' + @Search + '%'</CommandText>
         <rd:UseGenericDesigner>true</rd:UseGenericDesigner>
       </Query>
@@ -325,7 +325,7 @@ WHERE SKU LIKE '%' + @Search + '%'</CommandText>
       <Query>
         <DataSourceName>LOT_Reporting</DataSourceName>
         <CommandText>SELECT     SKU AS value, SKU AS label
-FROM         view_Supplier_Inventory_Levels</CommandText>
+FROM         report_Supplier_Inventory_Levels</CommandText>
       </Query>
       <Fields>
         <Field Name="value">

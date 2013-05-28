@@ -12,7 +12,7 @@
     <DataSet Name="DataSet1">
       <Query>
         <DataSourceName>LOT_Reporting</DataSourceName>
-        <CommandText>SELECT * FROM view_Order_Aging ORDER BY age DESC</CommandText>
+        <CommandText>SELECT * FROM report_Order_Aging ORDER BY age DESC</CommandText>
         <rd:UseGenericDesigner>true</rd:UseGenericDesigner>
       </Query>
       <Fields>

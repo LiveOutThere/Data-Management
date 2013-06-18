@@ -1,0 +1,304 @@
+--                         ''~``
+--                        ( o o )
+--+------------------.oooO--(_)--Oooo.------------------+
+--|                                                     |
+--|            File Name: Deuter FW13 Data Load         |
+--|            Author: Emily Luu                        |
+--|            Creation Date: June 6 2013               |
+--|			   Last Modified: June 12 2013              |
+--|                    .oooO                            |
+--|                    (   )   Oooo.                    |
+--+---------------------\ (----(   )--------------------+
+--                       \_)    ) /
+--                             (_/
+                                        
+USE LOT_Inventory
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+SET ANSI_PADDING ON
+GO
+SET CONCAT_NULL_YIELDS_NULL OFF
+GO
+
+/** If the table exists, then drop the table **/
+IF EXISTS (SELECT * FROM sysobjects WHERE id = object_id(N'[dbo].[tbl_LoadFile_FW13_DEU]')
+AND OBJECTPROPERTY(id, N'IsUserTable') = 1)
+DROP TABLE [dbo].[tbl_LoadFile_FW13_DEU]
+
+/** Create the LOADFILE TABLE for each brand **/
+CREATE TABLE [dbo].[tbl_LoadFile_FW13_DEU](
+	[id] [int] IDENTITY(1,1) NOT NULL,
+	[store] [nvarchar](4000) COLLATE SQL_Latin1_General_CP1_CI_AS NULL CONSTRAINT [DF_tbl_LoadFile_FW13_DEU_store]  DEFAULT ('admin'),
+	[websites] [nvarchar](4000) COLLATE SQL_Latin1_General_CP1_CI_AS NULL CONSTRAINT [DF_tbl_LoadFile_FW13_DEU_websites]  DEFAULT ('base'),
+	[type] [nvarchar](50) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
+	[sku] [nvarchar](50) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
+	[name] [nvarchar](4000) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
+	[categories] [nvarchar](4000) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
+	[attribute_set] [nvarchar](4000) COLLATE SQL_Latin1_General_CP1_CI_AS NULL CONSTRAINT [DF_tbl_LoadFile_FW13_DEU_attribute_set]  DEFAULT ('default'),
+	[configurable_attributes] [nvarchar](4000) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
+	[has_options] [nvarchar](4000) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
+	[price] [nvarchar](4000) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
+	[cost] [nvarchar](4000) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
+	[status] [nvarchar](4000) COLLATE SQL_Latin1_General_CP1_CI_AS NULL CONSTRAINT [DF_tbl_LoadFile_FW13_DEU_status]  DEFAULT ('Enabled'),
+	[tax_class_id] [nvarchar](4000) COLLATE SQL_Latin1_General_CP1_CI_AS NULL CONSTRAINT [DF_tbl_LoadFile_FW13_DEU_tax_class]  DEFAULT ('Taxable Goods'),
+	[department] [nvarchar](4000) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
+	[visibility] [nvarchar](4000) COLLATE SQL_Latin1_General_CP1_CI_AS NULL CONSTRAINT [DF_tbl_LoadFile_FW13_DEU_visibility]  DEFAULT ('Not Visible Individually'),
+	[image] [nvarchar](4000) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
+	[image_label] [nvarchar](4000) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
+	[small_image] [nvarchar](4000) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
+	[thumbnail] [nvarchar](4000) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
+	[choose_color] [nvarchar](4000) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
+	[choose_size] [nvarchar](4000) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
+	[vendor_sku] [nvarchar](4000) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
+	[vendor_product_id] [nvarchar](50) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
+	[vendor_color_code] [nvarchar](4000) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
+	[vendor_size_code] [nvarchar](4000) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
+	[season_id] [nvarchar](4000) COLLATE SQL_Latin1_General_CP1_CI_AS NULL CONSTRAINT [DF_tbl_LoadFile_FW13_DEU_season]  DEFAULT (N'FW13 ASAP'),
+	[short_description] [nvarchar](4000) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
+	[description] [nvarchar](4000) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
+	[features] [nvarchar](4000) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
+	[activities] [nvarchar](4000) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
+	[weather] [nvarchar](4000) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
+	[layering] [nvarchar](4000) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
+	[care_instructions] [nvarchar](4000) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
+	[fabric] [nvarchar](4000) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
+	[fit] [nvarchar](4000) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
+	[volume] [nvarchar](4000) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
+	[manufacturer] [nvarchar](4000) COLLATE SQL_Latin1_General_CP1_CI_AS NULL CONSTRAINT [DF_tbl_LoadFile_FW13_DEU_manufacturer]  DEFAULT ('Deuter'),
+	[qty] [nvarchar](4000) COLLATE SQL_Latin1_General_CP1_CI_AS NULL CONSTRAINT [DF_tbl_LoadFile_FW13_DEU_qty]  DEFAULT ((0)),
+	[is_in_stock] [nvarchar](4000) COLLATE SQL_Latin1_General_CP1_CI_AS NULL CONSTRAINT [DF_tbl_LoadFile_FW13_DEU_is_in_stock]  DEFAULT ((0)),
+	[simples_skus] [nvarchar](4000) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
+	[url_key] [nvarchar](4000) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
+	[meta_title] [nvarchar](4000) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
+	[videos] [nvarchar](4000) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
+	[weight] [nvarchar](4000) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
+	[merchandise_priority] [nvarchar](4000) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
+	[never_backorder] [nvarchar](4000) COLLATE SQL_Latin1_General_CP1_CI_AS NULL CONSTRAINT [DF_tbl_LoadFile_FW13_DEU_never_backorder]  DEFAULT ((0)),
+	[backorders] [nvarchar](4000) COLLATE SQL_Latin1_General_CP1_CI_AS NULL CONSTRAINT [DF_tbl_LoadFile_FW13_DEU_backorders]  DEFAULT ((0)),
+	[manage_stock] [nvarchar](4000) COLLATE SQL_Latin1_General_CP1_CI_AS NULL CONSTRAINT [DF_tbl_LoadFile_FW13_DEU_manage_stock]  DEFAULT ((1)),
+	[use_config_backorders] [nvarchar](4000) COLLATE SQL_Latin1_General_CP1_CI_AS NULL CONSTRAINT [DF_tbl_LoadFile_FW13_DEU_use_config_backorders]  DEFAULT ((0)),
+	[use_config_manage_stock] [nvarchar](4000) COLLATE SQL_Latin1_General_CP1_CI_AS NULL CONSTRAINT [DF_tbl_LoadFile_FW13_DEU_use_config_manage_stock]  DEFAULT ((1))
+ CONSTRAINT [PK_tbl_LoadFile_FW13_DEU] PRIMARY KEY CLUSTERED 
+(
+	[id] ASC
+/** Create the Keys **/
+)WITH (IGNORE_DUP_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY]
+/** Create the Index **/
+CREATE NONCLUSTERED INDEX [IX_tbl_LoadFile_FW13_DEU] ON [dbo].[tbl_LoadFile_FW13_DEU] 
+(
+	[sku] ASC,
+	[type] ASC,
+	[vendor_product_id] ASC
+)WITH (PAD_INDEX  = OFF, STATISTICS_NORECOMPUTE  = OFF, SORT_IN_TEMPDB = OFF, IGNORE_DUP_KEY = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS  = ON, ALLOW_PAGE_LOCKS  = ON) ON [PRIMARY]
+
+/** Loading data, truncating table and starting from fresh**/
+GO
+TRUNCATE TABLE tbl_LoadFile_FW13_DEU
+
+/**Load Syntax**/
+GO
+INSERT INTO tbl_LoadFile_FW13_DEU (
+		[type]		
+		,sku
+		,[name]
+		,has_options
+		,price
+		,cost
+		,department
+		,[image]
+		,image_label
+		,choose_color
+		,choose_size
+		,vendor_sku
+		,vendor_product_id
+		,vendor_color_code
+		,vendor_size_code
+		,url_key
+		,weight)
+/** The values we want to load the table with using select statements including the functions for data formatting **/	
+
+SELECT DISTINCT
+	'simple' AS type
+	,REPLACE(('FW13A-DEU-' +  CAST(a.Style as nvarchar) + '-' +  CAST(a.Color_Code as nvarchar) + '-' +  dbo.getDEUSize(a.Size_Code)),'--','-') AS sku
+	,dbo.getDEUProductName(a.Name) AS name
+	,0 AS has_options
+	,CAST(b.MSRP as float) +.99 AS price
+	,b.Wholesale AS cost
+	,dbo.getDEUdepartment(a.gender) as department
+	,null as image
+	,dbo.getDEUColor(dbo.ProperCase(a.Color_and_Size)) AS image_label
+	,dbo.getDEUColor(dbo.ProperCase(a.Color_and_Size)) AS choose_color
+	,dbo.getDEUSize(a.Size_Code) AS choose_size
+	,CAST(a.UPC  AS bigint) AS vendor_sku
+	,b.style_number AS vendor_product_id
+	,a.Color_Code AS vendor_color_code
+	,dbo.getDEUSize(a.Size_Code) AS vendor_size_code
+	,REPLACE(dbo.getDEUUrlKey('deuter-' + dbo.getDEUProductName(a.Name) + '-' + dbo.getDEUColor(CAST(a.Color_Code as nvarchar)) + '-' + REPLACE(a.Size_Code,'os','o-s') + '-fw13a'),'--','-') AS url_key
+	,REPLACE(a.weight,'g','') as weight
+FROM tbl_RawData_FW13_DEU_UPC_Marketing a
+JOIN tbl_RawData_FW13_DEU_Price_List b
+ON a.Style = b.style_number	
+
+GO	
+/** Need to Load the Configurables **/
+INSERT INTO tbl_LoadFile_FW13_DEU (
+	type
+	,sku
+	,name
+	,categories
+	,configurable_attributes
+	,has_options
+	,price
+	,cost
+	,department
+	,visibility
+	,vendor_product_id
+	,url_key
+	,meta_title
+	,merchandise_priority
+	,manage_stock
+	,use_config_manage_stock
+)
+/** Loading the Configurables in to the table with functions for formatting**/
+SELECT DISTINCT
+	'configurable' AS type
+	,'FW13A-DEU-' + CAST(a.style as nvarchar) AS sku
+	,dbo.getDEUProductName(a.name) AS name
+	,'Uncategorized' AS categories
+	,'choose_color,choose_size' AS configurable_attributes
+	,'1' AS has_options
+	,CAST(b.MSRP as float) +.99 AS price
+	,b.Wholesale AS cost
+	,dbo.getDEUdepartment(a.Gender) AS department
+	,'Catalog, Search' AS visibility
+	,a.style AS vendor_product_id
+	,REPLACE(LOWER('deuter-' 
+		+ dbo.getDEUUrlKey(dbo.getDEUProductName(a.name) 
+		+ '-FW13a')),'--','-') AS url_key
+	,'Deuter ' + dbo.getDEUProductName(a.name) + ' - Unisex' AS meta_title
+	,'F' AS merchandise_priority
+	,0 AS manage_stock
+	,0 AS use_config_manage_stock
+FROM tbl_RawData_FW13_DEU_UPC_Marketing as a	
+JOIN tbl_RawData_FW13_DEU_Price_List as b
+ON a.style = b.style_number	
+	
+/** After Loading, update the DATA **/
+GO
+UPDATE tbl_LoadFile_FW13_DEU SET
+	categories = CASE WHEN (SELECT TOP 1 categories FROM [LOT_Inventory].dbo.tbl_Magento_Categories WHERE vendor_product_id = a.vendor_product_id) 
+				IS NULL THEN 'Uncategorized' 
+				END,
+	description = (SELECT TOP 1 short_description FROM dbo.tbl_RawData_FW13_DEU_UPC_Marketing WHERE style = a.vendor_product_id),
+	features = (SELECT TOP 1 long_description FROM tbl_RawData_FW13_DEU_UPC_Marketing WHERE style = a.vendor_product_id),
+	fabric = (SELECT TOP 1 Materials FROM tbl_RawData_FW13_DEU_UPC_Marketing WHERE style = a.vendor_product_id),
+	simples_skus = (SELECT TOP 1 dbo.getDEUAssociatedProducts(style) FROM tbl_RawData_FW13_DEU_UPC_Marketing WHERE style = a.vendor_product_id),
+	volume = (SELECT TOP 1 dbo.getPATVolume(Capacity) FROM tbl_RawData_FW13_DEU_UPC_Marketing WHERE style = a.vendor_product_id)
+FROM tbl_LoadFile_FW13_DEU AS a
+WHERE type = 'configurable'
+
+/** Insert the image file names **/
+GO
+UPDATE tbl_LoadFile_FW13_DEU 
+SET image = (SELECT  top 1 REPLACE(image_file,'.tif','.jpg') 
+		FROM tbl_RawData_FW13_DEU_UPC_Marketing
+		WHERE UPC = a.vendor_sku)
+FROM tbl_LoadFile_FW13_DEU AS a
+
+/** Inserting images from the SS13 image file table from LOT_Inventory that are null **/
+/** This one updated 3 more rows **/
+GO
+UPDATE tbl_LoadFile_FW13_DEU 
+SET image = (SELECT  top 1 Filename
+		FROM [LOT_Inventory].dbo.tbl_RawData_SS13_Image_Filenames 
+		WHERE dbo.getDEUPhoto(Filename) = (dbo.getDEUPhoto(a.name) + '_' + a.vendor_color_code)
+		AND Brand = 'DEU')
+FROM tbl_LoadFile_FW13_DEU AS a
+WHERE image is null
+and type = 'simple'
+
+/* More updates to the tables and checking the DATA */
+GO	
+UPDATE tbl_LoadFile_FW13_DEU SET categories = CASE WHEN categories <> 'Uncategorized' THEN categories + ';;' + manufacturer + '/' + REPLACE(categories,';;',';;' + manufacturer + '/') ELSE 'Uncategorized' END
+UPDATE tbl_LoadFile_FW13_DEU SET categories = NULL WHERE type = 'simple'
+UPDATE tbl_LoadFile_FW13_DEU SET status = 'Disabled' WHERE image IS NULL AND type = 'simple'
+UPDATE tbl_LoadFile_FW13_DEU SET thumbnail = image, small_image = image WHERE type = 'simple'
+GO
+
+
+/* Creating the table view for reference */
+
+CREATE VIEW [dbo].[view_LoadFile_FW13_DEU]
+AS
+SELECT  '"store"' AS store, 
+		'"websites"' AS websites, 
+		'"type"' AS type, 
+		'"sku"' AS sku, 
+		'"name"' AS name, 
+		'"categories"' AS categories, 
+		'"attribute_set"' AS attribute_set, 
+        '"configurable_attributes"' AS configurable_attributes, 
+        '"has_options"' AS has_options, 
+        '"price"' AS price, 
+        '"cost"' AS cost, 
+        '"status"' AS status, 
+        '"tax_class_id"' AS tax_class_id, 
+        '"department"' AS department, 
+        '"visibility"' AS visibility, 
+        '"image"' AS image, 
+        '"image_label"' AS image_label, 
+        '"small_image"' AS small_image, 
+        '"thumbnail"' AS thumbnail,
+        '"choose_color"' AS choose_color, 
+        '"choose_size"' AS choose_size, 
+        '"vendor_sku"' AS vendor_sku, 
+        '"vendor_product_id"' AS vendor_product_id, 
+        '"vendor_color_code"' AS vendor_color_code, 
+        '"vendor_size_code"' AS vendor_size_code, 
+        '"season_id"' AS season_id, 
+        '"short_description"' AS short_description, 
+        '"description"' AS description, 
+        '"features"' AS features, 
+        '"activities"' AS activities, 
+        '"weather"' AS weather, 
+        '"layering"' AS layering, 
+        '"care_instructions"' AS care_instructions,
+        '"fabric"' AS fabric, 
+        '"fit"' AS fit, 
+        '"volume"' AS volume, 
+        '"manufacturer"' AS manufacturer, 
+        '"qty"' AS qty, 
+        '"is_in_stock"' AS is_in_stock, 
+        '"simples_skus"' AS simples_skus, 
+        '"url_key"' AS url_key,
+        '"videos"' AS videos, 
+        '"weight"' AS weight, 
+        '"merchandise_priority"' AS merchandise_priority, 
+        '"backorders"' AS backorders, 
+        '"manage_stock"' AS manage_stock, 
+        '"never_backorder"' AS never_backorder, 
+        '"use_config_manage_stock"' AS use_config_manage_stock, 
+        '"use_config_backorders"' AS use_config_backorders, 
+        '"meta_title"' AS meta_title
+UNION ALL
+SELECT  '"' + RTRIM(LTRIM(REPLACE(a.store,'"','""'))) + '"','"' + RTRIM(LTRIM(REPLACE(a.websites,'"','""'))) + '"','"' + RTRIM(LTRIM(REPLACE(a.type,'"','""'))) + '"','"' + RTRIM(LTRIM(REPLACE(a.sku,'"','""'))) + '"','"' + RTRIM(LTRIM(REPLACE(a.name,'"','""'))) + '"','"' + RTRIM(LTRIM(REPLACE(a.categories,'"','""'))) + '"','"' + RTRIM(LTRIM(REPLACE(a.attribute_set,'"','""'))) + '"','"' + RTRIM(LTRIM(REPLACE(a.configurable_attributes,'"','""'))) + '"',
+		'"' + RTRIM(LTRIM(REPLACE(a.has_options,'"','""'))) + '"','"' + RTRIM(LTRIM(REPLACE(a.price,'"','""'))) + '"','"' + RTRIM(LTRIM(REPLACE(a.cost,'"','""'))) + '"','"' + RTRIM(LTRIM(REPLACE(a.status,'"','""'))) + '"','"' + RTRIM(LTRIM(REPLACE(a.tax_class_id,'"','""'))) + '"','"' + RTRIM(LTRIM(REPLACE(a.department,'"','""'))) + '"','"' + RTRIM(LTRIM(REPLACE(a.visibility,'"','""'))) + '"','"' + RTRIM(LTRIM(REPLACE(a.image,'"','""'))) + '"','"' + RTRIM(LTRIM(REPLACE(a.image_label,'"','""'))) + '"',
+		'"' + RTRIM(LTRIM(REPLACE(a.small_image,'"','""'))) + '"','"' + RTRIM(LTRIM(REPLACE(a.thumbnail,'"','""'))) + '"','"' + RTRIM(LTRIM(REPLACE(a.choose_color,'"','""'))) + '"','"' + RTRIM(LTRIM(REPLACE(a.choose_size,'"','""'))) + '"','"' + RTRIM(LTRIM(REPLACE(a.vendor_sku,'"','""'))) + '"','"' + RTRIM(LTRIM(REPLACE(a.vendor_product_id,'"','""'))) + '"',
+		'"' + RTRIM(LTRIM(REPLACE(a.vendor_color_code,'"','""'))) + '"','"' + RTRIM(LTRIM(REPLACE(a.vendor_size_code,'"','""'))) + '"','"' + RTRIM(LTRIM(REPLACE(a.season_id,'"','""'))) + '"','"' + RTRIM(LTRIM(REPLACE(a. short_description,'"','""'))) + '"','"' + RTRIM(LTRIM(REPLACE(a.description,'"','""'))) + '"','"' + RTRIM(LTRIM(REPLACE(a.features,'"','""'))) + '"','"' + RTRIM(LTRIM(REPLACE(a.activities,'"','""'))) + '"','"' + RTRIM(LTRIM(REPLACE(a.weather,'"','""'))) + '"','"' + RTRIM(LTRIM(REPLACE(a.layering,'"','""'))) + '"','"' + RTRIM(LTRIM(REPLACE(a.care_instructions,'"','""'))) + '"',
+		'"' + RTRIM(LTRIM(REPLACE(a.fabric,'"','""'))) + '"','"' + RTRIM(LTRIM(REPLACE(a.fit,'"','""'))) + '"','"' + RTRIM(LTRIM(REPLACE(a.volume,'"','""'))) + '"','"' + RTRIM(LTRIM(REPLACE(a.manufacturer,'"','""'))) + '"','"' + RTRIM(LTRIM(REPLACE(a.qty,'"','""'))) + '"','"' + RTRIM(LTRIM(REPLACE(a.is_in_stock,'"','""'))) + '"','"' + RTRIM(LTRIM(REPLACE(a.simples_skus,'"','""'))) + '"','"' + RTRIM(LTRIM(REPLACE(a.url_key,'"','""'))) + '"',
+		'"' + RTRIM(LTRIM(REPLACE(a.videos,'"','""'))) + '"','"' + RTRIM(LTRIM(REPLACE(a.weight,'"','""'))) + '"','"' + RTRIM(LTRIM(REPLACE(a.merchandise_priority,'"','""'))) + '"','"' + RTRIM(LTRIM(REPLACE(a.backorders,'"','""'))) + '"','"' + RTRIM(LTRIM(REPLACE(a.manage_stock,'"','""'))) + '"','"' + RTRIM(LTRIM(REPLACE(a.never_backorder,'"','""'))) + '"','"' + RTRIM(LTRIM(REPLACE(a.use_config_manage_stock,'"','""'))) + '"','"' + RTRIM(LTRIM(REPLACE(a.use_config_backorders,'"','""'))) + '"','"' + RTRIM(LTRIM(REPLACE(a.meta_title,'"','""'))) + '"'
+FROM dbo.tbl_LoadFile_FW13_DEU AS a
+GO
+
+DECLARE @sql varchar(1024)
+SELECT @sql = 'bcp "SELECT * FROM LOT_Inventory.dbo.view_LoadFile_FW13_DEU" queryout "C:\Data\Shared\FW13DEU.csv" -w -t , -T -S ' + @@servername
+EXEC master..xp_cmdshell @sql
+
+DROP VIEW view_LoadFile_FW13_DEU	
+	
+	
+

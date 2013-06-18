@@ -3,11 +3,9 @@
   <DataSet Name="">
     <Query>
       <DataSourceReference>LOT_Inventory</DataSourceReference>
-      <CommandText>SELECT DISTINCT REPLACE(LEFT(REPLACE(categories, '"', ''), CHARINDEX(';;', categories)), ';;', '') AS categories
-FROM         LOT_Reporting.dbo.tbl_Categories
-WHERE     (categories NOT LIKE '%Sale%') AND (LTRIM(REPLACE(LEFT(REPLACE(categories, '"', ''), CHARINDEX(';;', categories)), ';;', '')) &lt;&gt; '')
-UNION ALL
-SELECT     NULL AS Expr1
+      <CommandText>SELECT DISTINCT CASE WHEN categories LIKE '%;;%' THEN REPLACE(LEFT(categories, CHARINDEX(';;', categories) -1), ';;', '') ELSE categories END AS categories
+FROM LOT_Inventory.dbo.tbl_Magento_Categories
+WHERE (categories NOT LIKE '%Sale%') AND categories &lt;&gt; ''
 ORDER BY categories</CommandText>
     </Query>
     <Fields>

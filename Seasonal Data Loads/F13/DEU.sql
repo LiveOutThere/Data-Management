@@ -123,27 +123,42 @@ INSERT INTO tbl_LoadFile_FW13_DEU (
 
 SELECT DISTINCT
 	'simple' AS type
-	,REPLACE(('FW13A-DEU-' +  CAST(a.Style as nvarchar) + '-' +  CAST(a.Color_Code as nvarchar) + '-' +  dbo.getDEUSize(a.Size_Code)),'--','-') AS sku
-	,dbo.getDEUProductName(a.Name) AS name
+	,REPLACE(('FW13A-DEU-' +  CAST(a.Style as nvarchar) + '-' +  CAST(a.Color_Code as nvarchar) + '-' + REPLACE(a.Size_Code,'OS','O/S')),'--','-') AS sku
+	,dbo.getDEUName(a.Name) AS name
 	,0 AS has_options
-	,CAST(b.MSRP as float) +.99 AS price
+	,CAST(b.MSRP AS float) +.99 AS price
 	,b.Wholesale AS cost
-	,dbo.getDEUdepartment(a.gender) as department
-	,null as image
+	,dbo.getDEUDepartment(a.Name) AS department
+	,NULL AS image
 	,dbo.getDEUColor(dbo.ProperCase(a.Color_and_Size)) AS image_label
 	,dbo.getDEUColor(dbo.ProperCase(a.Color_and_Size)) AS choose_color
-	,dbo.getDEUSize(a.Size_Code) AS choose_size
+	,REPLACE(a.Size_Code,'OS','O/S') AS choose_size
 	,CAST(a.UPC  AS bigint) AS vendor_sku
 	,b.style_number AS vendor_product_id
 	,a.Color_Code AS vendor_color_code
-	,dbo.getDEUSize(a.Size_Code) AS vendor_size_code
-	,REPLACE(dbo.getDEUUrlKey('deuter-' + dbo.getDEUProductName(a.Name) + '-' + dbo.getDEUColor(CAST(a.Color_Code as nvarchar)) + '-' + REPLACE(a.Size_Code,'os','o-s') + '-fw13a'),'--','-') AS url_key
+	,REPLACE(a.Size_Code,'OS','O/S') AS vendor_size_code
+	,dbo.getUrlKey(dbo.getDEUName(a.Name),'Deuter',dbo.getDEUColor(dbo.ProperCase(a.Color_and_Size)) + '-' + REPLACE(a.Size_Code,'OS','O/S'),dbo.getDEUDepartment(a.Name)) + '-fw13a' AS url_key
 	,REPLACE(a.weight,'g','') as weight
 FROM tbl_RawData_FW13_DEU_UPC_Marketing a
-JOIN tbl_RawData_FW13_DEU_Price_List b
-ON a.Style = b.style_number	
+INNER JOIN tbl_RawData_FW13_DEU_Price_List b
+ON a.Style = b.style_number
+GO
 
-GO	
+UPDATE tbl_LoadFile_FW13_DEU 
+SET image = (SELECT  TOP 1 REPLACE(image_file,'.tif','.jpg') 
+		FROM tbl_RawData_FW13_DEU_UPC_Marketing
+		WHERE UPC = a.vendor_sku)
+FROM tbl_LoadFile_FW13_DEU AS a
+
+UPDATE tbl_LoadFile_FW13_DEU 
+SET image = (SELECT  TOP 1 Filename
+		FROM [LOT_Inventory].dbo.tbl_RawData_SS13_Image_Filenames 
+		WHERE dbo.getDEUPhoto(Filename) = (dbo.getDEUPhoto(a.name) + '_' + a.vendor_color_code)
+		AND Brand = 'DEU')
+FROM tbl_LoadFile_FW13_DEU AS a
+WHERE image IS NULL AND type = 'simple'
+GO
+	
 /** Need to Load the Configurables **/
 INSERT INTO tbl_LoadFile_FW13_DEU (
 	type
@@ -162,68 +177,48 @@ INSERT INTO tbl_LoadFile_FW13_DEU (
 	,merchandise_priority
 	,manage_stock
 	,use_config_manage_stock
+	,qty
+	,is_in_stock
 )
 /** Loading the Configurables in to the table with functions for formatting**/
 SELECT DISTINCT
 	'configurable' AS type
-	,'FW13A-DEU-' + CAST(a.style as nvarchar) AS sku
-	,dbo.getDEUProductName(a.name) AS name
+	,'DEU-' + CAST(a.style as nvarchar) AS sku
+	,dbo.getDEUName(a.Name) AS name
 	,'Uncategorized' AS categories
 	,'choose_color,choose_size' AS configurable_attributes
 	,'1' AS has_options
 	,CAST(b.MSRP as float) +.99 AS price
 	,b.Wholesale AS cost
-	,dbo.getDEUdepartment(a.Gender) AS department
+	,dbo.getDEUDepartment(a.Name) AS department
 	,'Catalog, Search' AS visibility
 	,a.style AS vendor_product_id
-	,REPLACE(LOWER('deuter-' 
-		+ dbo.getDEUUrlKey(dbo.getDEUProductName(a.name) 
-		+ '-FW13a')),'--','-') AS url_key
-	,'Deuter ' + dbo.getDEUProductName(a.name) + ' - Unisex' AS meta_title
+	,dbo.getUrlKey(dbo.getDEUName(a.Name),'Deuter','',dbo.getDEUDepartment(a.Name)) AS url_key
+	,'Deuter ' + dbo.getDEUName(a.Name) + ' - ' + REPLACE(REPLACE(dbo.getDEUDepartment(a.Name) + '''s','Men|Women''s','Unisex'),'Boy|Girl''s','Kid''s') AS meta_title
 	,'F' AS merchandise_priority
 	,0 AS manage_stock
 	,0 AS use_config_manage_stock
+	,NULL AS qty
+	,NULL AS is_in_stock
 FROM tbl_RawData_FW13_DEU_UPC_Marketing as a	
-JOIN tbl_RawData_FW13_DEU_Price_List as b
+INNER JOIN tbl_RawData_FW13_DEU_Price_List as b
 ON a.style = b.style_number	
 	
 /** After Loading, update the DATA **/
 GO
 UPDATE tbl_LoadFile_FW13_DEU SET
-	categories = CASE WHEN (SELECT TOP 1 categories FROM [LOT_Inventory].dbo.tbl_Magento_Categories WHERE vendor_product_id = a.vendor_product_id) 
-				IS NULL THEN 'Uncategorized' 
-				END,
-	description = (SELECT TOP 1 short_description FROM dbo.tbl_RawData_FW13_DEU_UPC_Marketing WHERE style = a.vendor_product_id),
-	features = (SELECT TOP 1 long_description FROM tbl_RawData_FW13_DEU_UPC_Marketing WHERE style = a.vendor_product_id),
+	categories = dbo.getMagentoCategories(a.vendor_product_id),
+	description = (SELECT TOP 1 SUBSTRING(long_description,0,CHARINDEX('Details:',long_description)) FROM dbo.tbl_RawData_FW13_DEU_UPC_Marketing WHERE style = a.vendor_product_id),
+	features = (SELECT TOP 1 dbo.getDEUFeatures(long_description) FROM tbl_RawData_FW13_DEU_UPC_Marketing WHERE style = a.vendor_product_id),
 	fabric = (SELECT TOP 1 Materials FROM tbl_RawData_FW13_DEU_UPC_Marketing WHERE style = a.vendor_product_id),
 	simples_skus = (SELECT TOP 1 dbo.getDEUAssociatedProducts(style) FROM tbl_RawData_FW13_DEU_UPC_Marketing WHERE style = a.vendor_product_id),
-	volume = (SELECT TOP 1 dbo.getPATVolume(Capacity) FROM tbl_RawData_FW13_DEU_UPC_Marketing WHERE style = a.vendor_product_id)
+	volume = (SELECT TOP 1 ISNULL(Capacity,'') FROM tbl_RawData_FW13_DEU_UPC_Marketing WHERE style = a.vendor_product_id)
 FROM tbl_LoadFile_FW13_DEU AS a
 WHERE type = 'configurable'
 
-/** Insert the image file names **/
-GO
-UPDATE tbl_LoadFile_FW13_DEU 
-SET image = (SELECT  top 1 REPLACE(image_file,'.tif','.jpg') 
-		FROM tbl_RawData_FW13_DEU_UPC_Marketing
-		WHERE UPC = a.vendor_sku)
-FROM tbl_LoadFile_FW13_DEU AS a
-
-/** Inserting images from the SS13 image file table from LOT_Inventory that are null **/
-/** This one updated 3 more rows **/
-GO
-UPDATE tbl_LoadFile_FW13_DEU 
-SET image = (SELECT  top 1 Filename
-		FROM [LOT_Inventory].dbo.tbl_RawData_SS13_Image_Filenames 
-		WHERE dbo.getDEUPhoto(Filename) = (dbo.getDEUPhoto(a.name) + '_' + a.vendor_color_code)
-		AND Brand = 'DEU')
-FROM tbl_LoadFile_FW13_DEU AS a
-WHERE image is null
-and type = 'simple'
-
 /* More updates to the tables and checking the DATA */
 GO	
-UPDATE tbl_LoadFile_FW13_DEU SET categories = CASE WHEN categories <> 'Uncategorized' THEN categories + ';;' + manufacturer + '/' + REPLACE(categories,';;',';;' + manufacturer + '/') ELSE 'Uncategorized' END
+UPDATE tbl_LoadFile_FW13_DEU SET categories = dbo.getCategory(categories,'Deuter',department) WHERE type = 'configurable'
 UPDATE tbl_LoadFile_FW13_DEU SET categories = NULL WHERE type = 'simple'
 UPDATE tbl_LoadFile_FW13_DEU SET status = 'Disabled' WHERE image IS NULL AND type = 'simple'
 UPDATE tbl_LoadFile_FW13_DEU SET thumbnail = image, small_image = image WHERE type = 'simple'

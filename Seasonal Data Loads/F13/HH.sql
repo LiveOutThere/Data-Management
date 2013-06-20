@@ -171,7 +171,7 @@ SELECT DISTINCT
 	,'Catalog, Search' AS visibility
 	,Style AS vendor_product_id
 	,dbo.getUrlKey(dbo.getHHName(StyleName),'Helly Hansen','',dbo.getHHDepartment(Gender)) AS url_key
-	,'Helly Hansen ' + dbo.getHHName(StyleName) + ' - ' + REPLACE(REPLACE(dbo.getHHDepartment(Gender) + '''s','Men|Women''s','Unisex'),'Boy|Girl''s','Kid''s') AS meta_title
+	,'Helly Hansen ' + REPLACE(REPLACE(dbo.getHHDepartment(Gender) + '''s ','Men|Women''s ',''),'Boy|Girl''s ','') + dbo.getHHName(StyleName) AS meta_title
 	,'F' AS merchandise_priority
 	,0 AS manage_stock
 	,0 AS use_config_manage_stock

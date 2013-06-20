@@ -194,7 +194,7 @@ SELECT DISTINCT
 	,'Catalog, Search' AS visibility
 	,a.style AS vendor_product_id
 	,dbo.getUrlKey(dbo.getDEUName(a.Name),'Deuter','',dbo.getDEUDepartment(a.Name)) AS url_key
-	,'Deuter ' + dbo.getDEUName(a.Name) + ' - ' + REPLACE(REPLACE(dbo.getDEUDepartment(a.Name) + '''s','Men|Women''s','Unisex'),'Boy|Girl''s','Kid''s') AS meta_title
+	,'Deuter ' + REPLACE(REPLACE(dbo.getDEUDepartment(a.Name) + '''s ','Men|Women''s ',''),'Boy|Girl''s ','') + dbo.getDEUName(a.Name) AS meta_title
 	,'F' AS merchandise_priority
 	,0 AS manage_stock
 	,0 AS use_config_manage_stock

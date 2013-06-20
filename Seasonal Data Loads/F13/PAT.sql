@@ -121,8 +121,7 @@ SELECT
 	(SELECT SUBSTRING([weight],1,(CHARINDEX(' ',[weight]))) FROM tbl_RawData_FW13_PAT_Marketing WHERE style = a.[style #]) AS [weight]
 FROM tbl_RawData_FW13_PAT_UPC AS a
 INNER JOIN tbl_RawData_FW13_PAT_Price_List AS b
-ON a.[style #] = b.style_number	
-ORDER BY image
+ON a.[style #] = b.style_number
 GO	
 
 UPDATE a SET image = b.Filename
@@ -177,7 +176,7 @@ SELECT DISTINCT
 	'Catalog, Search' AS visibility,
 	a.style AS vendor_product_id,
 	dbo.getUrlKey(dbo.getPATName(a.name),'Patagonia-', '', dbo.getPATGender(a.name)) AS url_key,
-	REPLACE('Patagonia ' + dbo.getPATName(a.name) + ' - ' + dbo.getPATGender(a.name) + '''s','Men|Women''s','Unisex') AS meta_title,
+	'Patagonia ' + REPLACE(REPLACE(dbo.getPATGender(a.name) + '''s ','Men|Women''s ',''),'Boy|Girl''s ','') + dbo.getPATName(a.name) AS meta_title,
 	'F' AS merchandise_priority,
 	0 AS manage_stock,
 	0 AS use_config_manage_stock

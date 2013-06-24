@@ -1,9 +1,3 @@
-/** Load Syntax for the entire table **/
--- File Name: Osprey FW13 Data Load
--- Author: Brenda Mehler 
--- Creation Date: May 27 2013
--- Last Modified: June 14 2013
-
 USE LOT_Inventory
 GO
 SET ANSI_NULLS ON
@@ -13,12 +7,10 @@ GO
 SET ANSI_PADDING ON
 GO
 
-/** If the table exists, then drop the table **/
 IF EXISTS (SELECT * FROM sysobjects WHERE id = object_id(N'[dbo].[tbl_LoadFile_FW13_OSP]')
 AND OBJECTPROPERTY(id, N'IsUserTable') = 1)
 DROP TABLE [dbo].[tbl_LoadFile_FW13_OSP]
 
-/** Create the LOADFILE TABLE for each brand **/
 CREATE TABLE [dbo].[tbl_LoadFile_FW13_OSP](
 	[id] [int] IDENTITY(1,1) NOT NULL,
 	[store] [nvarchar](4000) COLLATE SQL_Latin1_General_CP1_CI_AS NULL CONSTRAINT [DF_tbl_LoadFile_FW13_OSP_store]  DEFAULT ('admin'),
@@ -77,29 +69,24 @@ CREATE TABLE [dbo].[tbl_LoadFile_FW13_OSP](
 		[id] ASC
 )WITH (IGNORE_DUP_KEY = OFF) ON [PRIMARY]
 ) ON [PRIMARY]
-/** Create the Index **/
+
 CREATE NONCLUSTERED INDEX [IX_tbl_LoadFile_FW13_OSP] ON [dbo].[tbl_LoadFile_FW13_OSP] 
 (
 	[sku] ASC,
 	[type] ASC,
 	[vendor_product_id] ASC
 )WITH (PAD_INDEX  = OFF, STATISTICS_NORECOMPUTE  = OFF, SORT_IN_TEMPDB = OFF, IGNORE_DUP_KEY = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS  = ON, ALLOW_PAGE_LOCKS  = ON) ON [PRIMARY]
-
 GO
-/** Loading data, truncating table and starting from fresh**/
+
 TRUNCATE TABLE tbl_LoadFile_FW13_OSP
-
-/**Load Syntax**/
 GO
+
 INSERT INTO tbl_LoadFile_FW13_OSP (
 		[type]		
 		,sku
 		,[name]
 		,has_options
-		,price
-		,cost
 		,department 
-		,image 
 		,image_label
 		,choose_color
 		,choose_size
@@ -111,59 +98,87 @@ INSERT INTO tbl_LoadFile_FW13_OSP (
 		,manage_stock
 		,never_backorder)
 		
-/** The values we want to load the table with using select statements including the functions for data formatting **/	
-/*  
- * functions used:
- *			getOSPdepartment			- strips the gender from marketing.unique_features1
- *			getOSPimage					- gets the image files from tbl_RawData_FW13_OSP_Image
- *			getOSPsize					- strips the size values (eg. LG = L, etc)
- *			getOSPAssociatedProducts	- concatenates all simple skus for the configurable rows   
- */
-SELECT  
+SELECT DISTINCT
 	'simple' AS type
-	,('FW13A-OSP-' + LEFT(us_internal_sku_and_style_number,6) + '-' +  SUBSTRING(us_internal_sku_and_style_number, 
-      CHARINDEX('-', us_internal_sku_and_style_number) + 1, 
-      LEN(us_internal_sku_and_style_number))+ '-' + dbo.getOSPSize(Size))AS sku
-	,style												AS name
+	,('FW13A-OSP-' + LEFT(us_internal_sku_and_style_number,6) + '-' +  SUBSTRING(us_internal_sku_and_style_number,CHARINDEX('-',us_internal_sku_and_style_number) + 1,LEN(us_internal_sku_and_style_number))+ '-' + dbo.getOSPSize(Size))AS sku
+	,dbo.getOSPName(Style)									AS name
 	,0														AS has_options
-	,NULL AS price --(SELECT CAST(b.MSRP as FLOAT) - .01 FROM tbl_RawData_FW13_OSP WHERE Style							AS price
-	,NULL AS cost  --b.Wholesale											AS cost
-	,dbo.getOSPDepartment(c.unique_features1,a.Size)		AS department
-	,dbo.getOSPImage(a.style,a.Color,a.UPC)					AS image
-	,a.color												AS image_label 
-	,a.color												AS choose_color
-	,dbo.getOSPSize(a.Size)									AS choose_size
-	,CAST(a.UPC AS bigint)									AS vendor_sku
-	,c.style												AS vendor_product_id
-	,SUBSTRING(us_internal_sku_and_style_number, 
-      CHARINDEX('-', us_internal_sku_and_style_number) + 1, 
-      LEN(us_internal_sku_and_style_number))				AS vendor_color_code
-	,dbo.getOSPSize(a.Size)									AS vendor_size_code
-	,dbo.getUrlKey(a.style,'Osprey',(a.color + '-' + dbo.getOSPSize(a.size) + '-'),dbo.getOSPDepartment(c.unique_features1,a.Size)) + '-fw13a'	AS url_key 
+	,dbo.getOSPDepartment(Style,Size)						AS department
+	,Color													AS image_label 
+	,Color													AS choose_color
+	,dbo.getOSPSize(Size)									AS choose_size
+	,CAST(UPC AS bigint)									AS vendor_sku
+	,LEFT(us_internal_sku_and_style_number,6)				AS vendor_product_id
+	,SUBSTRING(us_internal_sku_and_style_number,CHARINDEX('-',us_internal_sku_and_style_number) + 1,LEN(us_internal_sku_and_style_number)) AS vendor_color_code
+	,dbo.getOSPSize(Size)									AS vendor_size_code
+	,dbo.getUrlKey(dbo.getOSPName(Style),'Osprey',Color + '-' + dbo.getOSPSize(Size) + '-',dbo.getOSPDepartment(Style,Size)) + '-fw13a'	AS url_key 
 	,1														AS manage_stock
 	,0														AS never_backorder
-FROM tbl_RawData_FW13_OSP_UPC AS a
+FROM tbl_RawData_FW13_OSP_UPC
 GO
-/* 
- * Now we need to load the configurables  - header rows for all simple rows
- */
+
+/* Use a correlated update to assign the price and cost values. 
+   Do this prior to the configurable section so that we can pull price and cost directly for the configs */
+   
+UPDATE a SET
+	a.price = CAST(b.Retail_price AS float) - .01,
+	a.cost = b.WholeSale_Price
+FROM tbl_LoadFile_FW13_OSP AS a
+INNER JOIN tbl_RawData_FW13_OSP_Price AS b
+ON a.vendor_product_id = LEFT(b.[ SKU],6)
+WHERE a.type = 'simple'
+
+DELETE FROM tbl_LoadFile_FW13_OSP WHERE price IS NULL OR cost IS NULL
+
+/* Use more correlated updates to assign the image values. Otherwise the SELECT statement would take far too long to run. */
+
+UPDATE a SET 
+	a.image = b.image 
+FROM tbl_LoadFile_FW13_OSP AS a
+INNER JOIN tbl_LoadFile_SS13_OSP AS b
+ON a.vendor_sku = b.vendor_sku
+WHERE a.type = 'simple'
+	 
+UPDATE a SET
+	a.image = b.Filename
+FROM tbl_LoadFile_FW13_OSP AS a 
+INNER JOIN tbl_RawData_FW13_Image_Filenames AS b 
+ON b.Filename LIKE '%' + dbo.ProperCase(REPLACE(LTRIM(RTRIM(a.name)),' ','_')) + '_' + SUBSTRING(a.choose_color,0,CHARINDEX(' ',a.choose_color)) + '%'
+WHERE a.type = 'simple' AND a.image IS NULL AND b.Brand = 'OSP'
+
+UPDATE a SET
+	a.image = b.Filename
+FROM tbl_LoadFile_FW13_OSP AS a 
+INNER JOIN tbl_RawData_FW13_Image_Filenames AS b 
+ON b.Filename LIKE '%' + dbo.ProperCase(REPLACE(LTRIM(RTRIM(a.name)),' ','_')) + '_' + SUBSTRING(a.choose_color,CHARINDEX(' ',a.choose_color)+1,30) + '%'
+WHERE a.type = 'simple' AND a.image IS NULL AND b.Brand = 'OSP'	
+
+UPDATE a SET
+	a.image = b.Filename
+FROM tbl_LoadFile_FW13_OSP AS a 
+INNER JOIN tbl_RawData_SS13_Image_Filenames AS b 
+ON b.Filename LIKE '%' + dbo.ProperCase(REPLACE(LTRIM(RTRIM(a.name)),' ','_')) + '_' + SUBSTRING(a.choose_color,0,CHARINDEX(' ',a.choose_color)) + '%'
+WHERE a.type = 'simple' AND a.image IS NULL AND b.Brand = 'OSP'
+
+UPDATE a SET
+	a.image = b.Filename
+FROM tbl_LoadFile_FW13_OSP AS a 
+INNER JOIN tbl_RawData_SS13_Image_Filenames AS b 
+ON b.Filename LIKE '%' + dbo.ProperCase(REPLACE(LTRIM(RTRIM(a.name)),' ','_')) + '_' + SUBSTRING(a.choose_color,CHARINDEX(' ',a.choose_color)+1,30) + '%'
+WHERE a.type = 'simple' AND a.image IS NULL AND b.Brand = 'OSP'	
+		
 INSERT INTO tbl_LoadFile_FW13_OSP (
 		[type]
 		,sku  		
 		,name
-		,categories 
 		,has_options
 		,price
 		,cost
 		,department
 		,visibility 
 		,vendor_product_id
-		,description
-		,features
-		,fabric 
 		,qty
 		,is_in_stock 
-		,simples_skus
 		,url_key
 		,meta_title
 		,merchandise_priority
@@ -172,37 +187,35 @@ INSERT INTO tbl_LoadFile_FW13_OSP (
 		,manage_stock
 		,use_config_manage_stock)
 		
-/** The values we want to load the table with using select statements including the functions for data formatting **/	
-
-SELECT  DISTINCT 
+SELECT DISTINCT 
 	'configurable'												AS type
-	,('FW13A-OSP-' +  c.Style)									AS sku
-	,a.style													AS name
-	,dbo.getMagentoCategories(c.Style)							AS categories
+	,'OSP-' + vendor_product_id									AS sku
+	,name														AS name
 	,1															AS has_options
-	,CAST(b.MSRP as FLOAT) - .01								AS price
-	,b.Wholesale												AS cost
-	,dbo.getOSPDepartment(c.unique_features1,a.Size)			AS department
+	,price														AS price
+	,cost														AS cost
+	,department													AS department
 	,'Catalog, Search'											AS visibility
-	,c.style													AS vendor_product_id
-	,c.Description												AS description 
-	,dbo.getOSPFeatures(c.Style)								AS features
-	,dbo.getOSPFabric(c.Style)									AS fabric
+	,vendor_product_id											AS vendor_product_id
 	,NULL														AS qty
 	,NULL 														AS is_in_stock
-	,dbo.getOSPAssociatedProducts(c.style)						AS simples_skus
-	,dbo.getUrlKey(a.Style,'Osprey','',dbo.getOSPdepartment(c.unique_features1,a.Size))	+ '-fw13a'						AS url_key 
-	,'Osprey ' + REPLACE(REPLACE(dbo.getOSPdepartment(c.unique_features1,a.Size) + '''s ','Men|Women''s ',''),'Boy|Girls''s ','') + a.Style		AS meta_title
+	,dbo.getUrlKey(name,'Osprey','',department)					AS url_key 
+	,'Osprey ' + REPLACE(REPLACE(department + '''s ','Men|Women''s ',''),'Boy|Girls''s ','') + name AS meta_title
 	,'F'														AS merchandise_priority 
 	,0															AS never_backorder
 	,0															AS use_config_backorders
 	,0															AS manage_stock
 	,0															AS use_config_manage_stock
-FROM	tbl_RawData_FW13_OSP_UPC		AS a,
-		tbl_RawData_FW13_OSP_Price_List AS b,
-		tbl_RawData_FW13_OSP_Marketing	AS c 
-WHERE  a.[style] = LTRIM(b.product_name_detail)
-  AND  a.[style] = c.product
+FROM tbl_LoadFile_FW13_OSP
+GO
+
+UPDATE a SET 
+	categories = dbo.getMagentoCategories(a.vendor_product_id),
+	features = dbo.getOSPFeatures(a.vendor_product_id),
+	description = (SELECT TOP 1 Description FROM tbl_RawData_FW13_OSP_Marketing WHERE Style = a.vendor_product_id),
+	fabric = dbo.getOSPFabric(a.vendor_product_id),
+	simples_skus = dbo.getOSPAssociatedProducts(a.vendor_product_id)
+FROM tbl_LoadFile_FW13_OSP AS a
 GO
 
 UPDATE tbl_LoadFile_FW13_OSP SET videos = (SELECT TOP 1 SUBSTRING(Youtube,CHARINDEX('=',Youtube)+1,LEN(Youtube)) FROM tbl_RawData_FW13_OSP_Video WHERE Style1 = vendor_product_id AND type = 'configurable')

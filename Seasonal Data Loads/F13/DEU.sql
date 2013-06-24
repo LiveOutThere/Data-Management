@@ -183,26 +183,24 @@ INSERT INTO tbl_LoadFile_FW13_DEU (
 /** Loading the Configurables in to the table with functions for formatting**/
 SELECT DISTINCT
 	'configurable' AS type
-	,'DEU-' + CAST(a.style as nvarchar) AS sku
-	,dbo.getDEUName(a.Name) AS name
+	,'DEU-' + vendor_product_id AS sku
+	,name AS name
 	,'Uncategorized' AS categories
 	,'choose_color,choose_size' AS configurable_attributes
 	,'1' AS has_options
-	,CAST(b.MSRP as float) +.99 AS price
-	,b.Wholesale AS cost
-	,dbo.getDEUDepartment(a.Name) AS department
+	,price AS price
+	,cost AS cost
+	,department AS department
 	,'Catalog, Search' AS visibility
-	,a.style AS vendor_product_id
-	,dbo.getUrlKey(dbo.getDEUName(a.Name),'Deuter','',dbo.getDEUDepartment(a.Name)) AS url_key
-	,'Deuter ' + REPLACE(REPLACE(dbo.getDEUDepartment(a.Name) + '''s ','Men|Women''s ',''),'Boy|Girl''s ','') + dbo.getDEUName(a.Name) AS meta_title
+	,vendor_product_id AS vendor_product_id
+	,dbo.getUrlKey(name,'Deuter','',department) AS url_key
+	,'Deuter ' + REPLACE(REPLACE(department + '''s ','Men|Women''s ',''),'Boy|Girl''s ','') + name AS meta_title
 	,'F' AS merchandise_priority
 	,0 AS manage_stock
 	,0 AS use_config_manage_stock
 	,NULL AS qty
 	,NULL AS is_in_stock
-FROM tbl_RawData_FW13_DEU_UPC_Marketing as a	
-INNER JOIN tbl_RawData_FW13_DEU_Price_List as b
-ON a.style = b.style_number	
+FROM tbl_LoadFile_FW13_DEU
 	
 /** After Loading, update the DATA **/
 GO

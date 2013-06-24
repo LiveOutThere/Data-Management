@@ -160,24 +160,24 @@ INSERT INTO tbl_LoadFile_FW13_HH (
 
 SELECT DISTINCT
 	'configurable' AS type
-	,'HH-' + Style AS sku
-	,dbo.getHHName(StyleName) AS name
+	,'HH-' + vendor_product_id AS sku
+	,name AS name
 	,'Uncategorized' AS categories
 	,'choose_color,choose_size' AS configurable_attributes
 	,'1' AS has_options
-	,CAST(RetailPrice_CA AS float) +.99 AS price
-	,WholeSaleCost_CA AS cost
-	,dbo.getHHDepartment(Gender) AS department
+	,price AS price
+	,cost AS cost
+	,department AS department
 	,'Catalog, Search' AS visibility
-	,Style AS vendor_product_id
-	,dbo.getUrlKey(dbo.getHHName(StyleName),'Helly Hansen','',dbo.getHHDepartment(Gender)) AS url_key
-	,'Helly Hansen ' + REPLACE(REPLACE(dbo.getHHDepartment(Gender) + '''s ','Men|Women''s ',''),'Boy|Girl''s ','') + dbo.getHHName(StyleName) AS meta_title
+	,vendor_product_id AS vendor_product_id
+	,dbo.getUrlKey(name,'Helly Hansen','',department) AS url_key
+	,'Helly Hansen ' + REPLACE(REPLACE(department + '''s ','Men|Women''s ',''),'Boy|Girl''s ','') + name AS meta_title
 	,'F' AS merchandise_priority
 	,0 AS manage_stock
 	,0 AS use_config_manage_stock
 	,NULL AS qty
 	,NULL AS is_in_stock
-FROM tbl_RawData_FW13_HH_UPC_Marketing_Price
+FROM tbl_LoadFile_FW13_HH
 GO
 
 UPDATE tbl_LoadFile_FW13_HH SET

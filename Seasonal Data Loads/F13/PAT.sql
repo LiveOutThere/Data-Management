@@ -101,7 +101,7 @@ INSERT INTO tbl_LoadFile_FW13_PAT (
 		url_key,
 		[weight])
 
-SELECT  
+SELECT DISTINCT  
 	'simple' AS [type],
 	'FW13A-PAT-' +  b.Style_number + '-' +  a.[color number]+ '-' +  a.size AS sku,
 	dbo.getPATName(a.[Style Description]) AS name,
@@ -124,10 +124,10 @@ INNER JOIN tbl_RawData_FW13_PAT_Price_List AS b
 ON a.[style #] = b.style_number
 GO	
 
-UPDATE a SET image = b.Filename
+UPDATE a SET image = b.image
 FROM tbl_LoadFile_FW13_PAT AS a
-INNER JOIN tbl_RawData_SS13_Image_Filenames AS b
-ON b.Filename LIKE '%' + vendor_product_id + '%' + vendor_color_code + '%' AND b.Brand = 'PAT'
+INNER JOIN tbl_LoadFile_SS13_PAT AS b
+ON a.vendor_sku = b.vendor_sku
 WHERE a.type = 'simple'
 
 UPDATE a SET image = c.Filename
@@ -160,29 +160,31 @@ INSERT INTO tbl_LoadFile_FW13_PAT (
 	meta_title,
 	merchandise_priority,
 	manage_stock,
-	use_config_manage_stock
+	use_config_manage_stock,
+	qty,
+	is_in_stock
 )
 
 SELECT DISTINCT
 	'configurable' AS [type],
-	'PAT-' + CAST(a.style AS nvarchar) AS sku,
-	REPLACE(dbo.getPATName(a.name),'оо','о') AS name,
+	'PAT-' + vendor_product_id AS sku,
+	name AS name,
 	'Uncategorized' AS categories,
 	'choose_color,choose_size' AS configurable_attributes,
 	'1' AS has_options,
-	CAST(b.Published_Retail_Price AS float) +.99 AS price,
-	b.Published_Wholesale_Price AS cost,
-	dbo.getPATGender(a.name) AS department,
+	price AS price,
+	cost AS cost,
+	department AS department,
 	'Catalog, Search' AS visibility,
-	a.style AS vendor_product_id,
-	dbo.getUrlKey(dbo.getPATName(a.name),'Patagonia-', '', dbo.getPATGender(a.name)) AS url_key,
-	'Patagonia ' + REPLACE(REPLACE(dbo.getPATGender(a.name) + '''s ','Men|Women''s ',''),'Boy|Girl''s ','') + dbo.getPATName(a.name) AS meta_title,
+	vendor_product_id AS vendor_product_id,
+	dbo.getUrlKey(name,'Patagonia','',department) AS url_key,
+	'Patagonia ' + REPLACE(REPLACE(department + '''s ','Men|Women''s ',''),'Boy|Girl''s ','') + name AS meta_title,
 	'F' AS merchandise_priority,
 	0 AS manage_stock,
-	0 AS use_config_manage_stock
-FROM tbl_RawData_FW13_PAT_Marketing AS a	
-INNER JOIN tbl_RawData_FW13_PAT_Price_List AS b
-ON a.style = b.style_number	
+	0 AS use_config_manage_stock,
+	NULL AS qty,
+	NULL AS is_in_stock
+FROM tbl_LoadFile_FW13_PAT
 GO
 
 UPDATE tbl_LoadFile_FW13_PAT SET

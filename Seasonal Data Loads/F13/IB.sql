@@ -105,7 +105,7 @@ INSERT INTO tbl_LoadFile_FW13_IB (
 SELECT DISTINCT
 	'simple' AS type
 	,'FW13A-IB-' + ItemNumber + '-' + ColorCode + '-' + Size AS sku
-	,dbo.getIBName(ProductName) AS name
+	,dbo.getIBName(ItemNumber) AS name
 	,0 AS has_options
 	,ROUND(MSRP,2) AS price
 	,ROUND([WS Price],1) AS cost
@@ -118,7 +118,7 @@ SELECT DISTINCT
 	,ItemNumber AS vendor_product_id
 	,ColorCode AS vendor_color_code
 	,Size AS vendor_size_code
-	,dbo.getUrlKey(dbo.getIBName(ProductName), 'Icebreaker', dbo.getIBColorName(Color) + '-' + Size, dbo.getIBGender(Directory)) + '-fw13a' AS url_key
+	,dbo.getUrlKey(dbo.getIBName(ItemNumber), 'Icebreaker', dbo.getIBColorName(Color) + '-' + Size, dbo.getIBGender(Directory)) + '-fw13a' AS url_key
 	,NULL AS weight
 FROM tbl_RawData_FW13_IB_UPC_Price
 GO

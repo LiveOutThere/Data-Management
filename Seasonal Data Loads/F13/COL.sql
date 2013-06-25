@@ -173,7 +173,7 @@ SELECT DISTINCT
 	,'Catalog, Search' AS visibility
 	,vendor_product_id AS vendor_product_id
 	,dbo.getUrlKey(name,'Columbia','',department) AS url_key
-	,'Columbia ' + REPLACE(REPLACE(department + '''s','Men|Women''s',''),'Boy|Girl''s','') + name AS meta_title
+	,'Columbia ' + REPLACE(REPLACE(department + '''s ','Men|Women''s ',''),'Boy|Girl''s ','') + name AS meta_title
 	,'F' AS merchandise_priority
 	,0 AS manage_stock
 	,0 AS use_config_manage_stock

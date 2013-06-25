@@ -42,7 +42,7 @@ CREATE TABLE [dbo].[tbl_LoadFile_FW13_COL](
 	[vendor_size_code] [nvarchar](4000) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
 	[season_id] [nvarchar](4000) COLLATE SQL_Latin1_General_CP1_CI_AS NULL CONSTRAINT [DF_tbl_LoadFile_FW13_COL_season]  DEFAULT (N'FW13 ASAP'),
 	[short_description] [nvarchar](4000) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
-	[description] [nvarchar](4000) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
+	[description] [nvarchar](MAX) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
 	[features] [nvarchar](4000) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
 	[activities] [nvarchar](4000) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
 	[weather] [nvarchar](4000) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
@@ -162,37 +162,35 @@ INSERT INTO tbl_LoadFile_FW13_COL (
 
 SELECT DISTINCT
 	'configurable' AS type
-	,'COL-' + Style AS sku
-	,dbo.getCOLName(StyleName) AS name
+	,'COL-' + vendor_product_id AS sku
+	,name AS name
 	,'Uncategorized' AS categories
 	,'choose_color,choose_size' AS configurable_attributes
 	,'1' AS has_options
-	,CAST(RetailPrice_CA AS float) +.99 AS price
-	,WholeSaleCost_CA AS cost
-	,dbo.getCOLDepartment(Gender) AS department
+	,price AS price
+	,cost AS cost
+	,department AS department
 	,'Catalog, Search' AS visibility
-	,Style AS vendor_product_id
-	,dbo.getUrlKey(dbo.getCOLName(StyleName),'Helly Hansen','',dbo.getCOLDepartment(Gender)) AS url_key
-	,'Helly Hansen ' + dbo.getCOLName(StyleName) + ' - ' + REPLACE(REPLACE(dbo.getCOLDepartment(Gender) + '''s','Men|Women''s','Unisex'),'Boy|Girl''s','Kid''s') AS meta_title
+	,vendor_product_id AS vendor_product_id
+	,dbo.getUrlKey(name,'Columbia','',department) AS url_key
+	,'Columbia ' + REPLACE(REPLACE(department + '''s','Men|Women''s',''),'Boy|Girl''s','') + name AS meta_title
 	,'F' AS merchandise_priority
 	,0 AS manage_stock
 	,0 AS use_config_manage_stock
 	,NULL AS qty
 	,NULL AS is_in_stock
-FROM tbl_RawData_FW13_COL_UPC_Marketing_Price
+FROM tbl_LoadFile_FW13_COL
 GO
 
 UPDATE tbl_LoadFile_FW13_COL SET
 	 categories = dbo.getMagentoCategories(a.vendor_product_id)
-	,description = (SELECT TOP 1 Product_Statement FROM tbl_RawData_FW13_COL_UPC_Marketing_Price WHERE Style = a.vendor_product_id)
-	,features = (SELECT TOP 1 Product_Features FROM tbl_RawData_FW13_COL_UPC_Marketing_Price WHERE Style = a.vendor_product_id)
-	,fabric = (SELECT TOP 1 Fabric_Content FROM tbl_RawData_FW13_COL_UPC_Marketing_Price WHERE Style = a.vendor_product_id)
-	,simples_skus = (SELECT TOP 1 dbo.getCOLAssociatedProducts(Style) FROM tbl_RawData_FW13_COL_UPC_Marketing_Price WHERE Style = a.vendor_product_id)
+	,description = (SELECT TOP 1 Short_Description + '<br><br>' + Long_Description FROM tbl_RawData_FW13_COL_UPC_Marketing WHERE LEFT(JDE_Style_Color,6) = a.vendor_product_id)
+	,simples_skus = dbo.getCOLAssociatedProducts(a.vendor_product_id)
 FROM tbl_LoadFile_FW13_COL AS a
 WHERE type = 'configurable'
 
 GO	
-UPDATE tbl_LoadFile_FW13_COL SET categories = dbo.getCategory(categories,'Helly Hansen',department) WHERE type = 'configurable'
+UPDATE tbl_LoadFile_FW13_COL SET categories = dbo.getCategory(categories,'Columbia',department) WHERE type = 'configurable'
 UPDATE tbl_LoadFile_FW13_COL SET categories = NULL WHERE type = 'simple'
 UPDATE tbl_LoadFile_FW13_COL SET status = 'Disabled' WHERE image IS NULL AND type = 'simple'
 UPDATE tbl_LoadFile_FW13_COL SET thumbnail = image, small_image = image WHERE type = 'simple'

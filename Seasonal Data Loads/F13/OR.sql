@@ -76,10 +76,10 @@ CREATE TABLE [dbo].[tbl_LoadFile_FW13_OR](
 	[videos] [nvarchar](4000) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
 	[weight] [nvarchar](4000) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
 	[merchandise_priority] [nvarchar](4000) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
-	[never_backorder] [nvarchar](4000) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
+	[never_backorder] [nvarchar](4000) COLLATE SQL_Latin1_General_CP1_CI_AS NULL CONSTRAINT [DF_tbl_LoadFile_FW13_OR_never_backorder]  DEFAULT ((0)),
 	[backorders] [nvarchar](4000) COLLATE SQL_Latin1_General_CP1_CI_AS NULL CONSTRAINT [DF_tbl_LoadFile_FW13_OR_backorders]  DEFAULT ((0)),
 	[manage_stock] [nvarchar](4000) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
-	[use_config_backorders] [nvarchar](4000) COLLATE SQL_Latin1_General_CP1_CI_AS NULL CONSTRAINT [DF_tbl_LoadFile_FW13_OR_use_config_backorders]  DEFAULT ((1)),
+	[use_config_backorders] [nvarchar](4000) COLLATE SQL_Latin1_General_CP1_CI_AS NULL CONSTRAINT [DF_tbl_LoadFile_FW13_OR_use_config_backorders]  DEFAULT ((0)),
 	[use_config_manage_stock] [nvarchar](4000) COLLATE SQL_Latin1_General_CP1_CI_AS NULL CONSTRAINT [DF_tbl_LoadFile_FW13_OR_use_config_manage_stock]  DEFAULT ((1))
  CONSTRAINT [PK_tbl_LoadFile_FW13_OR] PRIMARY KEY CLUSTERED 
 (
@@ -117,7 +117,6 @@ INSERT INTO tbl_LoadFile_FW13_OR (
 		,vendor_product_id
 		,vendor_color_code
 		,vendor_size_code
-		,description 
 		,url_key 
 		,weight
 		,manage_stock
@@ -144,15 +143,14 @@ SELECT DISTINCT
 	,a.Wholesale_Price_CAD									AS cost
 	,dbo.getORDepartment(a.gender)							AS department	
 	,'Not Visible Individually'								AS visibility
-	,LOWER(a.color_name)									AS image_label
-	,UPPER(a.color_name)									AS choose_color 
+	,dbo.ProperCase(a.color_name)							AS image_label
+	,dbo.ProperCase(a.color_name)							AS choose_color 
  	,UPPER(size)											AS choose_size
  	,CAST(a.UPC AS bigint)									AS vendor_sku
 	,a.style_number											AS vendor_product_id
 	,a.Color_code											AS vendor_color_code
 	,a.size										 			AS vendor_size_code
-	,description											AS description
-	,dbo.getUrlKey(b.name,'Outdoor Research','' 
+	,dbo.getUrlKey(b.name,'Outdoor Research',a.color_name + '-' + a.size 
 				,dbo.getORDepartment(a.gender)) 
 				+ '-fw13a'									AS url_key			 												
 	,product_weight_gm										AS weight 
@@ -177,10 +175,13 @@ INSERT INTO tbl_LoadFile_FW13_OR (
 		,department 
 		,visibility 
 		,vendor_product_id
-		,description 
 		,url_key 
 		,merchandise_priority
-		,manage_stock)
+		,manage_stock
+		,qty
+		,is_in_stock
+		,use_config_manage_stock
+		)
 /** 
  **   We load the configurable table with data loaded in 'simple' types 
  **			unless the values are different for 'configurables'
@@ -197,10 +198,12 @@ SELECT DISTINCT
  	,department													AS department
 	,'Catalog, Search'											AS visibility
 	,vendor_product_id 											AS vendor_product_id
-	,description												AS description
-	,url_key 												    AS url_key	
+	,dbo.getUrlKey(name,'Outdoor Research','',department)		AS url_key		
 	,'F'														AS merchandize_priority 
 	,0															AS manage_stock
+	,NULL														AS qty
+	,NULL														AS is_in_stock
+	,0															AS use_config_manage_stock
 FROM tbl_LoadFile_FW13_OR
 
 /** 
@@ -211,14 +214,20 @@ FROM tbl_LoadFile_FW13_OR
  **/
 GO
 
-UPDATE tbl_LoadFile_FW13_OR SET
-	image			= (SELECT TOP 1 Filename 
-						FROM tbl_RawData_FW13_Image_Filenames AS a
-			                 INNER JOIN tbl_LoadFile_FW13_OR AS b
-			                 ON a.Filename 
-			                 LIKE '%' + b.vendor_product_id + '_' + b.vendor_color_code + '.jpg'
-			   			WHERE  a.Brand = 'OR' AND b.type ='simple' AND b.image IS NULL)									
+UPDATE a SET
+	a.image = b.image
 FROM tbl_LoadFile_FW13_OR AS a 
+INNER JOIN tbl_LoadFile_SS13_OR AS b
+ON a.vendor_sku = b.vendor_sku
+WHERE a.type ='simple' AND a.image IS NULL
+GO
+
+UPDATE a SET
+	a.image = b.Filename
+FROM tbl_LoadFile_FW13_OR AS a 
+INNER JOIN tbl_RawData_FW13_Image_Filenames AS b
+ON b.Filename LIKE '%' + a.vendor_product_id + '_' + a.vendor_color_code + '.jpg'
+WHERE b.Brand = 'OR' AND a.type ='simple' AND a.image IS NOT NULL
 GO
 
  /** 
@@ -228,14 +237,10 @@ GO
  UPDATE tbl_LoadFile_FW13_OR SET
 	categories		= dbo.getMagentoCategories(vendor_product_id),	
 	simples_skus	= dbo.getORAssociatedProducts(vendor_product_id),
-	meta_title		= a.manufacturer + ' ' + a.name + ' - ' 
-									 + REPLACE(REPLACE(a.department 
-									 + '''s','Men|Women''s','Unisex'),'Boy|Girl''s','Kid''s'),
-	features		= (SELECT TOP 1 b.features 
-						FROM dbo.tbl_RawData_FW13_OR_Marketing AS b
-						INNER JOIN dbo.tbl_LoadFile_FW13_OR AS c 
-						ON b.style = c.vendor_product_id
-						WHERE c.type = 'simple' AND b.features IS NOT NULL)	
+	meta_title		= a.manufacturer + ' ' + REPLACE(REPLACE(a.department 
+									 + '''s ','Men|Women''s ',''),'Boy|Girl''s ','') + a.name,
+	description		= (SELECT TOP 1 description FROM dbo.tbl_RawData_FW13_OR_Marketing WHERE Style = a.vendor_product_id),
+	features		= (SELECT TOP 1 REPLACE(features,'*','|') FROM dbo.tbl_RawData_FW13_OR_Marketing WHERE Style = a.vendor_product_id)	
 FROM tbl_LoadFile_FW13_OR AS a
 WHERE type = 'configurable'
 GO

@@ -1,9 +1,3 @@
-/** Load Syntax for the entire Outdoor Research table **/
--- File Name: OR FW13 Data Load
--- Author: Brenda Mehler 
--- Creation Date: June 19 2013
--- Last Modified: June 19 2013
-
 USE LOT_Inventory 
 GO
 SET ANSI_NULLS ON
@@ -72,7 +66,6 @@ CREATE TABLE [dbo].[tbl_LoadFile_FW13_OR](
 	[simples_skus] [nvarchar](4000) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
 	[url_key] [nvarchar](4000) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
 	[meta_title] [nvarchar](4000) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
--- videos null for both
 	[videos] [nvarchar](4000) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
 	[weight] [nvarchar](4000) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
 	[merchandise_priority] [nvarchar](4000) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
@@ -133,11 +126,8 @@ INSERT INTO tbl_LoadFile_FW13_OR (
  */
 SELECT DISTINCT
 	'simple'												AS type
- 	,'FW13A-OR-' +  CAST(a.Style_number AS varchar(155)) 
- 				 + '-' + CAST(a.color_code AS varchar(155)) 
- 				 + '-' + a.size 
-															AS sku 												
-	,b.name													AS name
+ 	,'FW13A-OR-' + a.Style_number + '-' + dbo.getORColorCode(a.Color_code) + '-' + REPLACE(a.Size,'1SIZE','O/S') AS sku 												
+	,dbo.getORProductName(b.name)							AS name
 	,0														AS has_options
 	,CAST(a.MSRP_CAD AS float) - .01						AS price
 	,a.Wholesale_Price_CAD									AS cost
@@ -145,14 +135,12 @@ SELECT DISTINCT
 	,'Not Visible Individually'								AS visibility
 	,dbo.ProperCase(a.color_name)							AS image_label
 	,dbo.ProperCase(a.color_name)							AS choose_color 
- 	,UPPER(size)											AS choose_size
+ 	,REPLACE(a.Size,'1SIZE','O/S')							AS choose_size
  	,CAST(a.UPC AS bigint)									AS vendor_sku
-	,a.style_number											AS vendor_product_id
-	,a.Color_code											AS vendor_color_code
+	,a.Style_number											AS vendor_product_id
+	,dbo.getORColorCode(a.Color_code)						AS vendor_color_code
 	,a.size										 			AS vendor_size_code
-	,dbo.getUrlKey(b.name,'Outdoor Research',a.color_name + '-' + a.size 
-				,dbo.getORDepartment(a.gender)) 
-				+ '-fw13a'									AS url_key			 												
+	,dbo.getUrlKey(dbo.getORProductName(b.name),'Outdoor Research',a.color_name + '-' + REPLACE(a.Size,'1SIZE','O/S'),dbo.getORDepartment(a.gender)) + '-fw13a' AS url_key			 												
 	,product_weight_gm										AS weight 
 	,1														AS manage_stock
 	,1														AS use_config_manage_stock
@@ -223,11 +211,27 @@ WHERE a.type ='simple' AND a.image IS NULL
 GO
 
 UPDATE a SET
+	a.image = b.image
+FROM tbl_LoadFile_FW13_OR AS a 
+INNER JOIN tbl_LoadFile_F12_OR AS b
+ON a.vendor_sku = b.vendor_sku
+WHERE a.type ='simple' AND a.image IS NULL
+GO
+
+UPDATE a SET
+	a.image = b.Filename
+FROM tbl_LoadFile_FW13_OR AS a 
+INNER JOIN tbl_RawData_SS13_Image_Filenames AS b
+ON b.Filename LIKE '%' + a.vendor_product_id + '_' + a.vendor_color_code + '%'
+WHERE b.Brand = 'OR' AND a.type ='simple' AND a.image IS NULL
+GO
+
+UPDATE a SET
 	a.image = b.Filename
 FROM tbl_LoadFile_FW13_OR AS a 
 INNER JOIN tbl_RawData_FW13_Image_Filenames AS b
-ON b.Filename LIKE '%' + a.vendor_product_id + '_' + a.vendor_color_code + '.jpg'
-WHERE b.Brand = 'OR' AND a.type ='simple' AND a.image IS NOT NULL
+ON b.Filename LIKE '%' + a.vendor_product_id + '_' + a.vendor_color_code + '%'
+WHERE b.Brand = 'OR' AND a.type ='simple' AND a.image IS NULL
 GO
 
  /** 
@@ -237,12 +241,32 @@ GO
  UPDATE tbl_LoadFile_FW13_OR SET
 	categories		= dbo.getMagentoCategories(vendor_product_id),	
 	simples_skus	= dbo.getORAssociatedProducts(vendor_product_id),
-	meta_title		= a.manufacturer + ' ' + REPLACE(REPLACE(a.department 
-									 + '''s ','Men|Women''s ',''),'Boy|Girl''s ','') + a.name,
-	description		= (SELECT TOP 1 description FROM dbo.tbl_RawData_FW13_OR_Marketing WHERE Style = a.vendor_product_id),
-	features		= (SELECT TOP 1 REPLACE(features,'*','|') FROM dbo.tbl_RawData_FW13_OR_Marketing WHERE Style = a.vendor_product_id)	
+	fabric			= (SELECT TOP 1 CASE WHEN Customs_Description NOT LIKE '%[%]%' THEN NULL ELSE REPLACE(REPLACE(REPLACE(dbo.ProperCase(Customs_Description),'Women''S',''),'Men''S',''),'Kid''s','') END FROM tbl_RawData_FW13_OR_UPC_Price WHERE Style_number = a.vendor_product_id),
+	meta_title		= a.manufacturer + ' ' + REPLACE(REPLACE(a.department + '''s ','Men|Women''s ',''),'Boy|Girl''s ','') + a.name,
+	description		= (SELECT TOP 1 description FROM tbl_RawData_FW13_OR_Marketing WHERE Style = a.vendor_product_id),
+	features		= (SELECT TOP 1 REPLACE(features,'*','|') FROM tbl_RawData_FW13_OR_Marketing WHERE Style = a.vendor_product_id)	
 FROM tbl_LoadFile_FW13_OR AS a
 WHERE type = 'configurable'
+GO
+
+DECLARE @stylenumber varchar(1024), @styledesc varchar(1024), @color varchar(1024), @features varchar(1024), @description varchar(1024), @sku varchar(1024)
+
+DECLARE alike_styles CURSOR FOR
+SELECT DISTINCT vendor_product_id, name, choose_color, features, description FROM tbl_LoadFile_FW13_OR
+
+OPEN alike_styles
+
+FETCH NEXT FROM alike_styles INTO @stylenumber, @styledesc, @color, @features, @description
+
+WHILE @@FETCH_STATUS = 0
+BEGIN
+	SELECT @sku = sku FROM tbl_LoadFile_FW13_OR WHERE name LIKE @styledesc + '%' AND choose_color = @color AND features IS NULL OR description IS NULL
+	UPDATE tbl_LoadFile_FW13_OR SET features = @features, description = @description WHERE sku = @sku
+	FETCH NEXT FROM alike_styles  INTO @stylenumber, @styledesc, @color, @features, @description
+END
+
+CLOSE alike_styles
+DEALLOCATE alike_styles
 GO
 
 UPDATE tbl_LoadFile_FW13_OR SET categories = dbo.getCategory(categories,'Outdoor Research',department) WHERE type = 'configurable'

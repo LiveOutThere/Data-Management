@@ -135,7 +135,7 @@ FROM tbl_LoadFile_FW13_PAT AS a
 INNER JOIN tbl_RawData_FW13_PAT_UPC AS b
 ON a.vendor_product_id = b.[Style #] AND a.vendor_color_code = b.[Color Number]
 INNER JOIN tbl_RawData_SS13_Image_Filenames AS c
-ON c.Filename LIKE '%' + vendor_product_id + '%' + b.[Color Alpha] + '%' AND c.Brand = 'PAT'
+ON c.Filename LIKE '%' + vendor_product_id + '%' + b.[Color Code] + '%' AND c.Brand = 'PAT'
 WHERE a.type = 'simple'
 
 UPDATE a SET image = b.Filename
@@ -187,7 +187,7 @@ SELECT DISTINCT
 FROM tbl_LoadFile_FW13_PAT
 GO
 
-UPDATE tbl_LoadFile_FW13_PAT SET
+UPDATE a SET
 	categories = dbo.getMagentoCategories(a.vendor_product_id),
 	[description] = (SELECT positioning_text FROM dbo.tbl_RawData_FW13_PAT_Marketing WHERE style = a.vendor_product_id),
 	features = (SELECT dbo.getPATFeatures(style) FROM tbl_RawData_FW13_PAT_Marketing WHERE style = a.vendor_product_id),
@@ -199,7 +199,8 @@ UPDATE tbl_LoadFile_FW13_PAT SET
 FROM tbl_LoadFile_FW13_PAT AS a
 WHERE type = 'configurable'
 GO	
-	
+
+UPDATE tbl_LoadFile_FW13_PAT SET features =	features + '|Note: size ML means Medium - Large Bootie, and size LM means Large - Medium Bootie' WHERE type = 'configurable' AND name LIKE '%wader%' OR type = 'configurable' AND name LIKE '%wading%' 
 UPDATE tbl_LoadFile_FW13_PAT SET categories = dbo.getCategory(categories,'Patagonia',department) WHERE type = 'configurable'
 UPDATE tbl_LoadFile_FW13_PAT SET categories = NULL WHERE type = 'simple'
 UPDATE tbl_LoadFile_FW13_PAT SET status = 'Disabled' WHERE image IS NULL AND type = 'simple'
@@ -271,8 +272,4 @@ DECLARE @sql varchar(1024)
 SELECT @sql = 'bcp "SELECT * FROM LOT_Inventory.dbo.view_LoadFile_FW13_PAT" queryout "C:\Data\Shared\FW13PAT.csv" -w -t , -T -S ' + @@servername
 EXEC master..xp_cmdshell @sql
 
-DROP VIEW view_LoadFile_FW13_PAT	
-	
-	
-	
-
+DROP VIEW view_LoadFile_FW13_PAT

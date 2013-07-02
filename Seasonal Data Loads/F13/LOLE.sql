@@ -1,4 +1,19 @@
-USE LOT_Inventory
+/** Load Syntax for the entire table **/
+--                         ''~``
+--                        ( o o )
+--+------------------.oooO--(_)--Oooo.------------------+
+--|                                                     |
+--|            File Name: LOLEe FW13 Data Load		    |
+--|            Author: Emily Luu                        |
+--|            Creation Date: June 28 2013              |
+--|			   Last Modified: July 2 2013               |
+--|                    .oooO                            |
+--|                    (   )   Oooo.                    |
+--+---------------------\ (----(   )--------------------+
+--                       \_)    ) /
+--                             (_/
+                                        
+use LOT_SAIT
 GO
 SET ANSI_NULLS ON
 GO
@@ -8,28 +23,29 @@ SET ANSI_PADDING ON
 GO
 SET CONCAT_NULL_YIELDS_NULL OFF
 GO
-
-IF EXISTS (SELECT * FROM sysobjects WHERE id = object_id(N'[dbo].[tbl_LoadFile_FW13_COL]')
+/** If the table exists, then drop the table **/
+IF EXISTS (SELECT * FROM sysobjects WHERE id = object_id(N'[dbo].[tbl_LoadFile_FW13_LOLE]')
 AND OBJECTPROPERTY(id, N'IsUserTable') = 1)
-DROP TABLE [dbo].[tbl_LoadFile_FW13_COL]
-
-CREATE TABLE [dbo].[tbl_LoadFile_FW13_COL](
+DROP TABLE [dbo].[tbl_LoadFile_FW13_LOLE]
+GO
+/** Create the LOADFILE TABLE for each brand **/
+CREATE TABLE [dbo].[tbl_LoadFile_FW13_LOLE](
 	[id] [int] IDENTITY(1,1) NOT NULL,
-	[store] [nvarchar](4000) COLLATE SQL_Latin1_General_CP1_CI_AS NULL CONSTRAINT [DF_tbl_LoadFile_FW13_COL_store]  DEFAULT ('admin'),
-	[websites] [nvarchar](4000) COLLATE SQL_Latin1_General_CP1_CI_AS NULL CONSTRAINT [DF_tbl_LoadFile_FW13_COL_websites]  DEFAULT ('base'),
+	[store] [nvarchar](4000) COLLATE SQL_Latin1_General_CP1_CI_AS NULL CONSTRAINT [DF_tbl_LoadFile_FW13_LOLE_store]  DEFAULT ('admin'),
+	[websites] [nvarchar](4000) COLLATE SQL_Latin1_General_CP1_CI_AS NULL CONSTRAINT [DF_tbl_LoadFile_FW13_LOLE_websites]  DEFAULT ('base'),
 	[type] [nvarchar](50) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
 	[sku] [nvarchar](50) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
 	[name] [nvarchar](4000) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
 	[categories] [nvarchar](4000) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
-	[attribute_set] [nvarchar](4000) COLLATE SQL_Latin1_General_CP1_CI_AS NULL CONSTRAINT [DF_tbl_LoadFile_FW13_COL_attribute_set]  DEFAULT ('default'),
+	[attribute_set] [nvarchar](4000) COLLATE SQL_Latin1_General_CP1_CI_AS NULL CONSTRAINT [DF_tbl_LoadFile_FW13_LOLE_attribute_set]  DEFAULT ('default'),
 	[configurable_attributes] [nvarchar](4000) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
 	[has_options] [nvarchar](4000) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
 	[price] [nvarchar](4000) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
 	[cost] [nvarchar](4000) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
-	[status] [nvarchar](4000) COLLATE SQL_Latin1_General_CP1_CI_AS NULL CONSTRAINT [DF_tbl_LoadFile_FW13_COL_status]  DEFAULT ('Enabled'),
-	[tax_class_id] [nvarchar](4000) COLLATE SQL_Latin1_General_CP1_CI_AS NULL CONSTRAINT [DF_tbl_LoadFile_FW13_COL_tax_class]  DEFAULT ('Taxable Goods'),
+	[status] [nvarchar](4000) COLLATE SQL_Latin1_General_CP1_CI_AS NULL CONSTRAINT [DF_tbl_LoadFile_FW13_LOLE_status]  DEFAULT ('Enabled'),
+	[tax_class_id] [nvarchar](4000) COLLATE SQL_Latin1_General_CP1_CI_AS NULL CONSTRAINT [DF_tbl_LoadFile_FW13_LOLE_tax_class]  DEFAULT ('Taxable Goods'),
 	[department] [nvarchar](4000) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
-	[visibility] [nvarchar](4000) COLLATE SQL_Latin1_General_CP1_CI_AS NULL CONSTRAINT [DF_tbl_LoadFile_FW13_COL_visibility]  DEFAULT ('Not Visible Individually'),
+	[visibility] [nvarchar](4000) COLLATE SQL_Latin1_General_CP1_CI_AS NULL CONSTRAINT [DF_tbl_LoadFile_FW13_LOLE_visibility]  DEFAULT ('Not Visible Individually'),
 	[image] [nvarchar](4000) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
 	[image_label] [nvarchar](4000) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
 	[small_image] [nvarchar](4000) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
@@ -40,9 +56,9 @@ CREATE TABLE [dbo].[tbl_LoadFile_FW13_COL](
 	[vendor_product_id] [nvarchar](50) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
 	[vendor_color_code] [nvarchar](4000) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
 	[vendor_size_code] [nvarchar](4000) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
-	[season_id] [nvarchar](4000) COLLATE SQL_Latin1_General_CP1_CI_AS NULL CONSTRAINT [DF_tbl_LoadFile_FW13_COL_season]  DEFAULT (N'FW13 ASAP'),
+	[season_id] [nvarchar](4000) COLLATE SQL_Latin1_General_CP1_CI_AS NULL CONSTRAINT [DF_tbl_LoadFile_FW13_LOLE_season]  DEFAULT (N'FW13 ASAP'),
 	[short_description] [nvarchar](4000) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
-	[description] [nvarchar](MAX) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
+	[description] [nvarchar](4000) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
 	[features] [nvarchar](4000) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
 	[activities] [nvarchar](4000) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
 	[weather] [nvarchar](4000) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
@@ -51,38 +67,41 @@ CREATE TABLE [dbo].[tbl_LoadFile_FW13_COL](
 	[fabric] [nvarchar](4000) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
 	[fit] [nvarchar](4000) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
 	[volume] [nvarchar](4000) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
-	[manufacturer] [nvarchar](4000) COLLATE SQL_Latin1_General_CP1_CI_AS NULL CONSTRAINT [DF_tbl_LoadFile_FW13_COL_manufacturer]  DEFAULT ('Columbia'),
-	[qty] [nvarchar](4000) COLLATE SQL_Latin1_General_CP1_CI_AS NULL CONSTRAINT [DF_tbl_LoadFile_FW13_COL_qty]  DEFAULT ((0)),
-	[is_in_stock] [nvarchar](4000) COLLATE SQL_Latin1_General_CP1_CI_AS NULL CONSTRAINT [DF_tbl_LoadFile_FW13_COL_is_in_stock]  DEFAULT ((0)),
+	[manufacturer] [nvarchar](4000) COLLATE SQL_Latin1_General_CP1_CI_AS NULL CONSTRAINT [DF_tbl_LoadFile_FW13_LOLE_manufacturer]  DEFAULT ('Lole'),
+	[qty] [nvarchar](4000) COLLATE SQL_Latin1_General_CP1_CI_AS NULL CONSTRAINT [DF_tbl_LoadFile_FW13_LOLE_qty]  DEFAULT ((0)),
+	[is_in_stock] [nvarchar](4000) COLLATE SQL_Latin1_General_CP1_CI_AS NULL CONSTRAINT [DF_tbl_LoadFile_FW13_LOLE_is_in_stock]  DEFAULT ((0)),
 	[simples_skus] [nvarchar](4000) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
 	[url_key] [nvarchar](4000) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
 	[meta_title] [nvarchar](4000) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
 	[videos] [nvarchar](4000) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
 	[weight] [nvarchar](4000) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
 	[merchandise_priority] [nvarchar](4000) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
-	[never_backorder] [nvarchar](4000) COLLATE SQL_Latin1_General_CP1_CI_AS NULL CONSTRAINT [DF_tbl_LoadFile_FW13_COL_never_backorder]  DEFAULT ((0)),
-	[backorders] [nvarchar](4000) COLLATE SQL_Latin1_General_CP1_CI_AS NULL CONSTRAINT [DF_tbl_LoadFile_FW13_COL_backorders]  DEFAULT ((0)),
-	[manage_stock] [nvarchar](4000) COLLATE SQL_Latin1_General_CP1_CI_AS NULL CONSTRAINT [DF_tbl_LoadFile_FW13_COL_manage_stock]  DEFAULT ((1)),
-	[use_config_backorders] [nvarchar](4000) COLLATE SQL_Latin1_General_CP1_CI_AS NULL CONSTRAINT [DF_tbl_LoadFile_FW13_COL_use_config_backorders]  DEFAULT ((0)),
-	[use_config_manage_stock] [nvarchar](4000) COLLATE SQL_Latin1_General_CP1_CI_AS NULL CONSTRAINT [DF_tbl_LoadFile_FW13_COL_use_config_manage_stock]  DEFAULT ((1))
- CONSTRAINT [PK_tbl_LoadFile_FW13_COL] PRIMARY KEY CLUSTERED 
+	[never_backorder] [nvarchar](4000) COLLATE SQL_Latin1_General_CP1_CI_AS NULL CONSTRAINT [DF_tbl_LoadFile_FW13_LOLE_never_backorder]  DEFAULT ((0)),
+	[backorders] [nvarchar](4000) COLLATE SQL_Latin1_General_CP1_CI_AS NULL CONSTRAINT [DF_tbl_LoadFile_FW13_LOLE_backorders]  DEFAULT ((0)),
+	[manage_stock] [nvarchar](4000) COLLATE SQL_Latin1_General_CP1_CI_AS NULL CONSTRAINT [DF_tbl_LoadFile_FW13_LOLE_manage_stock]  DEFAULT ((1)),
+	[use_config_backorders] [nvarchar](4000) COLLATE SQL_Latin1_General_CP1_CI_AS NULL CONSTRAINT [DF_tbl_LoadFile_FW13_LOLE_use_config_backorders]  DEFAULT ((0)),
+	[use_config_manage_stock] [nvarchar](4000) COLLATE SQL_Latin1_General_CP1_CI_AS NULL CONSTRAINT [DF_tbl_LoadFile_FW13_LOLE_use_config_manage_stock]  DEFAULT ((1))
+ CONSTRAINT [PK_tbl_LoadFile_FW13_LOLE] PRIMARY KEY CLUSTERED 
 (
 	[id] ASC
+/** Create the Keys **/
 )WITH (IGNORE_DUP_KEY = OFF) ON [PRIMARY]
 ) ON [PRIMARY]
-
-CREATE NONCLUSTERED INDEX [IX_tbl_LoadFile_FW13_COL] ON [dbo].[tbl_LoadFile_FW13_COL] 
+/** Create the Index **/
+CREATE NONCLUSTERED INDEX [IX_tbl_LoadFile_FW13_LOLE] ON [dbo].[tbl_LoadFile_FW13_LOLE] 
 (
 	[sku] ASC,
 	[type] ASC,
 	[vendor_product_id] ASC
 )WITH (PAD_INDEX  = OFF, STATISTICS_NORECOMPUTE  = OFF, SORT_IN_TEMPDB = OFF, IGNORE_DUP_KEY = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS  = ON, ALLOW_PAGE_LOCKS  = ON) ON [PRIMARY]
 
-GO
-TRUNCATE TABLE tbl_LoadFile_FW13_COL
+/** Loading data, truncating table and starting from fresh**/
 
+TRUNCATE TABLE tbl_LoadFile_FW13_LOLE
 GO
-INSERT INTO tbl_LoadFile_FW13_COL (
+/**Load Syntax**/
+
+INSERT INTO tbl_LoadFile_FW13_LOLE (
 		[type]		
 		,sku
 		,[name]
@@ -100,46 +119,32 @@ INSERT INTO tbl_LoadFile_FW13_COL (
 		,vendor_size_code
 		,url_key
 		,weight)
-
+/** The values we want to load the table with using select statements including the functions for data formatting **/	
 SELECT DISTINCT
-	'simple' AS type
-	,'FW13A-COL-' + LEFT(a.JDE_Style_Color,6) + '-' + a.Color_Code + '-' + dbo.getCOLSize(a.Size,a.Dimension) AS sku
-	,dbo.getCOLName(a.Style_Name) AS name
-	,0 AS has_options
-	,CAST(b.MSRP AS float) +.99 AS price
-	,b.Dealer_Cost AS cost
-	,dbo.getCOLDepartment(a.Gender) AS department
-	,NULL AS image
-	,a.Color_Description AS image_label
-	,a.Color_Description AS choose_color
-	,dbo.getCOLSize(a.Size,a.Dimension) AS choose_size
-	,CAST(a.UPC AS bigint) AS vendor_sku
-	,LEFT(a.JDE_Style_Color,6) AS vendor_product_id
-	,a.Color_Code AS vendor_color_code
-	,dbo.getCOLSize(a.Size,a.Dimension) AS vendor_size_code
-	,dbo.getUrlKey(dbo.getCOLName(a.Style_Name),'Columbia',a.Color_Description + '-' + dbo.getCOLSize(a.Size,a.Dimension),dbo.getCOLDepartment(a.Gender)) + '-fw13a' AS url_key
-	,NULL AS weight
-FROM tbl_RawData_FW13_COL_UPC_Marketing AS a
-INNER JOIN tbl_RawData_FW13_COL_Price_List AS b
-ON LEFT(a.JDE_Style_Color,6) = b.JDE_Style_Number
-GO
+	'simple'																	AS type
+	,REPLACE(('FW13A-LOLE-' +  CAST(a.style AS NVARCHAR) + '-' +  dbo.ProperCase(SUBSTRING(a.color,1,4)) + '-' +  a.Size),'--','-') AS sku
+	,dbo.ProperCase(a.Description)												AS name
+	,0																			AS has_options
+	,CAST(a.list_price AS INTEGER) - .02										AS price
+	,a.unit_price																AS cost
+	,a.gender																	AS department
+	,null																		AS image
+	,dbo.ProperCase(SUBSTRING(a.color, CHARINDEX(' - ', a.color)+3,20))			AS image_label
+	,dbo.ProperCase(SUBSTRING(a.color, CHARINDEX(' - ', a.color)+3,20))			AS choose_color
+	,a.Size																		AS choose_size
+	,CAST(a.UPC  AS bigint)														AS vendor_sku
+	,a.style																	AS vendor_product_id
+	,SUBSTRING(a.color,1,4)														AS vendor_color_code
+	,a.Size																		AS vendor_size_code
+	,dbo.getUrlKey(a.Description, 'LOLE', SUBSTRING(a.color, CHARINDEX(' - ', a.color)+3,20) + '-' + a.Size, a.gender) + '-fw13a' AS url_key
+	,null																		AS weight
+FROM tbl_RawData_FW13_LOLE_Marketing AS b
+JOIN tbl_RawData_FW13_LOL_UPC_Price AS a
+ON a.style = b.[Style Number]
+GO	
 
-UPDATE a
-	SET a.image = b.image
-FROM tbl_LoadFile_FW13_COL AS a
-INNER JOIN tbl_LoadFile_SS13_COL AS b
-ON b.vendor_sku = a.vendor_sku 
-WHERE a.type = 'simple'
-
-UPDATE a
-	SET a.image = b.Filename
-FROM tbl_LoadFile_FW13_COL AS a
-INNER JOIN tbl_RawData_FW13_Image_Filenames AS b
-ON b.Filename = a.vendor_product_id + '_' + a.vendor_color_code + '.jpg' 
-WHERE b.Brand = 'COL' AND a.type = 'simple' AND a.image IS NULL
-
-	
-INSERT INTO tbl_LoadFile_FW13_COL (
+/** Need to Load the Configurables **/
+INSERT INTO tbl_LoadFile_FW13_LOLE (
 	type
 	,sku
 	,name
@@ -151,53 +156,76 @@ INSERT INTO tbl_LoadFile_FW13_COL (
 	,department
 	,visibility
 	,vendor_product_id
+	,is_in_stock
 	,url_key
 	,meta_title
 	,merchandise_priority
 	,manage_stock
 	,use_config_manage_stock
-	,qty
-	,is_in_stock
 )
-
+/** Loading the Configurables in to the table with functions for formatting**/
 SELECT DISTINCT
-	'configurable' AS type
-	,'COL-' + vendor_product_id AS sku
-	,name AS name
-	,'Uncategorized' AS categories
-	,'choose_color,choose_size' AS configurable_attributes
-	,'1' AS has_options
-	,price AS price
-	,cost AS cost
-	,department AS department
-	,'Catalog, Search' AS visibility
-	,vendor_product_id AS vendor_product_id
-	,dbo.getUrlKey(name,'Columbia','',department) AS url_key
-	,'Columbia ' + REPLACE(REPLACE(department + '''s ','Men|Women''s ',''),'Boy|Girl''s ','') + name AS meta_title
-	,'F' AS merchandise_priority
-	,0 AS manage_stock
-	,0 AS use_config_manage_stock
-	,NULL AS qty
-	,NULL AS is_in_stock
-FROM tbl_LoadFile_FW13_COL
-GO
-
-UPDATE tbl_LoadFile_FW13_COL SET
-	 categories = dbo.getMagentoCategories(a.vendor_product_id)
-	 /* inserting description + features into description value due to html formatting in raw data */
-	,description = (SELECT TOP 1 Short_Description + '<br><br>' + Long_Description FROM tbl_RawData_FW13_COL_UPC_Marketing WHERE LEFT(JDE_Style_Color,6) = a.vendor_product_id)
-	,simples_skus = dbo.getCOLAssociatedProducts(a.vendor_product_id)
-FROM tbl_LoadFile_FW13_COL AS a
-WHERE type = 'configurable'
-
+	'configurable'												AS type
+	,SUBSTRING(SKU,1,18)										AS sku
+	,Name														AS name
+	,'Uncategorized' 											AS categories
+	,'choose_color,choose_size' 								AS configurable_attributes
+	,'1' 														AS has_options
+	,price 														AS price
+	,cost 														AS cost
+	,department 												AS department
+	,'Catalog, Search' 											AS visibility
+	,vendor_product_id 											AS vendor_product_id
+	, null 														AS is_in_stock
+	,dbo.getUrlKey(Name,'LOLE','',department) + '-fw13a'		AS url_key
+	,'Lole ' + Name + ' - ' + department + '''s'				AS meta_title
+	,'F' 														AS merchandise_priority
+	,0 															AS manage_stock
+	,0 															AS use_config_manage_stock
+FROM tbl_LoadFile_FW13_LOLE
 GO	
-UPDATE tbl_LoadFile_FW13_COL SET categories = dbo.getCategory(categories,'Columbia',department) WHERE type = 'configurable'
-UPDATE tbl_LoadFile_FW13_COL SET categories = NULL WHERE type = 'simple'
-UPDATE tbl_LoadFile_FW13_COL SET status = 'Disabled' WHERE image IS NULL AND type = 'simple'
-UPDATE tbl_LoadFile_FW13_COL SET thumbnail = image, small_image = image WHERE type = 'simple'
+
+/** After Loading, update the DATA **/
+UPDATE tbl_LoadFile_FW13_LOLE 
+SET
+--	care_instructions = ,
+	simples_skus	  = (SELECT top 1 dbo.getLOLAssociatedProducts([style number]) FROM tbl_RawData_FW13_LOLE_Marketing WHERE [style number]  COLLATE DATABASE_DEFAULT= a.vendor_product_id COLLATE DATABASE_DEFAULT),
+	categories		  = (SELECT top 1 dbo.getMagentoCategories(vendor_product_id) FROM LOT_Inventory.dbo.tbl_Magento_Categories WHERE vendor_product_id = a.vendor_product_id COLLATE DATABASE_DEFAULT ),
+--	fabric			  = ,
+	description		  = (SELECT top 1 [long description] FROM tbl_RawData_FW13_LOLE_Marketing WHERE [style number] COLLATE DATABASE_DEFAULT = a.vendor_product_id COLLATE DATABASE_DEFAULT)
+--	fit				  = 
+--	volume			  = 
+FROM tbl_LoadFile_FW13_LOLE AS a
+WHERE type = 'configurable'
 GO
 
-CREATE VIEW [dbo].[view_LoadFile_FW13_COL]
+/** Insert the image file names **/
+UPDATE a
+	SET a.image = b.image
+FROM tbl_LoadFile_FW13_LOLE AS a
+INNER JOIN LOT_Inventory.dbo.tbl_LoadFile_SS13_LOLE AS b
+ON a.vendor_sku = b.vendor_sku 
+WHERE a.type = 'simple'
+GO
+
+UPDATE a
+	SET a.image = b.Filename 
+FROM tbl_LoadFile_FW13_LOLE AS a
+INNER JOIN LOT_INVENTORY.dbo.tbl_RawData_FW13_Image_Filenames AS b
+ON b.Filename LIKE '%' + a.vendor_product_id + '-' + a.vendor_color_code + '%'
+WHERE a.type = 'simple' AND a.image IS NULL
+GO
+
+/** More updates to the tables and checking the DATA **/	
+UPDATE tbl_LoadFile_FW13_LOLE SET categories = dbo.getCategory(categories,'LOLEe',department) WHERE type = 'configurable'
+UPDATE tbl_LoadFile_FW13_LOLE SET categories = NULL WHERE type = 'simple'
+UPDATE tbl_LoadFile_FW13_LOLE SET status = 'Disabled' WHERE image IS NULL AND type = 'simple'
+UPDATE tbl_LoadFile_FW13_LOLE SET thumbnail = image, small_image = image WHERE type = 'simple'
+GO
+
+-------------- Will Address the rest of this later
+/** Creating the table view for reference **/
+CREATE VIEW [dbo].[view_LoadFile_FW13_LOLE]
 AS
 SELECT  '"store"' AS store, 
 		'"websites"' AS websites, 
@@ -205,15 +233,15 @@ SELECT  '"store"' AS store,
 		'"sku"' AS sku, 
 		'"name"' AS name, 
 		'"categories"' AS categories, 
-		'"attribute_set"' AS attribute_set, 
-        '"configurable_attributes"' AS configurable_attributes, 
+		'"attrLOLEute_set"' AS attrLOLEute_set, 
+        '"configurable_attrLOLEutes"' AS configurable_attrLOLEutes, 
         '"has_options"' AS has_options, 
         '"price"' AS price, 
         '"cost"' AS cost, 
         '"status"' AS status, 
         '"tax_class_id"' AS tax_class_id, 
         '"department"' AS department, 
-        '"visibility"' AS visibility, 
+        '"visLOLEility"' AS visLOLEility, 
         '"image"' AS image, 
         '"image_label"' AS image_label, 
         '"small_image"' AS small_image, 
@@ -256,14 +284,11 @@ SELECT  '"' + RTRIM(LTRIM(REPLACE(a.store,'"','""'))) + '"','"' + RTRIM(LTRIM(RE
 		'"' + RTRIM(LTRIM(REPLACE(a.vendor_color_code,'"','""'))) + '"','"' + RTRIM(LTRIM(REPLACE(a.vendor_size_code,'"','""'))) + '"','"' + RTRIM(LTRIM(REPLACE(a.season_id,'"','""'))) + '"','"' + RTRIM(LTRIM(REPLACE(a. short_description,'"','""'))) + '"','"' + RTRIM(LTRIM(REPLACE(a.description,'"','""'))) + '"','"' + RTRIM(LTRIM(REPLACE(a.features,'"','""'))) + '"','"' + RTRIM(LTRIM(REPLACE(a.activities,'"','""'))) + '"','"' + RTRIM(LTRIM(REPLACE(a.weather,'"','""'))) + '"','"' + RTRIM(LTRIM(REPLACE(a.layering,'"','""'))) + '"','"' + RTRIM(LTRIM(REPLACE(a.care_instructions,'"','""'))) + '"',
 		'"' + RTRIM(LTRIM(REPLACE(a.fabric,'"','""'))) + '"','"' + RTRIM(LTRIM(REPLACE(a.fit,'"','""'))) + '"','"' + RTRIM(LTRIM(REPLACE(a.volume,'"','""'))) + '"','"' + RTRIM(LTRIM(REPLACE(a.manufacturer,'"','""'))) + '"','"' + RTRIM(LTRIM(REPLACE(a.qty,'"','""'))) + '"','"' + RTRIM(LTRIM(REPLACE(a.is_in_stock,'"','""'))) + '"','"' + RTRIM(LTRIM(REPLACE(a.simples_skus,'"','""'))) + '"','"' + RTRIM(LTRIM(REPLACE(a.url_key,'"','""'))) + '"',
 		'"' + RTRIM(LTRIM(REPLACE(a.videos,'"','""'))) + '"','"' + RTRIM(LTRIM(REPLACE(a.weight,'"','""'))) + '"','"' + RTRIM(LTRIM(REPLACE(a.merchandise_priority,'"','""'))) + '"','"' + RTRIM(LTRIM(REPLACE(a.backorders,'"','""'))) + '"','"' + RTRIM(LTRIM(REPLACE(a.manage_stock,'"','""'))) + '"','"' + RTRIM(LTRIM(REPLACE(a.never_backorder,'"','""'))) + '"','"' + RTRIM(LTRIM(REPLACE(a.use_config_manage_stock,'"','""'))) + '"','"' + RTRIM(LTRIM(REPLACE(a.use_config_backorders,'"','""'))) + '"','"' + RTRIM(LTRIM(REPLACE(a.meta_title,'"','""'))) + '"'
-FROM dbo.tbl_LoadFile_FW13_COL AS a
+FROM dbo.tbl_LoadFile_FW13_LOLE AS a
 GO
 
 DECLARE @sql varchar(1024)
-SELECT @sql = 'bcp "SELECT * FROM LOT_Inventory.dbo.view_LoadFile_FW13_COL" queryout "C:\Data\Shared\FW13COL.csv" -w -t , -T -S ' + @@servername
+SELECT @sql = 'bcp "SELECT * FROM LOT_Inventory.dbo.view_LoadFile_FW13_LOLE" queryout "C:\Data\Shared\FW13LOLE.csv" -w -t , -T -S ' + @@servername
 EXEC master..xp_cmdshell @sql
 
-DROP VIEW view_LoadFile_FW13_COL	
-	
-	
-
+DROP VIEW view_LoadFile_FW13_LOLE

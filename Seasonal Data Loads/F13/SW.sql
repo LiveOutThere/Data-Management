@@ -1,19 +1,4 @@
-/** Load Syntax for the entire table **/
---                         ''~``
---                        ( o o )
---+------------------.oooO--(_)--Oooo.------------------+
---|                                                     |
---|            File Name: Smart Wool FW13 Data Load     |
---|            Author: Emily Luu                        |
---|            Creation Date: June 25 2013              |
---|			   Last Modified: June 27 2013              |
---|                    .oooO                            |
---|                    (   )   Oooo.                    |
---+---------------------\ (----(   )--------------------+
---                       \_)    ) /
---                             (_/
-                                        
-use LOT_SAIT
+USE LOT_Inventory
 GO
 SET ANSI_NULLS ON
 GO
@@ -23,12 +8,12 @@ SET ANSI_PADDING ON
 GO
 SET CONCAT_NULL_YIELDS_NULL OFF
 GO
-/** If the table exists, then drop the table **/
+
 IF EXISTS (SELECT * FROM sysobjects WHERE id = object_id(N'[dbo].[tbl_LoadFile_FW13_SW]')
 AND OBJECTPROPERTY(id, N'IsUserTable') = 1)
 DROP TABLE [dbo].[tbl_LoadFile_FW13_SW]
 GO
-/** Create the LOADFILE TABLE for each brand **/
+
 CREATE TABLE [dbo].[tbl_LoadFile_FW13_SW](
 	[id] [int] IDENTITY(1,1) NOT NULL,
 	[store] [nvarchar](4000) COLLATE SQL_Latin1_General_CP1_CI_AS NULL CONSTRAINT [DF_tbl_LoadFile_FW13_SW_store]  DEFAULT ('admin'),
@@ -67,7 +52,7 @@ CREATE TABLE [dbo].[tbl_LoadFile_FW13_SW](
 	[fabric] [nvarchar](4000) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
 	[fit] [nvarchar](4000) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
 	[volume] [nvarchar](4000) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
-	[manufacturer] [nvarchar](4000) COLLATE SQL_Latin1_General_CP1_CI_AS NULL CONSTRAINT [DF_tbl_LoadFile_FW13_SW_manufacturer]  DEFAULT ('Smartwool'),
+	[manufacturer] [nvarchar](4000) COLLATE SQL_Latin1_General_CP1_CI_AS NULL CONSTRAINT [DF_tbl_LoadFile_FW13_SW_manufacturer]  DEFAULT ('SmartWool'),
 	[qty] [nvarchar](4000) COLLATE SQL_Latin1_General_CP1_CI_AS NULL CONSTRAINT [DF_tbl_LoadFile_FW13_SW_qty]  DEFAULT ((0)),
 	[is_in_stock] [nvarchar](4000) COLLATE SQL_Latin1_General_CP1_CI_AS NULL CONSTRAINT [DF_tbl_LoadFile_FW13_SW_is_in_stock]  DEFAULT ((0)),
 	[simples_skus] [nvarchar](4000) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
@@ -84,10 +69,10 @@ CREATE TABLE [dbo].[tbl_LoadFile_FW13_SW](
  CONSTRAINT [PK_tbl_LoadFile_FW13_SW] PRIMARY KEY CLUSTERED 
 (
 	[id] ASC
-/** Create the Keys **/
+
 )WITH (IGNORE_DUP_KEY = OFF) ON [PRIMARY]
 ) ON [PRIMARY]
-/** Create the Index **/
+
 CREATE NONCLUSTERED INDEX [IX_tbl_LoadFile_FW13_SW] ON [dbo].[tbl_LoadFile_FW13_SW] 
 (
 	[sku] ASC,
@@ -95,11 +80,8 @@ CREATE NONCLUSTERED INDEX [IX_tbl_LoadFile_FW13_SW] ON [dbo].[tbl_LoadFile_FW13_
 	[vendor_product_id] ASC
 )WITH (PAD_INDEX  = OFF, STATISTICS_NORECOMPUTE  = OFF, SORT_IN_TEMPDB = OFF, IGNORE_DUP_KEY = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS  = ON, ALLOW_PAGE_LOCKS  = ON) ON [PRIMARY]
 
-/** Loading data, truncating table and starting from fresh**/
-
 TRUNCATE TABLE tbl_LoadFile_FW13_SW
 GO
-/**Load Syntax**/
 
 INSERT INTO tbl_LoadFile_FW13_SW (
 		[type]		
@@ -118,36 +100,32 @@ INSERT INTO tbl_LoadFile_FW13_SW (
 		,vendor_color_code
 		,vendor_size_code
 		,url_key
-		,weight)
-/** The values we want to load the table with using select statements including the functions for data formatting **/	
+		)
+
 SELECT DISTINCT
-	'simple'													AS type
-	,REPLACE(('FW13A-SW-' +  CAST(a.style_number AS NVARCHAR) + '-' +  CAST(a.color_number AS NVARCHAR) + '-' +  b.ProductSize),'--','-') AS sku
-	,dbo.getSWname(a.workbook_style_name)						AS name
+	 'simple'													AS type
+	,'FW13A-SW-' + a.StyleNumber + '-' + a.ColorNumber + '-' + SUBSTRING(a.[SKU Number],11,LEN(a.[SKU Number])) AS sku
+	,dbo.getSWName(b.name)										AS name
 	,0															AS has_options
-	,b.MSRP														AS price
+	,b.Retail													AS price
 	,b.WholeSale												AS cost
-	,dbo.getSWdepartment(a.gender)								AS department
-	,null														AS image
-	,dbo.ProperCase(a.color_name)								AS image_label
-	,dbo.ProperCase(a.color_name)								AS choose_color
-	,b.ProductSize												AS choose_size
-	,CAST(b.UPC  AS bigint)										AS vendor_sku
-	,a.style_number												AS vendor_product_id
-	,a.color_number												AS vendor_color_code
-	,b.ProductSize												AS vendor_size_code
-	,dbo.getUrlKey(dbo.getSWname(a.workbook_style_name) , 'Smartwool', a.color_name + '-' + b.ProductSize, dbo.getSWdepartment(a.gender)) + '-fw13a' AS url_key
-	,dbo.getSWweight(a.garment_weight_for_workbook)				AS weight
-FROM tbl_RawData_FW13_SW_Marketing AS a
-JOIN tbl_RawData_FW13_SW_UPC_Price AS b
-ON a.style_number = b.StyleNumber
-WHERE a.workbook_style_name not like '%Totals%'	
-AND a.style_number not like '%Totals%'	
-AND a.style_number is not null
-AND a.color_number is not null
+	,dbo.getSWDepartment(b.name)								AS department
+	,NULL														AS image
+	,dbo.getSWColorName(a.ColorName)							AS image_label
+	,dbo.getSWColorName(a.ColorName)							AS choose_color
+	,SUBSTRING(a.[SKU Number],11,LEN(a.[SKU Number]))			AS choose_size
+	,CAST(a.UPC AS bigint)										AS vendor_sku
+	,a.StyleNumber												AS vendor_product_id
+	,a.ColorNumber												AS vendor_color_code
+	,SUBSTRING(a.[SKU Number],11,LEN(a.[SKU Number]))			AS vendor_size_code
+	,dbo.getUrlKey(dbo.getSWName(b.name), 'Smartwool',dbo.getSWColorName(a.ColorName) + '-' + SUBSTRING(a.[SKU Number],11,LEN(a.[SKU Number])),dbo.getSWDepartment(b.name)) + '-fw13a' AS url_key
+FROM tbl_RawData_FW13_SW_UPC AS a
+INNER JOIN tbl_RawData_FW13_SW_Price AS b
+ON a.StyleNumber = b.Style
 GO	
 
-/** Need to Load the Configurables **/
+DELETE FROM tbl_LoadFile_FW13_SW WHERE price IS NULL OR cost IS NULL
+
 INSERT INTO tbl_LoadFile_FW13_SW (
 	type
 	,sku
@@ -167,11 +145,11 @@ INSERT INTO tbl_LoadFile_FW13_SW (
 	,manage_stock
 	,use_config_manage_stock
 )
-/** Loading the Configurables in to the table with functions for formatting**/
+
 SELECT DISTINCT
 	'configurable'												AS type
-	,SUBSTRING(SKU,1,14)										AS sku
-	,Name														AS name
+	,'SW-' + vendor_product_id									AS sku
+	,name														AS name
 	,'Uncategorized' 											AS categories
 	,'choose_color,choose_size' 								AS configurable_attributes
 	,'1' 														AS has_options
@@ -180,34 +158,30 @@ SELECT DISTINCT
 	,department 												AS department
 	,'Catalog, Search' 											AS visibility
 	,vendor_product_id 											AS vendor_product_id
-	, null 														AS is_in_stock
-	,dbo.getUrlKey(Name,'Smartwool','',department) + '-fw13a'	AS url_key
-	,('Smartwool ' + Name + ' - ' + dbo.getSWmeta(department))	AS meta_title
+	,NULL														AS is_in_stock
+	,dbo.getUrlKey(Name,'Smartwool','',department)				AS url_key
+	,'SmartWool ' + REPLACE(REPLACE(department + '''s ','Men|Women''s ',''),'Boy|Girl''s ','') + name AS meta_title
 	,'F' 														AS merchandise_priority
 	,0 															AS manage_stock
 	,0 															AS use_config_manage_stock
 FROM tbl_LoadFile_FW13_SW
 GO	
 
-/** After Loading, update the DATA **/
-UPDATE tbl_LoadFile_FW13_SW 
-SET
-	care_instructions = (SELECT top 1 care_instructions FROM tbl_RawData_FW13_SW_Marketing WHERE style_number COLLATE DATABASE_DEFAULT = a.vendor_product_id COLLATE DATABASE_DEFAULT),
-	simples_skus	  = (SELECT top 1 dbo.getSWAssociatedProducts(style_number) FROM tbl_RawData_FW13_SW_Marketing WHERE style_number COLLATE DATABASE_DEFAULT = a.vendor_product_id COLLATE DATABASE_DEFAULT ),
-	categories		  = (SELECT top 1 dbo.getMagentoCategories(vendor_product_id) FROM LOT_Inventory.dbo.tbl_Magento_Categories WHERE vendor_product_id = a.vendor_product_id COLLATE DATABASE_DEFAULT ),
-	fabric			  = (SELECT top 1 content_for_workbook FROM tbl_RawData_FW13_SW_Marketing WHERE style_number COLLATE DATABASE_DEFAULT = a.vendor_product_id),
-	description		  = (SELECT top 1 dbo.getSWdescription(product_feature_1 + '|' + product_feature_2 + '|' + product_feature_3 + '|' +  product_feature_4 + '|' + product_feature_5 + '|' + product_feature_6 + '|' + product_feature_7) FROM dbo.tbl_RawData_FW13_SW_Marketing WHERE style_number COLLATE DATABASE_DEFAULT = a.vendor_product_id COLLATE DATABASE_DEFAULT),
-	fit				  = (SELECT top 1 dbo.getSWfit(product_feature_1) FROM tbl_RawData_FW13_SW_Marketing WHERE style_number COLLATE DATABASE_DEFAULT = a.vendor_product_id COLLATE DATABASE_DEFAULT )
---	volume = 
+UPDATE a SET
+	a.care_instructions	  = (SELECT TOP 1 care_instructions FROM tbl_RawData_FW13_SW_Marketing WHERE style_number = a.vendor_product_id),
+	a.simples_skus		  = dbo.getSWAssociatedProducts(a.vendor_product_id),
+	a.categories		  = dbo.getMagentoCategories(a.vendor_product_id),
+	a.fabric			  = (SELECT TOP 1 content_for_workbook FROM tbl_RawData_FW13_SW_Marketing WHERE style_number = a.vendor_product_id),
+--	a.description	      = 
+	a.features		      = dbo.getSWFeatures(a.vendor_product_id)
 FROM tbl_LoadFile_FW13_SW AS a
-WHERE type = 'configurable'
+WHERE a.type = 'configurable'
 GO
 
-/** Insert the image file names **/
 UPDATE a
 	SET a.image = b.image
 FROM tbl_LoadFile_FW13_SW AS a
-INNER JOIN LOT_Inventory.dbo.tbl_LoadFile_SS13_SW AS b
+INNER JOIN tbl_LoadFile_SS13_SW AS b
 ON a.vendor_sku = b.vendor_sku 
 WHERE a.type = 'simple'
 GO
@@ -215,20 +189,43 @@ GO
 UPDATE a
 	SET a.image = b.Filename 
 FROM tbl_LoadFile_FW13_SW AS a
-INNER JOIN LOT_INVENTORY.dbo.tbl_RawData_FW13_Image_Filenames AS b
-ON b.Filename LIKE '%' + a.vendor_product_id + '-' + a.vendor_color_code + '%'
+INNER JOIN tbl_RawData_SS13_Image_Filenames AS b
+ON b.Filename LIKE a.vendor_product_id + '-' + a.vendor_color_code + '%' AND b.Brand = 'SW'
 WHERE a.type = 'simple' AND a.image IS NULL
 GO
 
-/** More updates to the tables and checking the DATA **/	
-UPDATE tbl_LoadFile_FW13_SW SET categories = dbo.getCategory(categories,'Icebreaker',department) WHERE type = 'configurable'
+UPDATE a
+	SET a.image = b.image
+FROM tbl_LoadFile_FW13_SW AS a
+INNER JOIN tbl_LoadFile_F12_SW AS b
+ON a.vendor_sku = b.vendor_sku 
+WHERE a.type = 'simple' AND a.image IS NULL
+GO
+
+UPDATE a
+	SET a.image = b.image
+FROM tbl_LoadFile_FW13_SW AS a
+INNER JOIN tbl_LoadFile_S12_SW AS b
+ON a.vendor_sku = b.vendor_sku 
+WHERE a.type = 'simple' AND a.image IS NULL
+GO
+
+UPDATE a
+	SET a.image = b.Filename 
+FROM tbl_LoadFile_FW13_SW AS a
+INNER JOIN tbl_RawData_FW13_Image_Filenames AS b
+ON b.Filename LIKE a.vendor_product_id + '-' + a.vendor_color_code + '%' AND b.Brand = 'SW'
+WHERE a.type = 'simple' AND a.image IS NULL
+GO
+
+UPDATE tbl_LoadFile_FW13_SW SET name = name + ' (3 Pack)' WHERE vendor_product_id IN('SC101','SC107','SC112','SC113','SC114','SC115','SC116','SC119','SC120','SC122','SC123','SC125','SC126','SC127','SC128','SC129','SC130','SC131','SC132','SC133','SC134','SC135','SC137','SC138','SC139','SC139','SC140','SC144','SC200','SC202','SC208','SC210','SC211','SC214','SC216','SC217','SC218','SC221','SC222','SC223','SC224','SC225','SC356','SC357','SC360','SC364','SC371','SC400','SC403','SC456','SC551','SC558','SC694','SC695','SC696','SC701','SC901','SC912','SC913','SC915','SC916','SC919','SC932','SC933','SC953','SC962','SC967','SC968','SC969','SC972','SC975','SC988','SW950','SW956')
+UPDATE tbl_LoadFile_FW13_SW SET price = ROUND(CAST(price AS float) * 3,1) - 0.01 WHERE vendor_product_id IN('SC101','SC107','SC112','SC113','SC114','SC115','SC116','SC119','SC120','SC122','SC123','SC125','SC126','SC127','SC128','SC129','SC130','SC131','SC132','SC133','SC134','SC135','SC137','SC138','SC139','SC139','SC140','SC144','SC200','SC202','SC208','SC210','SC211','SC214','SC216','SC217','SC218','SC221','SC222','SC223','SC224','SC225','SC356','SC357','SC360','SC364','SC371','SC400','SC403','SC456','SC551','SC558','SC694','SC695','SC696','SC701','SC901','SC912','SC913','SC915','SC916','SC919','SC932','SC933','SC953','SC962','SC967','SC968','SC969','SC972','SC975','SC988','SW950','SW956')
+UPDATE tbl_LoadFile_FW13_SW SET categories = dbo.getCategory(categories,'SmartWool',department) WHERE type = 'configurable'
 UPDATE tbl_LoadFile_FW13_SW SET categories = NULL WHERE type = 'simple'
 UPDATE tbl_LoadFile_FW13_SW SET status = 'Disabled' WHERE image IS NULL AND type = 'simple'
 UPDATE tbl_LoadFile_FW13_SW SET thumbnail = image, small_image = image WHERE type = 'simple'
 GO
 
--------------- Will Address the rest of this later
-/** Creating the table view for reference **/
 CREATE VIEW [dbo].[view_LoadFile_FW13_SW]
 AS
 SELECT  '"store"' AS store, 
@@ -282,8 +279,8 @@ SELECT  '"store"' AS store,
         '"use_config_backorders"' AS use_config_backorders, 
         '"meta_title"' AS meta_title
 UNION ALL
-SELECT  '"' + RTRIM(LTRIM(REPLACE(a.store,'"','""'))) + '"','"' + RTRIM(LTRIM(REPLACE(a.websites,'"','""'))) + '"','"' + RTRIM(LTRIM(REPLACE(a.type,'"','""'))) + '"','"' + RTRIM(LTRIM(REPLACE(a.sku,'"','""'))) + '"','"' + RTRIM(LTRIM(REPLACE(a.name,'"','""'))) + '"','"' + RTRIM(LTRIM(REPLACE(a.categories,'"','""'))) + '"','"' + RTRIM(LTRIM(REPLACE(a.attrSWute_set,'"','""'))) + '"','"' + RTRIM(LTRIM(REPLACE(a.configurable_attrSWutes,'"','""'))) + '"',
-		'"' + RTRIM(LTRIM(REPLACE(a.has_options,'"','""'))) + '"','"' + RTRIM(LTRIM(REPLACE(a.price,'"','""'))) + '"','"' + RTRIM(LTRIM(REPLACE(a.cost,'"','""'))) + '"','"' + RTRIM(LTRIM(REPLACE(a.status,'"','""'))) + '"','"' + RTRIM(LTRIM(REPLACE(a.tax_claFW_id,'"','""'))) + '"','"' + RTRIM(LTRIM(REPLACE(a.department,'"','""'))) + '"','"' + RTRIM(LTRIM(REPLACE(a.visSWility,'"','""'))) + '"','"' + RTRIM(LTRIM(REPLACE(a.image,'"','""'))) + '"','"' + RTRIM(LTRIM(REPLACE(a.image_label,'"','""'))) + '"',
+SELECT  '"' + RTRIM(LTRIM(REPLACE(a.store,'"','""'))) + '"','"' + RTRIM(LTRIM(REPLACE(a.websites,'"','""'))) + '"','"' + RTRIM(LTRIM(REPLACE(a.type,'"','""'))) + '"','"' + RTRIM(LTRIM(REPLACE(a.sku,'"','""'))) + '"','"' + RTRIM(LTRIM(REPLACE(a.name,'"','""'))) + '"','"' + RTRIM(LTRIM(REPLACE(a.categories,'"','""'))) + '"','"' + RTRIM(LTRIM(REPLACE(a.attribute_set,'"','""'))) + '"','"' + RTRIM(LTRIM(REPLACE(a.configurable_attributes,'"','""'))) + '"',
+		'"' + RTRIM(LTRIM(REPLACE(a.has_options,'"','""'))) + '"','"' + RTRIM(LTRIM(REPLACE(a.price,'"','""'))) + '"','"' + RTRIM(LTRIM(REPLACE(a.cost,'"','""'))) + '"','"' + RTRIM(LTRIM(REPLACE(a.status,'"','""'))) + '"','"' + RTRIM(LTRIM(REPLACE(a.tax_class_id,'"','""'))) + '"','"' + RTRIM(LTRIM(REPLACE(a.department,'"','""'))) + '"','"' + RTRIM(LTRIM(REPLACE(a.visibility,'"','""'))) + '"','"' + RTRIM(LTRIM(REPLACE(a.image,'"','""'))) + '"','"' + RTRIM(LTRIM(REPLACE(a.image_label,'"','""'))) + '"',
 		'"' + RTRIM(LTRIM(REPLACE(a.small_image,'"','""'))) + '"','"' + RTRIM(LTRIM(REPLACE(a.thumbnail,'"','""'))) + '"','"' + RTRIM(LTRIM(REPLACE(a.choose_color,'"','""'))) + '"','"' + RTRIM(LTRIM(REPLACE(a.choose_size,'"','""'))) + '"','"' + RTRIM(LTRIM(REPLACE(a.vendor_sku,'"','""'))) + '"','"' + RTRIM(LTRIM(REPLACE(a.vendor_product_id,'"','""'))) + '"',
 		'"' + RTRIM(LTRIM(REPLACE(a.vendor_color_code,'"','""'))) + '"','"' + RTRIM(LTRIM(REPLACE(a.vendor_size_code,'"','""'))) + '"','"' + RTRIM(LTRIM(REPLACE(a.season_id,'"','""'))) + '"','"' + RTRIM(LTRIM(REPLACE(a. short_description,'"','""'))) + '"','"' + RTRIM(LTRIM(REPLACE(a.description,'"','""'))) + '"','"' + RTRIM(LTRIM(REPLACE(a.features,'"','""'))) + '"','"' + RTRIM(LTRIM(REPLACE(a.activities,'"','""'))) + '"','"' + RTRIM(LTRIM(REPLACE(a.weather,'"','""'))) + '"','"' + RTRIM(LTRIM(REPLACE(a.layering,'"','""'))) + '"','"' + RTRIM(LTRIM(REPLACE(a.care_instructions,'"','""'))) + '"',
 		'"' + RTRIM(LTRIM(REPLACE(a.fabric,'"','""'))) + '"','"' + RTRIM(LTRIM(REPLACE(a.fit,'"','""'))) + '"','"' + RTRIM(LTRIM(REPLACE(a.volume,'"','""'))) + '"','"' + RTRIM(LTRIM(REPLACE(a.manufacturer,'"','""'))) + '"','"' + RTRIM(LTRIM(REPLACE(a.qty,'"','""'))) + '"','"' + RTRIM(LTRIM(REPLACE(a.is_in_stock,'"','""'))) + '"','"' + RTRIM(LTRIM(REPLACE(a.simples_skus,'"','""'))) + '"','"' + RTRIM(LTRIM(REPLACE(a.url_key,'"','""'))) + '"',

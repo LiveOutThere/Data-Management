@@ -1,19 +1,4 @@
-/** Load Syntax for the entire table **/
---                         ''~``
---                        ( o o )
---+------------------.oooO--(_)--Oooo.------------------+
---|                                                     |
---|            File Name: LOLEe FW13 Data Load		    |
---|            Author: Emily Luu                        |
---|            Creation Date: June 28 2013              |
---|			   Last Modified: July 2 2013               |
---|                    .oooO                            |
---|                    (   )   Oooo.                    |
---+---------------------\ (----(   )--------------------+
---                       \_)    ) /
---                             (_/
-                                        
-use LOT_SAIT
+USE LOT_Inventory
 GO
 SET ANSI_NULLS ON
 GO
@@ -23,12 +8,12 @@ SET ANSI_PADDING ON
 GO
 SET CONCAT_NULL_YIELDS_NULL OFF
 GO
-/** If the table exists, then drop the table **/
+
 IF EXISTS (SELECT * FROM sysobjects WHERE id = object_id(N'[dbo].[tbl_LoadFile_FW13_LOLE]')
 AND OBJECTPROPERTY(id, N'IsUserTable') = 1)
 DROP TABLE [dbo].[tbl_LoadFile_FW13_LOLE]
 GO
-/** Create the LOADFILE TABLE for each brand **/
+
 CREATE TABLE [dbo].[tbl_LoadFile_FW13_LOLE](
 	[id] [int] IDENTITY(1,1) NOT NULL,
 	[store] [nvarchar](4000) COLLATE SQL_Latin1_General_CP1_CI_AS NULL CONSTRAINT [DF_tbl_LoadFile_FW13_LOLE_store]  DEFAULT ('admin'),
@@ -84,10 +69,10 @@ CREATE TABLE [dbo].[tbl_LoadFile_FW13_LOLE](
  CONSTRAINT [PK_tbl_LoadFile_FW13_LOLE] PRIMARY KEY CLUSTERED 
 (
 	[id] ASC
-/** Create the Keys **/
+
 )WITH (IGNORE_DUP_KEY = OFF) ON [PRIMARY]
 ) ON [PRIMARY]
-/** Create the Index **/
+
 CREATE NONCLUSTERED INDEX [IX_tbl_LoadFile_FW13_LOLE] ON [dbo].[tbl_LoadFile_FW13_LOLE] 
 (
 	[sku] ASC,
@@ -95,11 +80,8 @@ CREATE NONCLUSTERED INDEX [IX_tbl_LoadFile_FW13_LOLE] ON [dbo].[tbl_LoadFile_FW1
 	[vendor_product_id] ASC
 )WITH (PAD_INDEX  = OFF, STATISTICS_NORECOMPUTE  = OFF, SORT_IN_TEMPDB = OFF, IGNORE_DUP_KEY = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS  = ON, ALLOW_PAGE_LOCKS  = ON) ON [PRIMARY]
 
-/** Loading data, truncating table and starting from fresh**/
-
 TRUNCATE TABLE tbl_LoadFile_FW13_LOLE
 GO
-/**Load Syntax**/
 
 INSERT INTO tbl_LoadFile_FW13_LOLE (
 		[type]		
@@ -117,33 +99,30 @@ INSERT INTO tbl_LoadFile_FW13_LOLE (
 		,vendor_product_id
 		,vendor_color_code
 		,vendor_size_code
-		,url_key
-		,weight)
-/** The values we want to load the table with using select statements including the functions for data formatting **/	
+		,url_key)
+
 SELECT DISTINCT
-	'simple'																	AS type
-	,REPLACE(('FW13A-LOLE-' +  CAST(a.style AS NVARCHAR) + '-' +  dbo.ProperCase(SUBSTRING(a.color,1,4)) + '-' +  a.Size),'--','-') AS sku
-	,dbo.ProperCase(a.Description)												AS name
+	 'simple'																	AS type
+	,'FW13A-LOLE-' +  CAST(a.Style AS nvarchar(15)) + '-' + SUBSTRING(a.Color,1,4) + '-' + a.Size AS sku
+	,dbo.getLOLEName(a.Description)												AS name
 	,0																			AS has_options
-	,CAST(a.list_price AS INTEGER) - .02										AS price
-	,a.unit_price																AS cost
-	,a.gender																	AS department
-	,null																		AS image
-	,dbo.ProperCase(SUBSTRING(a.color, CHARINDEX(' - ', a.color)+3,20))			AS image_label
-	,dbo.ProperCase(SUBSTRING(a.color, CHARINDEX(' - ', a.color)+3,20))			AS choose_color
+	,CAST(b.List AS float) - .01												AS price
+	,b.Price																	AS cost
+	,'Women'																	AS department
+	,NULL																		AS image
+	,dbo.getLOLEColorName(a.Color)												AS image_label
+	,dbo.getLOLEColorName(a.Color)												AS choose_color
 	,a.Size																		AS choose_size
-	,CAST(a.UPC  AS bigint)														AS vendor_sku
-	,a.style																	AS vendor_product_id
-	,SUBSTRING(a.color,1,4)														AS vendor_color_code
+	,CAST(a.UPC AS bigint)														AS vendor_sku
+	,a.Style																	AS vendor_product_id
+	,SUBSTRING(a.Color,1,4)														AS vendor_color_code
 	,a.Size																		AS vendor_size_code
-	,dbo.getUrlKey(a.Description, 'LOLE', SUBSTRING(a.color, CHARINDEX(' - ', a.color)+3,20) + '-' + a.Size, a.gender) + '-fw13a' AS url_key
-	,null																		AS weight
-FROM tbl_RawData_FW13_LOLE_Marketing AS b
-JOIN tbl_RawData_FW13_LOL_UPC_Price AS a
-ON a.style = b.[Style Number]
+	,dbo.getUrlKey(dbo.getLOLEName(a.Description),'LOLE',dbo.getLOLEColorName(a.Color) + '-' + a.Size,'Women') + '-fw13a' AS url_key
+FROM tbl_RawData_FW13_LOLE_UPC AS a
+INNER JOIN tbl_RawData_FW13_LOLE_Price AS b
+ON a.Style = b.Style
 GO	
 
-/** Need to Load the Configurables **/
 INSERT INTO tbl_LoadFile_FW13_LOLE (
 	type
 	,sku
@@ -156,6 +135,7 @@ INSERT INTO tbl_LoadFile_FW13_LOLE (
 	,department
 	,visibility
 	,vendor_product_id
+	,qty
 	,is_in_stock
 	,url_key
 	,meta_title
@@ -163,11 +143,11 @@ INSERT INTO tbl_LoadFile_FW13_LOLE (
 	,manage_stock
 	,use_config_manage_stock
 )
-/** Loading the Configurables in to the table with functions for formatting**/
+
 SELECT DISTINCT
 	'configurable'												AS type
-	,SUBSTRING(SKU,1,18)										AS sku
-	,Name														AS name
+	,'LOLE-' + vendor_product_id									AS sku
+	,name														AS name
 	,'Uncategorized' 											AS categories
 	,'choose_color,choose_size' 								AS configurable_attributes
 	,'1' 														AS has_options
@@ -176,34 +156,30 @@ SELECT DISTINCT
 	,department 												AS department
 	,'Catalog, Search' 											AS visibility
 	,vendor_product_id 											AS vendor_product_id
-	, null 														AS is_in_stock
-	,dbo.getUrlKey(Name,'LOLE','',department) + '-fw13a'		AS url_key
-	,'Lole ' + Name + ' - ' + department + '''s'				AS meta_title
+	,NULL														AS is_in_stock
+	,NULL														AS qty
+	,dbo.getUrlKey(name,'LOLE','',department)					AS url_key
+	,'Lole ' + REPLACE(REPLACE(department + '''s ','Men|Women''s ',''),'Boy|Girl''s ','') + name				AS meta_title
 	,'F' 														AS merchandise_priority
 	,0 															AS manage_stock
 	,0 															AS use_config_manage_stock
 FROM tbl_LoadFile_FW13_LOLE
 GO	
 
-/** After Loading, update the DATA **/
 UPDATE tbl_LoadFile_FW13_LOLE 
 SET
---	care_instructions = ,
-	simples_skus	  = (SELECT top 1 dbo.getLOLAssociatedProducts([style number]) FROM tbl_RawData_FW13_LOLE_Marketing WHERE [style number]  COLLATE DATABASE_DEFAULT= a.vendor_product_id COLLATE DATABASE_DEFAULT),
-	categories		  = (SELECT top 1 dbo.getMagentoCategories(vendor_product_id) FROM LOT_Inventory.dbo.tbl_Magento_Categories WHERE vendor_product_id = a.vendor_product_id COLLATE DATABASE_DEFAULT ),
---	fabric			  = ,
-	description		  = (SELECT top 1 [long description] FROM tbl_RawData_FW13_LOLE_Marketing WHERE [style number] COLLATE DATABASE_DEFAULT = a.vendor_product_id COLLATE DATABASE_DEFAULT)
---	fit				  = 
---	volume			  = 
+	simples_skus	  = dbo.getLOLEAssociatedProducts(a.vendor_product_id),
+	categories		  = dbo.getMagentoCategories(a.vendor_product_id),
+	description		  = dbo.getLOLELDesc(a.vendor_product_id),
+	features		  = dbo.getLOLEFeatures(a.vendor_product_id)
 FROM tbl_LoadFile_FW13_LOLE AS a
 WHERE type = 'configurable'
 GO
 
-/** Insert the image file names **/
 UPDATE a
 	SET a.image = b.image
 FROM tbl_LoadFile_FW13_LOLE AS a
-INNER JOIN LOT_Inventory.dbo.tbl_LoadFile_SS13_LOLE AS b
+INNER JOIN dbo.tbl_LoadFile_SS13_LOLE AS b
 ON a.vendor_sku = b.vendor_sku 
 WHERE a.type = 'simple'
 GO
@@ -211,20 +187,17 @@ GO
 UPDATE a
 	SET a.image = b.Filename 
 FROM tbl_LoadFile_FW13_LOLE AS a
-INNER JOIN LOT_INVENTORY.dbo.tbl_RawData_FW13_Image_Filenames AS b
-ON b.Filename LIKE '%' + a.vendor_product_id + '-' + a.vendor_color_code + '%'
-WHERE a.type = 'simple' AND a.image IS NULL
+INNER JOIN dbo.tbl_RawData_FW13_Image_Filenames AS b
+ON b.Filename LIKE '%' + a.vendor_product_id + '-' + a.vendor_color_code + '%' OR b.Filename LIKE '%' + a.vendor_product_id + '_' + a.vendor_color_code + '%'
+WHERE a.type = 'simple' AND a.image IS NULL AND b.Brand = 'LOLE'
 GO
 
-/** More updates to the tables and checking the DATA **/	
-UPDATE tbl_LoadFile_FW13_LOLE SET categories = dbo.getCategory(categories,'LOLEe',department) WHERE type = 'configurable'
+UPDATE tbl_LoadFile_FW13_LOLE SET categories = dbo.getCategory(categories,'Lolë',department) WHERE type = 'configurable'
 UPDATE tbl_LoadFile_FW13_LOLE SET categories = NULL WHERE type = 'simple'
 UPDATE tbl_LoadFile_FW13_LOLE SET status = 'Disabled' WHERE image IS NULL AND type = 'simple'
 UPDATE tbl_LoadFile_FW13_LOLE SET thumbnail = image, small_image = image WHERE type = 'simple'
 GO
 
--------------- Will Address the rest of this later
-/** Creating the table view for reference **/
 CREATE VIEW [dbo].[view_LoadFile_FW13_LOLE]
 AS
 SELECT  '"store"' AS store, 
@@ -233,15 +206,15 @@ SELECT  '"store"' AS store,
 		'"sku"' AS sku, 
 		'"name"' AS name, 
 		'"categories"' AS categories, 
-		'"attrLOLEute_set"' AS attrLOLEute_set, 
-        '"configurable_attrLOLEutes"' AS configurable_attrLOLEutes, 
+		'"attribute_set"' AS attribute_set, 
+        '"configurable_attributes"' AS configurable_attributes, 
         '"has_options"' AS has_options, 
         '"price"' AS price, 
         '"cost"' AS cost, 
         '"status"' AS status, 
         '"tax_class_id"' AS tax_class_id, 
         '"department"' AS department, 
-        '"visLOLEility"' AS visLOLEility, 
+        '"visibility"' AS visibility, 
         '"image"' AS image, 
         '"image_label"' AS image_label, 
         '"small_image"' AS small_image, 

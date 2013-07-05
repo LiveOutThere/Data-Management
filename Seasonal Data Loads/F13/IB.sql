@@ -26,6 +26,7 @@ CREATE TABLE [dbo].[tbl_LoadFile_FW13_IB](
 	[has_options] [nvarchar](4000) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
 	[price] [nvarchar](4000) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
 	[cost] [nvarchar](4000) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
+	[super_attribute_pricing] [nvarchar](4000) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
 	[status] [nvarchar](4000) COLLATE SQL_Latin1_General_CP1_CI_AS NULL CONSTRAINT [DF_tbl_LoadFile_FW13_IB_status]  DEFAULT ('Enabled'),
 	[tax_class_id] [nvarchar](4000) COLLATE SQL_Latin1_General_CP1_CI_AS NULL CONSTRAINT [DF_tbl_LoadFile_FW13_IB_tax_class]  DEFAULT ('Taxable Goods'),
 	[department] [nvarchar](4000) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,

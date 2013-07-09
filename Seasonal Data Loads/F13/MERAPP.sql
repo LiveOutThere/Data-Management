@@ -100,37 +100,35 @@ INSERT INTO tbl_LoadFile_FW13_MERAPP (
 		,vendor_color_code
 		,vendor_size_code 
 		,url_key  
-		,weight 
 		,never_backorder
 		,manage_stock  
 		,use_config_manage_stock)
-		
+
 SELECT DISTINCT 
 	'simple'												AS type
- 	,'FW13A-MERAPP-' +  b.Style_number + '-' + a.Color_Number + '-' + dbo.getMARSize(a.Size) AS sku												
-	,dbo.getMARName(b.product_name)						    AS name
+ 	,'FW13A-MERAPP-' + LEFT(a.Material,8) + '-' + RIGHT(a.Material,3) + '-' + dbo.getMERAPPSize(a.SKU) AS sku												
+	,dbo.getMERAPPName(a.Model)							    AS name
 	,0														AS has_options
-	,CAST(b.MSRP AS float) - .01							AS price
-	,b.Whole_sale											AS cost
-	,dbo.getMARDepartment(b.gender)							AS department	
+	,CAST(b.Retail AS float) - .01							AS price
+	,b.Wholesale											AS cost
+	,dbo.getMERAPPDepartment(a.[Grouping])					AS department	
 	,'Not Visible Individually'								AS visibility
-	,a.Color_Description									AS image_label 
-	,a.Color_Description									AS choose_color 
- 	,dbo.getMARSize(a.Size)									AS choose_size
- 	,CAST(a.UPC AS bigint)									AS vendor_sku
-	,b.style_number											AS vendor_product_id
-	,a.color_number											AS vendor_color_code 
-	,dbo.getMARSize(a.Size)			 						AS vendor_size_code 
-	,dbo.getUrlKey(dbo.getMARName(b.product_name),'Merrell',a.Color_Description + '-' + dbo.getMARSize(a.Size),dbo.getMARDepartment(b.gender)) + '-fw13a' AS url_key 	 												
-	,dbo.getMARWeight(b.style_number)					    AS weight 
-    ,0														AS never_backorder
+	,dbo.getMERAPPColor(a.Color)							AS image_label 
+	,dbo.getMERAPPColor(a.Color)							AS choose_color 
+ 	,dbo.getMERAPPSize(a.SKU)								AS choose_size
+ 	,CASE WHEN LEN(a.UPC) = 11 THEN '0' + a.UPC ELSE a.UPC END AS vendor_sku
+	,LEFT(a.Material,8)										AS vendor_product_id
+	,RIGHT(a.Material,3)									AS vendor_color_code 
+	,dbo.getMERAPPSize(a.SKU)			 					AS vendor_size_code 
+	,dbo.getUrlKey(dbo.getMERAPPName(a.Model),'Merrell',dbo.getMERAPPColor(a.Color) + '-' + dbo.getMERAPPSize(a.SKU),dbo.getMERAPPDepartment(a.[Grouping])) + '-fw13a' AS url_key 	 												
+	,0														AS never_backorder
 	,1														AS manage_stock 
 	,1														AS use_config_manage_stock
 FROM tbl_RawData_FW13_MER_APP_UPC AS a 
 INNER JOIN tbl_RawData_FW13_MER_APP_Price_List AS b 
-ON a.Style_number = b.Style_number
+ON LEFT(a.Material,8) = LEFT(b.Stock_Number,8)
 GO
- 
+  
 INSERT INTO tbl_LoadFile_FW13_MERAPP (
 		 type		
 		,sku
@@ -143,29 +141,50 @@ INSERT INTO tbl_LoadFile_FW13_MERAPP (
 		,visibility 
 		,vendor_product_id
 		,url_key 
-		,MERAPPchandise_priority
+		,meta_title
+		,merchandise_priority
 		,never_backorder
 		,manage_stock 
-		,use_config_manage_stock)
+		,use_config_manage_stock
+		,qty
+		,is_in_stock
+)
 			 
 SELECT DISTINCT 
 	'configurable'											AS type
  	,'MERAPP-' + vendor_product_id							AS sku											
 	,name													AS name
-	,'Choose_color,Choose_size'								AS configurable_attributes
+	,'choose_color,choose_size'								AS configurable_attributes
 	,1														AS has_options
 	,price													AS price
 	,cost													AS cost
 	,department												AS department	
-	,'Catalog,Search'										AS visibility
+	,'Catalog, Search'										AS visibility
 	,vendor_product_id 										AS vendor_product_id
-	,dbo.getUrlKey(name,'Merrell','',department)			AS url_key			
+	,dbo.getUrlKey(name,'Merrell','',department)			AS url_key	
+	,'Merrell ' + REPLACE(REPLACE(department + '''s ','Men|Women''s ',''),'Boy|Girl''s ','') + name AS meta_title
 	,'F'													AS merchandise_priority												
 	,0														AS never_backorder
 	,0														AS manage_stock 
 	,0														AS use_config_manage_stock
+	,NULL													AS qty
+	,NULL													AS is_in_stock
    
 FROM dbo.tbl_LoadFile_FW13_MERAPP
+GO
+
+UPDATE a SET
+	a.name = CASE WHEN b.type = 'Sock' THEN a.name + ' (Sock)' ELSE a.name END
+FROM tbl_LoadFile_FW13_MERAPP AS a
+INNER JOIN tbl_RawData_FW13_MER_APP_Marketing AS b
+ON a.vendor_product_id = LEFT(b.Stock#,8)
+
+UPDATE a SET
+	a.image = b.image
+FROM tbl_LoadFile_FW13_MERAPP AS a 
+INNER JOIN tbl_LoadFile_F12_MER AS b
+ON a.vendor_sku = b.vendor_sku
+WHERE a.type ='simple'
 GO
   
 UPDATE a SET
@@ -186,10 +205,8 @@ GO
  
 UPDATE tbl_LoadFile_FW13_MERAPP SET
 	categories		= dbo.getMagentoCategories(a.vendor_product_id),	
-	simples_skus	= dbo.getMARAssociatedProducts(a.vendor_product_id),
-	fabric			= (SELECT TOP 1 materials FROM tbl_RawData_FW13_MER_APP_Marketing WHERE CAST([Style Number] AS nvarchar(255)) = a.vendor_product_id),
-	features	    = dbo.getMARFeatures(a.vendor_product_id),
-	description		= (SELECT TOP 1 [Positioning Statement] FROM tbl_RawData_FW13_MER_APP_Marketing WHERE CAST([Style Number] AS nvarchar(255)) = a.vendor_product_id)
+	simples_skus	= dbo.getMERAPPAssociatedProducts(a.vendor_product_id),
+	description		= dbo.getMERAPPLDesc(a.vendor_product_id)
 FROM tbl_LoadFile_FW13_MERAPP AS a
 WHERE a.type = 'configurable'
 GO

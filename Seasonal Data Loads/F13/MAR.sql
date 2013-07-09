@@ -112,7 +112,7 @@ SELECT DISTINCT
 	,0														AS has_options
 	,CAST(b.MSRP AS float) - .01							AS price
 	,b.Whole_sale											AS cost
-	,dbo.getMARDepartment(b.gender)							AS department	
+	,dbo.getMARDepartment(b.gender,b.product_name)			AS department	
 	,'Not Visible Individually'								AS visibility
 	,a.Color_Description									AS image_label 
 	,a.Color_Description									AS choose_color 
@@ -121,7 +121,7 @@ SELECT DISTINCT
 	,b.style_number											AS vendor_product_id
 	,a.color_number											AS vendor_color_code 
 	,dbo.getMARSize(a.Size)			 						AS vendor_size_code 
-	,dbo.getUrlKey(dbo.getMARName(b.product_name),'Marmot',a.Color_Description + '-' + dbo.getMARSize(a.Size),dbo.getMARDepartment(b.gender)) + '-fw13a' AS url_key 	 												
+	,dbo.getUrlKey(dbo.getMARName(b.product_name),'Marmot',a.Color_Description + '-' + dbo.getMARSize(a.Size),dbo.getMARDepartment(b.gender,b.product_name)) + '-fw13a' AS url_key 	 												
 	,dbo.getMARWeight(b.style_number)					    AS weight 
     ,0														AS never_backorder
 	,1														AS manage_stock 
@@ -192,6 +192,34 @@ ON b.Filename LIKE '%' + a.vendor_product_id + '_' + a.vendor_color_code + '%'
 WHERE b.Brand = 'MAR' AND a.type ='simple' AND a.image IS NULL
 GO
  
+UPDATE tbl_LoadFile_FW13_MAR SET image = 'A22200_6169_alwayssummer_bag.jpg' WHERE vendor_sku = '785562390034'
+UPDATE tbl_LoadFile_FW13_MAR SET image = 'A20120_6332_cmwmembrain_bag.jpg' WHERE vendor_sku = '785562982925'
+UPDATE tbl_LoadFile_FW13_MAR SET image = 'A63160_1440_hatteras_pnt.jpg' WHERE vendor_sku IN('785562740143','785562740150','785562740167','785562740174','785562740181','785562740198','785562740211')
+UPDATE tbl_LoadFile_FW13_MAR SET image = 'A20910_4462_w_anglefire.jpg' WHERE vendor_sku IN('785562407527','785562407534','785562407541','785562407558')
+UPDATE tbl_LoadFile_FW13_MAR SET image = 'A73540_9227_isotherm_hdy.jpg' WHERE vendor_sku IN('785562672505','785562672512','785562672529','785562672536')
+UPDATE tbl_LoadFile_FW13_MAR SET image = 'A70290_001_motion_pnt.jpg' WHERE vendor_sku IN('785562388000','785562388017','785562388024','785562388031')
+UPDATE tbl_LoadFile_FW13_MAR SET image = 'A21320_9512_neversummer_bag.jpg' WHERE vendor_sku = '785562407763'
+UPDATE tbl_LoadFile_FW13_MAR SET image = 'A21360_1229_neversummermem_bag.jpg' WHERE vendor_sku IN('785562407800','785562407817')
+UPDATE tbl_LoadFile_FW13_MAR SET image = 'A20750_4724_neverwinter_bag.jpg' WHERE vendor_sku IN('785562407626','785562407633','785562407565','785562407572')
+UPDATE tbl_LoadFile_FW13_MAR SET image = 'A21140_9413_w_ouray_bag.jpg' WHERE vendor_sku IN('785562407824','785562407831','785562407848','785562407855')
+UPDATE tbl_LoadFile_FW13_MAR SET image = 'A88640_001_w_powerstretch_jkt.jpg' WHERE vendor_sku IN('785562388420','785562388505','785562391857','785562391864','785562391871')
+UPDATE tbl_LoadFile_FW13_MAR SET image = 'A88640_6778_w_powerstretch_jkt.jpg' WHERE vendor_sku IN('785562392335','785562392342','785562392359','785562392366','785562392373')
+UPDATE tbl_LoadFile_FW13_MAR SET image = 'A88640_2692_w_powerstretch_jkt.jpg' WHERE vendor_sku IN('785562391932','785562391949','785562392304','785562392311','785562392328')
+UPDATE tbl_LoadFile_FW13_MAR SET image = 'A88640_2381_w_powerstretch_jkt.jpg' WHERE vendor_sku IN('785562391888','785562391895','785562391901','785562391918','785562391925')
+UPDATE tbl_LoadFile_FW13_MAR SET image = 'A88640_9185_w_powerstretch_jkt.jpg' WHERE vendor_sku IN('785562392380','785562392397','785562392557','785562392564','785562392571')
+UPDATE tbl_LoadFile_FW13_MAR SET image = 'A55260_001_w_precip_fllzppnt.jpg' WHERE vendor_sku IN('785562041707','785562041714','785562041721','785562041738')
+UPDATE tbl_LoadFile_FW13_MAR SET image = 'A30660_62778_ridgerock_jkt.jpg' WHERE vendor_sku IN('785562396197','785562396210','785562396227','785562396234','785562396241')
+UPDATE tbl_LoadFile_FW13_MAR SET image = 'A50820_1415_rincon_jkt.jpg' WHERE vendor_sku IN('785562665415','785562665422','785562665439','785562665446','785562665460')
+UPDATE tbl_LoadFile_FW13_MAR SET image = 'A50820_6278_rincon_jkt.jpg' WHERE vendor_sku IN('785562665583','785562665590','785562665613','785562665620','785562665637')
+UPDATE tbl_LoadFile_FW13_MAR SET image = 'A20590_2759_sawtooth_bag.jpg' WHERE vendor_sku IN('785562407589','785562407596','785562407602','785562407619','785562407688','785562407695')
+UPDATE tbl_LoadFile_FW13_MAR SET image = 'A21840_1228_sawtoothmem_bag.jpg' WHERE vendor_sku = '785562407640'
+UPDATE tbl_LoadFile_FW13_MAR SET image = 'A80950_001_scree_pnt.jpg' WHERE vendor_sku IN('785562230958','785562230965','785562230972','785562230989','785562230996','785562231009','785562231016','785562230743','785562230750','785562230767','785562230774','785562230781','785562230798','785562230804')
+UPDATE tbl_LoadFile_FW13_MAR SET image = 'A85310_001_w_scree_pnt.jpg' WHERE vendor_sku IN('785562340183','785562340190','785562340343','785562340350','785562340367')
+UPDATE tbl_LoadFile_FW13_MAR SET image = 'A85310_1132_w_scree_pnt.jpg' WHERE vendor_sku IN('785562340398','785562340404','785562340480','785562340497','785562340503','785562340510')
+UPDATE tbl_LoadFile_FW13_MAR SET image = 'A21640_2717_w_sunset20_ba.jpg' WHERE vendor_sku = '785562659216'
+UPDATE tbl_LoadFile_FW13_MAR SET image = 'A21670_4462_w_sunset30_bag.jpg' WHERE vendor_sku = '785562659261'
+UPDATE tbl_LoadFile_FW13_MAR SET image = 'A21240_2422_w_teton_bag.jpg' WHERE vendor_sku = '785562407725'
+
 UPDATE tbl_LoadFile_FW13_MAR SET
 	categories		= dbo.getMagentoCategories(a.vendor_product_id),	
 	simples_skus	= dbo.getMARAssociatedProducts(a.vendor_product_id),

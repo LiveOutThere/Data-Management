@@ -104,25 +104,23 @@ INSERT INTO tbl_LoadFile_FW13_SOR (
 
 SELECT DISTINCT
 	'simple' AS type
-	,'FW13A-SOR-' + LEFT(a.JDE_Style_Color,6) + '-' + a.Color_Code + '-' + a.Size AS sku
-	,dbo.ProperCase(a.Style_Name) AS name
+	,'FW13A-SOR-' + LEFT(JDE_Style_Color,6) + '-' + Color_Code + '-' + Size AS sku
+	,dbo.getSORName(Style_Name) AS name
 	,0 AS has_options
-	,CAST(a.MSRP AS float) +.99 AS price
-	,a.Wholesale AS cost
-	,dbo.getSORDepartment(a.Gender) AS department
+	,CAST(MSRP AS float) +.99 AS price
+	,Wholesale AS cost
+	,dbo.getSORDepartment(Gender) AS department
 	,NULL AS image
-	,a.Color_Description AS image_label
-	,a.Color_Description AS choose_color
-	,REPLACE(a.Size,'.5','½') AS choose_size
-	,CAST(a.UPC AS bigint) AS vendor_sku
-	,LEFT(a.JDE_Style_Color,6) AS vendor_product_id
-	,a.Color_Code AS vendor_color_code
-	,a.Size AS vendor_size_code
-	,dbo.getUrlKey(dbo.ProperCase(a.Style_Name),'Sorel',a.Color_Description + '-' + a.Size,dbo.getSORDepartment(a.Gender)) + '-fw13a' AS url_key
+	,Color_Description AS image_label
+	,Color_Description AS choose_color
+	,REPLACE(Size,'.5','½') AS choose_size
+	,CAST(UPC AS bigint) AS vendor_sku
+	,LEFT(JDE_Style_Color,6) AS vendor_product_id
+	,Color_Code AS vendor_color_code
+	,Size AS vendor_size_code
+	,dbo.getUrlKey(dbo.getSORName(Style_Name),'Sorel',Color_Description + '-' + Size,dbo.getSORDepartment(Gender)) + '-fw13a' AS url_key
 	,NULL AS weight
-FROM tbl_RawData_FW13_SOR_UPC_Marketing AS a
---INNER JOIN tbl_RawData_FW13_SOR_Price_List AS b
---ON LEFT(a.JDE_Style_Color,6) = b.JDE_Style_Number
+FROM tbl_RawData_FW13_SOR_UPC_Marketing
 GO
 /*
 UPDATE a

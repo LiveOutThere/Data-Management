@@ -139,6 +139,7 @@ INSERT INTO tbl_LoadFile_FW13_SW (
 	,department
 	,visibility
 	,vendor_product_id
+	,qty
 	,is_in_stock
 	,url_key
 	,meta_title
@@ -159,6 +160,7 @@ SELECT DISTINCT
 	,department 												AS department
 	,'Catalog, Search' 											AS visibility
 	,vendor_product_id 											AS vendor_product_id
+	,NULL														AS qty
 	,NULL														AS is_in_stock
 	,dbo.getUrlKey(Name,'Smartwool','',department)				AS url_key
 	,'SmartWool ' + REPLACE(REPLACE(department + '''s ','Men|Women''s ',''),'Boy|Girl''s ','') + name AS meta_title

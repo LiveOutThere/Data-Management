@@ -156,6 +156,7 @@ INSERT INTO tbl_LoadFile_FW13_IB (
 	,merchandise_priority
 	,manage_stock
 	,use_config_manage_stock
+	,qty
 )
 
 SELECT DISTINCT
@@ -176,6 +177,7 @@ SELECT DISTINCT
 	,'F' AS merchandise_priority
 	,0 AS manage_stock
 	,0 AS use_config_manage_stock
+	,NULL AS qty
 FROM tbl_LoadFile_FW13_IB
 GO
 

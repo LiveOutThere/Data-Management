@@ -171,6 +171,7 @@ INSERT INTO tbl_LoadFile_FW13_OSP (
 		[type]
 		,sku  		
 		,name
+		,configurable_attributes
 		,has_options
 		,price
 		,cost
@@ -191,6 +192,7 @@ SELECT DISTINCT
 	'configurable'												AS type
 	,'OSP-' + vendor_product_id									AS sku
 	,name														AS name
+	,'choose_color,choose_size'									AS configurable_attributes
 	,1															AS has_options
 	,price														AS price
 	,cost														AS cost

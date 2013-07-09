@@ -143,27 +143,34 @@ INSERT INTO tbl_LoadFile_FW13_MAR (
 		,visibility 
 		,vendor_product_id
 		,url_key 
+		,meta_title
 		,merchandise_priority
 		,never_backorder
 		,manage_stock 
-		,use_config_manage_stock)
+		,use_config_manage_stock
+		,qty
+		,is_in_stock
+)
 			 
 SELECT DISTINCT 
 	'configurable'											AS type
  	,'MAR-' + vendor_product_id								AS sku											
 	,name													AS name
-	,'Choose_color,Choose_size'								AS configurable_attributes
+	,'choose_color,choose_size'								AS configurable_attributes
 	,1														AS has_options
 	,price													AS price
 	,cost													AS cost
 	,department												AS department	
-	,'Catalog,Search'										AS visibility
+	,'Catalog, Search'										AS visibility
 	,vendor_product_id 										AS vendor_product_id
-	,dbo.getUrlKey(name,'Marmot','',department)			    AS url_key			
+	,dbo.getUrlKey(name,'Marmot','',department)			    AS url_key	
+	,'Marmot ' + REPLACE(REPLACE(department + '''s ','Men|Women''s ',''),'Boy|Girl''s ','') + name AS meta_title		
 	,'F'													AS merchandize_priority												
 	,0														AS never_backorder
 	,0														AS manage_stock 
 	,0														AS use_config_manage_stock
+	,NULL													AS qty
+	,NULL													AS is_in_stock
    
 FROM dbo.tbl_LoadFile_FW13_MAR
 GO

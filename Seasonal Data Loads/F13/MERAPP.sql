@@ -199,8 +199,8 @@ UPDATE a SET
 	a.image = b.Filename
 FROM tbl_LoadFile_FW13_MERAPP AS a 
 INNER JOIN tbl_RawData_FW13_Image_Filenames AS b
-ON b.Filename LIKE '%' + a.vendor_product_id + '_' + a.vendor_color_code + '%'
-WHERE b.Brand = 'MER' AND a.type ='simple' AND a.image IS NULL
+ON b.Filename LIKE a.vendor_product_id + '-' + a.vendor_color_code + '-P%'
+WHERE b.Brand = 'MERAPP' AND a.type ='simple' AND a.image IS NULL
 GO
  
 UPDATE tbl_LoadFile_FW13_MERAPP SET

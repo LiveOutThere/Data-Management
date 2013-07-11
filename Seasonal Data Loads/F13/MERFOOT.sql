@@ -100,36 +100,37 @@ INSERT INTO tbl_LoadFile_FW13_MERFOOT (
 		,vendor_color_code
 		,vendor_size_code 
 		,url_key  
-		,weight 
 		,never_backorder
 		,manage_stock  
-		,use_config_manage_stock)
+		,use_config_manage_stock
+)
 		
 SELECT DISTINCT 
 	'simple'												AS type
- 	,'FW13A-MERFOOT-' +  b.Style_number + '-' + a.Color_Number + '-' + dbo.getMARSize(a.Size) AS sku												
-	,dbo.getMARName(b.product_name)						    AS name
+ 	,'FW13A-MERFOOT-' + a.STYLENUMBER + '-' + a.Material + '-' + dbo.getMERFOOTSize(a.GenderSize,a.Material) AS sku												
+	,dbo.getMERFOOTName(a.Name)							    AS name
 	,0														AS has_options
-	,CAST(b.MSRP AS float) - .01							AS price
-	,b.Whole_sale											AS cost
-	,dbo.getMARDepartment(b.gender)							AS department	
+	,CAST(b.Retail_price AS float) - .01					AS price
+	,b.wholesale											AS cost
+	,dbo.getMERFOOTDepartment(a.Material,a.Name)			AS department	
 	,'Not Visible Individually'								AS visibility
-	,a.Color_Description									AS image_label 
-	,a.Color_Description									AS choose_color 
- 	,dbo.getMARSize(a.Size)									AS choose_size
- 	,CAST(a.UPC AS bigint)									AS vendor_sku
-	,b.style_number											AS vendor_product_id
-	,a.color_number											AS vendor_color_code 
-	,dbo.getMARSize(a.Size)			 						AS vendor_size_code 
-	,dbo.getUrlKey(dbo.getMARName(b.product_name),'Merrell',a.Color_Description + '-' + dbo.getMARSize(a.Size),dbo.getMARDepartment(b.gender)) + '-fw13a' AS url_key 	 												
-	,dbo.getMARWeight(b.style_number)					    AS weight 
-    ,0														AS never_backorder
+	,a.Color												AS image_label 
+	,a.Color												AS choose_color 
+ 	,CASE WHEN RIGHT(dbo.getMERFOOTSize(a.GenderSize,a.Material),1) = 'W' THEN REPLACE(dbo.getMERFOOTSize(a.GenderSize,a.Material),'W',' (Wide)') ELSE dbo.getMERFOOTSize(a.GenderSize,a.Material) END AS choose_size
+ 	,a.UPC													AS vendor_sku
+	,a.STYLENUMBER											AS vendor_product_id
+	,a.Material												AS vendor_color_code 
+	,dbo.getMERFOOTSize(a.GenderSize,a.Material) 			AS vendor_size_code 
+	,dbo.getUrlKey(dbo.getMERFOOTName(a.Name),'Merrell',a.Color + '-' + dbo.getMERFOOTSize(a.GenderSize,a.Material),dbo.getMERFOOTDepartment(a.Material,a.Name)) + '-fw13a' AS url_key 	 												
+	,0														AS never_backorder
 	,1														AS manage_stock 
 	,1														AS use_config_manage_stock
 FROM tbl_RawData_FW13_MER_FOOT_UPC AS a 
 INNER JOIN tbl_RawData_FW13_MER_FOOT_Price_List AS b 
-ON a.Style_number = b.Style_number
+ON a.Name = b.Final_Pattern_name
 GO
+
+UPDATE tbl_LoadFile_FW13_MERFOOT SET choose_size = REPLACE(choose_size,'.5','½')
  
 INSERT INTO tbl_LoadFile_FW13_MERFOOT (
 		 type		
@@ -142,30 +143,45 @@ INSERT INTO tbl_LoadFile_FW13_MERFOOT (
 		,department  
 		,visibility 
 		,vendor_product_id
-		,url_key 
-		,MERFOOTchandise_priority
+		,url_key
+		,meta_title
+		,merchandise_priority
 		,never_backorder
 		,manage_stock 
-		,use_config_manage_stock)
+		,use_config_manage_stock
+		,qty
+		,is_in_stock
+)
 			 
 SELECT DISTINCT 
 	'configurable'											AS type
  	,'MERFOOT-' + vendor_product_id							AS sku											
 	,name													AS name
-	,'Choose_color,Choose_size'								AS configurable_attributes
+	,'choose_color,choose_size'								AS configurable_attributes
 	,1														AS has_options
 	,price													AS price
 	,cost													AS cost
 	,department												AS department	
-	,'Catalog,Search'										AS visibility
+	,'Catalog, Search'										AS visibility
 	,vendor_product_id 										AS vendor_product_id
 	,dbo.getUrlKey(name,'Merrell','',department)			AS url_key			
+	,'Merrell ' + REPLACE(REPLACE(department + '''s ','Men|Women''s ',''),'Boy|Girl''s ','') + name AS meta_title
 	,'F'													AS merchandise_priority												
 	,0														AS never_backorder
 	,0														AS manage_stock 
 	,0														AS use_config_manage_stock
+	,NULL													AS qty 
+	,NULL													AS is_in_stock
    
 FROM dbo.tbl_LoadFile_FW13_MERFOOT
+GO
+
+UPDATE a SET
+	a.image = b.image
+FROM tbl_LoadFile_FW13_MERFOOT AS a 
+INNER JOIN tbl_LoadFile_F12_MER AS b
+ON a.vendor_sku = b.vendor_sku
+WHERE a.type ='simple'
 GO
   
 UPDATE a SET
@@ -180,16 +196,15 @@ UPDATE a SET
 	a.image = b.Filename
 FROM tbl_LoadFile_FW13_MERFOOT AS a 
 INNER JOIN tbl_RawData_FW13_Image_Filenames AS b
-ON b.Filename LIKE '%' + a.vendor_product_id + '_' + a.vendor_color_code + '%'
-WHERE b.Brand = 'MER' AND a.type ='simple' AND a.image IS NULL
+ON b.Filename = REPLACE(a.vendor_color_code,'W','') + '.jpg'
+WHERE (b.Brand = 'MERFOOT' AND a.type ='simple' AND a.image IS NULL) OR (b.Brand = 'MERAPP' AND a.type ='simple' AND a.image IS NULL)
 GO
  
 UPDATE tbl_LoadFile_FW13_MERFOOT SET
 	categories		= dbo.getMagentoCategories(a.vendor_product_id),	
-	simples_skus	= dbo.getMARAssociatedProducts(a.vendor_product_id),
-	fabric			= (SELECT TOP 1 materials FROM tbl_RawData_FW13_MER_APP_Marketing WHERE CAST([Style Number] AS nvarchar(255)) = a.vendor_product_id),
-	features	    = dbo.getMARFeatures(a.vendor_product_id),
-	description		= (SELECT TOP 1 [Positioning Statement] FROM tbl_RawData_FW13_MER_APP_Marketing WHERE CAST([Style Number] AS nvarchar(255)) = a.vendor_product_id)
+	simples_skus	= dbo.getMERFOOTAssociatedProducts(a.vendor_product_id),
+	description		= dbo.getMERFOOTLDesc(a.name,a.vendor_product_id),
+	features		= dbo.getMERFOOTFeatures(a.name,a.vendor_product_id)
 FROM tbl_LoadFile_FW13_MERFOOT AS a
 WHERE a.type = 'configurable'
 GO

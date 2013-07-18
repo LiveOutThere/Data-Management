@@ -27,6 +27,7 @@ CREATE TABLE [dbo].[tbl_LoadFile_FW13_SW](
 	[has_options] [nvarchar](4000) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
 	[price] [nvarchar](4000) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
 	[cost] [nvarchar](4000) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
+	[super_attribute_pricing] [nvarchar](4000) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
 	[status] [nvarchar](4000) COLLATE SQL_Latin1_General_CP1_CI_AS NULL CONSTRAINT [DF_tbl_LoadFile_FW13_SW_status]  DEFAULT ('Enabled'),
 	[tax_class_id] [nvarchar](4000) COLLATE SQL_Latin1_General_CP1_CI_AS NULL CONSTRAINT [DF_tbl_LoadFile_FW13_SW_tax_class]  DEFAULT ('Taxable Goods'),
 	[department] [nvarchar](4000) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
@@ -138,6 +139,7 @@ INSERT INTO tbl_LoadFile_FW13_SW (
 	,department
 	,visibility
 	,vendor_product_id
+	,qty
 	,is_in_stock
 	,url_key
 	,meta_title
@@ -158,6 +160,7 @@ SELECT DISTINCT
 	,department 												AS department
 	,'Catalog, Search' 											AS visibility
 	,vendor_product_id 											AS vendor_product_id
+	,NULL														AS qty
 	,NULL														AS is_in_stock
 	,dbo.getUrlKey(Name,'Smartwool','',department)				AS url_key
 	,'SmartWool ' + REPLACE(REPLACE(department + '''s ','Men|Women''s ',''),'Boy|Girl''s ','') + name AS meta_title

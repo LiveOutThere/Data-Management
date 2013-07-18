@@ -57,3 +57,54 @@ WHERE SKU IN('SS13A-TNF-A03B',
 'SS13A-MER-4718',
 'SS13A-MER-5538')
 
+-- Latest Categorization Approach
+
+CREATE TABLE ##patcat (sku nvarchar(55), brand nvarchar(55), gender nvarchar(55), category nvarchar(MAX))
+
+INSERT INTO ##patcat
+SELECT REPLACE(sku,'SS13A-',''), 'Patagonia','', categories 
+FROM tbl_Magento_Categories
+WHERE sku IN('SS13A-PAT-25442',
+'SS13A-PAT-27175',
+'SS13A-PAT-27196',
+'SS13A-PAT-27470',
+'SS13A-PAT-31805',
+'SS13A-PAT-31820',
+'SS13A-PAT-37120',
+'SS13A-PAT-37125',
+'SS13A-PAT-43660',
+'SS13A-PAT-56856',
+'SS13A-PAT-83390',
+'SS13A-PAT-83395',
+'SS13A-PAT-83650',
+'SS13A-PAT-83766',
+'SS13A-PAT-83826',
+'SS13A-PAT-84240',
+'SS13A-PAT-84540',
+'SS13A-PAT-84805')
+
+UPDATE ##patcat SET gender = 'Women' WHERE sku = 'PAT-25442'
+UPDATE ##patcat SET gender = 'Women' WHERE sku = 'PAT-27175'
+UPDATE ##patcat SET gender = 'Women' WHERE sku = 'PAT-27196'
+UPDATE ##patcat SET gender = 'Men' WHERE sku = 'PAT-27470'
+UPDATE ##patcat SET gender = 'Men' WHERE sku = 'PAT-31805'
+UPDATE ##patcat SET gender = 'Women' WHERE sku = 'PAT-31820'
+UPDATE ##patcat SET gender = 'Men' WHERE sku = 'PAT-37120'
+UPDATE ##patcat SET gender = 'Women' WHERE sku = 'PAT-37125'
+UPDATE ##patcat SET gender = 'Women' WHERE sku = 'PAT-43660'
+UPDATE ##patcat SET gender = 'Men' WHERE sku = 'PAT-56856'
+UPDATE ##patcat SET gender = 'Men' WHERE sku = 'PAT-83390'
+UPDATE ##patcat SET gender = 'Women' WHERE sku = 'PAT-83395'
+UPDATE ##patcat SET gender = 'Women' WHERE sku = 'PAT-83650'
+UPDATE ##patcat SET gender = 'Women' WHERE sku = 'PAT-83766'
+UPDATE ##patcat SET gender = 'Women' WHERE sku = 'PAT-83826'
+UPDATE ##patcat SET gender = 'Men' WHERE sku = 'PAT-84240'
+UPDATE ##patcat SET gender = 'Men' WHERE sku = 'PAT-84540'
+UPDATE ##patcat SET gender = 'Women' WHERE sku = 'PAT-84805'
+
+UPDATE ##patcat SET category = dbo.getCategory(category,brand,gender)
+
+SELECT * FROM ##patcat
+DROP TABLE ##patcat
+
+

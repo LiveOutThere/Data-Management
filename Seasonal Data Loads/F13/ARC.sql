@@ -9,28 +9,28 @@ GO
 SET CONCAT_NULL_YIELDS_NULL OFF
 GO
 
-IF EXISTS (SELECT * FROM sysobjects WHERE id = object_id(N'[dbo].[tbl_LoadFile_FW13_IB]')
+IF EXISTS (SELECT * FROM sysobjects WHERE id = object_id(N'[dbo].[tbl_LoadFile_FW13_ARC]')
 AND OBJECTPROPERTY(id, N'IsUserTable') = 1)
-DROP TABLE [dbo].[tbl_LoadFile_FW13_IB]
+DROP TABLE [dbo].[tbl_LoadFile_FW13_ARC]
 
-CREATE TABLE [dbo].[tbl_LoadFile_FW13_IB](
+CREATE TABLE [dbo].[tbl_LoadFile_FW13_ARC](
 	[id] [int] IDENTITY(1,1) NOT NULL,
-	[store] [nvarchar](4000) COLLATE SQL_Latin1_General_CP1_CI_AS NULL CONSTRAINT [DF_tbl_LoadFile_FW13_IB_store]  DEFAULT ('admin'),
-	[websites] [nvarchar](4000) COLLATE SQL_Latin1_General_CP1_CI_AS NULL CONSTRAINT [DF_tbl_LoadFile_FW13_IB_websites]  DEFAULT ('base'),
+	[store] [nvarchar](4000) COLLATE SQL_Latin1_General_CP1_CI_AS NULL CONSTRAINT [DF_tbl_LoadFile_FW13_ARC_store]  DEFAULT ('admin'),
+	[websites] [nvarchar](4000) COLLATE SQL_Latin1_General_CP1_CI_AS NULL CONSTRAINT [DF_tbl_LoadFile_FW13_ARC_websites]  DEFAULT ('base'),
 	[type] [nvarchar](50) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
 	[sku] [nvarchar](50) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
 	[name] [nvarchar](4000) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
 	[categories] [nvarchar](4000) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
-	[attribute_set] [nvarchar](4000) COLLATE SQL_Latin1_General_CP1_CI_AS NULL CONSTRAINT [DF_tbl_LoadFile_FW13_IB_attribute_set]  DEFAULT ('default'),
+	[attribute_set] [nvarchar](4000) COLLATE SQL_Latin1_General_CP1_CI_AS NULL CONSTRAINT [DF_tbl_LoadFile_FW13_ARC_attribute_set]  DEFAULT ('default'),
 	[configurable_attributes] [nvarchar](4000) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
 	[has_options] [nvarchar](4000) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
 	[price] [nvarchar](4000) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
 	[cost] [nvarchar](4000) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
 	[super_attribute_pricing] [nvarchar](4000) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
-	[status] [nvarchar](4000) COLLATE SQL_Latin1_General_CP1_CI_AS NULL CONSTRAINT [DF_tbl_LoadFile_FW13_IB_status]  DEFAULT ('Enabled'),
-	[tax_class_id] [nvarchar](4000) COLLATE SQL_Latin1_General_CP1_CI_AS NULL CONSTRAINT [DF_tbl_LoadFile_FW13_IB_tax_class]  DEFAULT ('Taxable Goods'),
+	[status] [nvarchar](4000) COLLATE SQL_Latin1_General_CP1_CI_AS NULL CONSTRAINT [DF_tbl_LoadFile_FW13_ARC_status]  DEFAULT ('Enabled'),
+	[tax_class_id] [nvarchar](4000) COLLATE SQL_Latin1_General_CP1_CI_AS NULL CONSTRAINT [DF_tbl_LoadFile_FW13_ARC_tax_class]  DEFAULT ('Taxable Goods'),
 	[department] [nvarchar](4000) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
-	[visibility] [nvarchar](4000) COLLATE SQL_Latin1_General_CP1_CI_AS NULL CONSTRAINT [DF_tbl_LoadFile_FW13_IB_visibility]  DEFAULT ('Not Visible Individually'),
+	[visibility] [nvarchar](4000) COLLATE SQL_Latin1_General_CP1_CI_AS NULL CONSTRAINT [DF_tbl_LoadFile_FW13_ARC_visibility]  DEFAULT ('Not Visible Individually'),
 	[image] [nvarchar](4000) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
 	[image_label] [nvarchar](4000) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
 	[small_image] [nvarchar](4000) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
@@ -41,9 +41,9 @@ CREATE TABLE [dbo].[tbl_LoadFile_FW13_IB](
 	[vendor_product_id] [nvarchar](50) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
 	[vendor_color_code] [nvarchar](4000) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
 	[vendor_size_code] [nvarchar](4000) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
-	[season_id] [nvarchar](4000) COLLATE SQL_Latin1_General_CP1_CI_AS NULL CONSTRAINT [DF_tbl_LoadFile_FW13_IB_season]  DEFAULT (N'FW13 ASAP'),
+	[season_id] [nvarchar](4000) COLLATE SQL_Latin1_General_CP1_CI_AS NULL CONSTRAINT [DF_tbl_LoadFile_FW13_ARC_season]  DEFAULT (N'FW13 ASAP'),
 	[short_description] [nvarchar](4000) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
-	[description] [nvarchar](4000) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
+	[description] [nvarchar](MAX) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
 	[features] [nvarchar](4000) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
 	[activities] [nvarchar](4000) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
 	[weather] [nvarchar](4000) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
@@ -52,38 +52,38 @@ CREATE TABLE [dbo].[tbl_LoadFile_FW13_IB](
 	[fabric] [nvarchar](4000) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
 	[fit] [nvarchar](4000) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
 	[volume] [nvarchar](4000) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
-	[manufacturer] [nvarchar](4000) COLLATE SQL_Latin1_General_CP1_CI_AS NULL CONSTRAINT [DF_tbl_LoadFile_FW13_IB_manufacturer]  DEFAULT ('Icebreaker'),
-	[qty] [nvarchar](4000) COLLATE SQL_Latin1_General_CP1_CI_AS NULL CONSTRAINT [DF_tbl_LoadFile_FW13_IB_qty]  DEFAULT ((0)),
-	[is_in_stock] [nvarchar](4000) COLLATE SQL_Latin1_General_CP1_CI_AS NULL CONSTRAINT [DF_tbl_LoadFile_FW13_IB_is_in_stock]  DEFAULT ((0)),
+	[manufacturer] [nvarchar](4000) COLLATE SQL_Latin1_General_CP1_CI_AS NULL CONSTRAINT [DF_tbl_LoadFile_FW13_ARC_manufacturer]  DEFAULT ('Arc''teryx'),
+	[qty] [nvarchar](4000) COLLATE SQL_Latin1_General_CP1_CI_AS NULL CONSTRAINT [DF_tbl_LoadFile_FW13_ARC_qty]  DEFAULT ((0)),
+	[is_in_stock] [nvarchar](4000) COLLATE SQL_Latin1_General_CP1_CI_AS NULL CONSTRAINT [DF_tbl_LoadFile_FW13_ARC_is_in_stock]  DEFAULT ((0)),
 	[simples_skus] [nvarchar](4000) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
 	[url_key] [nvarchar](4000) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
 	[meta_title] [nvarchar](4000) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
 	[videos] [nvarchar](4000) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
 	[weight] [nvarchar](4000) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
 	[merchandise_priority] [nvarchar](4000) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
-	[never_backorder] [nvarchar](4000) COLLATE SQL_Latin1_General_CP1_CI_AS NULL CONSTRAINT [DF_tbl_LoadFile_FW13_IB_never_backorder]  DEFAULT ((0)),
-	[backorders] [nvarchar](4000) COLLATE SQL_Latin1_General_CP1_CI_AS NULL CONSTRAINT [DF_tbl_LoadFile_FW13_IB_backorders]  DEFAULT ((0)),
-	[manage_stock] [nvarchar](4000) COLLATE SQL_Latin1_General_CP1_CI_AS NULL CONSTRAINT [DF_tbl_LoadFile_FW13_IB_manage_stock]  DEFAULT ((1)),
-	[use_config_backorders] [nvarchar](4000) COLLATE SQL_Latin1_General_CP1_CI_AS NULL CONSTRAINT [DF_tbl_LoadFile_FW13_IB_use_config_backorders]  DEFAULT ((0)),
-	[use_config_manage_stock] [nvarchar](4000) COLLATE SQL_Latin1_General_CP1_CI_AS NULL CONSTRAINT [DF_tbl_LoadFile_FW13_IB_use_config_manage_stock]  DEFAULT ((1))
- CONSTRAINT [PK_tbl_LoadFile_FW13_IB] PRIMARY KEY CLUSTERED 
+	[never_backorder] [nvarchar](4000) COLLATE SQL_Latin1_General_CP1_CI_AS NULL CONSTRAINT [DF_tbl_LoadFile_FW13_ARC_never_backorder]  DEFAULT ((0)),
+	[backorders] [nvarchar](4000) COLLATE SQL_Latin1_General_CP1_CI_AS NULL CONSTRAINT [DF_tbl_LoadFile_FW13_ARC_backorders]  DEFAULT ((0)),
+	[manage_stock] [nvarchar](4000) COLLATE SQL_Latin1_General_CP1_CI_AS NULL CONSTRAINT [DF_tbl_LoadFile_FW13_ARC_manage_stock]  DEFAULT ((1)),
+	[use_config_backorders] [nvarchar](4000) COLLATE SQL_Latin1_General_CP1_CI_AS NULL CONSTRAINT [DF_tbl_LoadFile_FW13_ARC_use_config_backorders]  DEFAULT ((0)),
+	[use_config_manage_stock] [nvarchar](4000) COLLATE SQL_Latin1_General_CP1_CI_AS NULL CONSTRAINT [DF_tbl_LoadFile_FW13_ARC_use_config_manage_stock]  DEFAULT ((1))
+ CONSTRAINT [PK_tbl_LoadFile_FW13_ARC] PRIMARY KEY CLUSTERED 
 (
 	[id] ASC
 )WITH (IGNORE_DUP_KEY = OFF) ON [PRIMARY]
 ) ON [PRIMARY]
 
-CREATE NONCLUSTERED INDEX [IX_tbl_LoadFile_FW13_IB] ON [dbo].[tbl_LoadFile_FW13_IB] 
+CREATE NONCLUSTERED INDEX [IX_tbl_LoadFile_FW13_ARC] ON [dbo].[tbl_LoadFile_FW13_ARC] 
 (
 	[sku] ASC,
 	[type] ASC,
 	[vendor_product_id] ASC
 )WITH (PAD_INDEX  = OFF, STATISTICS_NORECOMPUTE  = OFF, SORT_IN_TEMPDB = OFF, IGNORE_DUP_KEY = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS  = ON, ALLOW_PAGE_LOCKS  = ON) ON [PRIMARY]
-
 GO
-TRUNCATE TABLE tbl_LoadFile_FW13_IB
 
+TRUNCATE TABLE tbl_LoadFile_FW13_ARC
 GO
-INSERT INTO tbl_LoadFile_FW13_IB (
+
+INSERT INTO tbl_LoadFile_FW13_ARC (
 		[type]		
 		,sku
 		,[name]
@@ -100,45 +100,60 @@ INSERT INTO tbl_LoadFile_FW13_IB (
 		,vendor_color_code
 		,vendor_size_code
 		,url_key
-		,weight
-)
+		,weight)
 
 SELECT DISTINCT
 	'simple' AS type
-	,'FW13A-IB-' + ItemNumber + '-' + ColorCode + '-' + Size AS sku
-	,dbo.getIBName(ItemNumber) AS name
+	,'FW13A-ARC-' + CAST(model AS nvarchar(255)) + '-' + UPPER(REPLACE(color,' ','')) + '-' + dbo.getARCSize(size) AS sku
+	,dbo.getARCName(description) AS name
 	,0 AS has_options
-	,ROUND(MSRP,2) AS price
-	,ROUND([WS Price],1) AS cost
-	,dbo.getIBGender(Directory) AS department
+	,CAST(suggested_retail AS float) +.99 AS price
+	,wholesale AS cost
+	,dbo.getARCDepartment(description) AS department
 	,NULL AS image
-	,dbo.getIBColorName(Color) AS image_label
-	,dbo.getIBColorName(Color) AS choose_color
-	,Size AS choose_size
-	,CAST(UPC AS bigint) AS vendor_sku
-	,ItemNumber AS vendor_product_id
-	,ColorCode AS vendor_color_code
-	,Size AS vendor_size_code
-	,dbo.getUrlKey(dbo.getIBName(ItemNumber), 'Icebreaker', dbo.getIBColorName(Color) + '-' + Size, dbo.getIBGender(Directory)) + '-fw13a' AS url_key
-	,NULL AS weight
-FROM tbl_RawData_FW13_IB_UPC_Price
+	,color AS image_label
+	,color AS choose_color
+	,dbo.getARCSize(size) AS choose_size
+	,CAST(CAST(upc AS float) AS bigint) AS vendor_sku
+	,CAST(model AS nvarchar(255)) AS vendor_product_id
+	,UPPER(REPLACE(color,' ','')) AS vendor_color_code
+	,dbo.getARCSize(size) AS vendor_size_code
+	,dbo.getUrlKey(dbo.getARCName(description),'Arc''teryx',color + '-' + dbo.getARCSize(size),dbo.getARCDepartment(description)) + '-fw13a' AS url_key
+	,[weight] AS weight
+FROM tbl_RawData_FW13_ARC_UPC_Price
 GO
 
 UPDATE a
 	SET a.image = b.image
-FROM tbl_LoadFile_FW13_IB AS a
-INNER JOIN tbl_LoadFile_SS13_IB AS b
-ON a.vendor_sku = b.vendor_sku 
+FROM tbl_LoadFile_FW13_ARC AS a
+INNER JOIN tbl_LoadFile_F12_ARC AS b
+ON b.vendor_sku = a.vendor_sku 
 WHERE a.type = 'simple'
 
 UPDATE a
-	SET a.image = b.Filename 
-FROM tbl_LoadFile_FW13_IB AS a
-INNER JOIN tbl_RawData_FW13_Image_Filenames AS b
-ON b.Filename LIKE '%' + a.vendor_product_id + a.vendor_color_code + '_1.png'
+	SET a.image = b.image
+FROM tbl_LoadFile_FW13_ARC AS a
+INNER JOIN tbl_LoadFile_SS13_ARC AS b
+ON b.vendor_sku = a.vendor_sku 
 WHERE a.type = 'simple' AND a.image IS NULL
+
+UPDATE a
+	SET a.image = b.Filename
+FROM tbl_LoadFile_FW13_ARC AS a
+INNER JOIN tbl_RawData_FW13_Image_Filenames AS b
+ON b.Filename LIKE '%' + REPLACE(REPLACE(REPLACE(a.name,' ','-'),'/','-'),'&','-') + '-' + REPLACE(REPLACE(a.choose_color,' ','-'),'/','-') + '.png' 
+WHERE b.Brand = 'ARC' AND a.type = 'simple' AND a.image IS NULL
+
+UPDATE a
+	SET a.image = b.Filename
+FROM tbl_LoadFile_FW13_ARC AS a
+INNER JOIN tbl_RawData_FW13_Image_Filenames AS b
+ON b.Filename LIKE '%' + REPLACE(REPLACE(REPLACE(a.name,' ','-'),'/','-'),'&','-') + '-W-' + REPLACE(REPLACE(a.choose_color,' ','-'),'/','-') + '.png' 
+WHERE b.Brand = 'ARC' AND a.type = 'simple' AND a.image IS NULL AND department = 'Women'
+
+UPDATE tbl_LoadFile_FW13_ARC SET image = 'S13-Rho-LTW-Beanie-Tungsten.jpg' WHERE type = 'simple' AND name = 'Rho LTW Beanie' AND choose_color = 'Tungsten'
 	
-INSERT INTO tbl_LoadFile_FW13_IB (
+INSERT INTO tbl_LoadFile_FW13_ARC (
 	type
 	,sku
 	,name
@@ -150,18 +165,18 @@ INSERT INTO tbl_LoadFile_FW13_IB (
 	,department
 	,visibility
 	,vendor_product_id
-	,is_in_stock
 	,url_key
 	,meta_title
 	,merchandise_priority
 	,manage_stock
 	,use_config_manage_stock
 	,qty
+	,is_in_stock
 )
 
 SELECT DISTINCT
 	'configurable' AS type
-	,'IB-' + vendor_product_id AS sku
+	,'ARC-' + vendor_product_id AS sku
 	,name AS name
 	,'Uncategorized' AS categories
 	,'choose_color,choose_size' AS configurable_attributes
@@ -171,32 +186,55 @@ SELECT DISTINCT
 	,department AS department
 	,'Catalog, Search' AS visibility
 	,vendor_product_id AS vendor_product_id
-	,NULL AS is_in_stock
-	,dbo.getUrlKey(name,'Icebreaker','',department) AS url_key
-	,'Icebreaker ' + REPLACE(REPLACE(department + '''s ','Men|Women''s ',''),'Boy|Girl''s ','') + name AS meta_title
+	,dbo.getUrlKey(name,'Arc''teryx','',department) AS url_key
+	,'Arc''teryx ' + REPLACE(REPLACE(department + '''s ','Men|Women''s ',''),'Boy|Girl''s ','') + name AS meta_title
 	,'F' AS merchandise_priority
 	,0 AS manage_stock
 	,0 AS use_config_manage_stock
 	,NULL AS qty
-FROM tbl_LoadFile_FW13_IB
+	,NULL AS is_in_stock
+FROM tbl_LoadFile_FW13_ARC
 GO
 
-UPDATE a SET 
-	a.care_instructions	  = (SELECT TOP 1 dbo.getIBCareInstruction(care_instructions + '|' + care_instructions_En) FROM tbl_RawData_FW13_IB_Marketing WHERE Style_Code COLLATE DATABASE_DEFAULT = a.vendor_product_id COLLATE DATABASE_DEFAULT),
-	a.simples_skus		  = (SELECT TOP 1 dbo.getIBAssociatedProducts(a.vendor_product_id)),
-    a.categories		  =	(SELECT TOP 1 dbo.getMagentoCategories(a.vendor_product_id)),
-	a.fabric			  = (SELECT TOP 1 Fabric_Make_Up_EN FROM tbl_RawData_FW13_IB_Marketing WHERE Style_Code COLLATE DATABASE_DEFAULT = a.vendor_product_id COLLATE DATABASE_DEFAULT),
-	a.description		  = (SELECT TOP 1 Product_Description_EN FROM dbo.tbl_RawData_FW13_IB_Marketing WHERE Style_Code COLLATE DATABASE_DEFAULT = a.vendor_product_id COLLATE DATABASE_DEFAULT)
-FROM tbl_LoadFile_FW13_IB AS a
+UPDATE tbl_LoadFile_FW13_ARC SET
+	 categories = dbo.getMagentoCategories(a.vendor_product_id),
+	 description = (SELECT TOP 1 Design FROM tbl_RawData_FW13_ARC_Marketing WHERE model = a.vendor_product_id),
+	 features = dbo.getARCFeatures(a.vendor_product_id),
+	 fabric = (SELECT TOP 1 Materials FROM tbl_RawData_FW13_ARC_Marketing WHERE model = a.vendor_product_id),
+	 fit = (SELECT TOP 1 Fit FROM tbl_RawData_FW13_ARC_Marketing WHERE model = a.vendor_product_id),
+	 volume = (SELECT TOP 1 Volume FROM tbl_RawData_FW13_ARC_Marketing WHERE model = a.vendor_product_id),
+	 simples_skus = dbo.getARCAssociatedProducts(a.vendor_product_id)
+FROM tbl_LoadFile_FW13_ARC AS a
 WHERE type = 'configurable'
-	
-UPDATE tbl_LoadFile_FW13_IB SET categories = dbo.getCategory(categories,'Icebreaker',department) WHERE type = 'configurable'
-UPDATE tbl_LoadFile_FW13_IB SET categories = NULL WHERE type = 'simple'
-UPDATE tbl_LoadFile_FW13_IB SET status = 'Disabled' WHERE image IS NULL AND type = 'simple'
-UPDATE tbl_LoadFile_FW13_IB SET thumbnail = image, small_image = image WHERE type = 'simple'
+
+DECLARE @stylenumber varchar(1024), @styledesc varchar(1024), @color varchar(1024), @features varchar(1024), @description varchar(1024), @sku varchar(1024)
+
+DECLARE alike_styles CURSOR FOR
+SELECT DISTINCT vendor_product_id, name, choose_color, features, description FROM tbl_LoadFile_FW13_ARC
+
+OPEN alike_styles
+
+FETCH NEXT FROM alike_styles INTO @stylenumber, @styledesc, @color, @features, @description
+
+WHILE @@FETCH_STATUS = 0
+BEGIN
+	SELECT @sku = sku FROM tbl_LoadFile_FW13_ARC WHERE name LIKE @styledesc + '%' AND choose_color = @color AND features IS NULL OR description IS NULL
+	UPDATE tbl_LoadFile_FW13_ARC SET features = @features, description = @description WHERE sku = @sku
+	FETCH NEXT FROM alike_styles  INTO @stylenumber, @styledesc, @color, @features, @description
+END
+
+CLOSE alike_styles
+DEALLOCATE alike_styles
 GO
 
-CREATE VIEW [dbo].[view_LoadFile_FW13_IB]
+GO	
+UPDATE tbl_LoadFile_FW13_ARC SET categories = dbo.getCategory(categories,'Arc''teryx',department) WHERE type = 'configurable'
+UPDATE tbl_LoadFile_FW13_ARC SET categories = NULL WHERE type = 'simple'
+UPDATE tbl_LoadFile_FW13_ARC SET status = 'Disabled' WHERE image IS NULL AND type = 'simple'
+UPDATE tbl_LoadFile_FW13_ARC SET thumbnail = image, small_image = image WHERE type = 'simple'
+GO
+
+CREATE VIEW [dbo].[view_LoadFile_FW13_ARC]
 AS
 SELECT  '"store"' AS store, 
 		'"websites"' AS websites, 
@@ -255,14 +293,11 @@ SELECT  '"' + RTRIM(LTRIM(REPLACE(a.store,'"','""'))) + '"','"' + RTRIM(LTRIM(RE
 		'"' + RTRIM(LTRIM(REPLACE(a.vendor_color_code,'"','""'))) + '"','"' + RTRIM(LTRIM(REPLACE(a.vendor_size_code,'"','""'))) + '"','"' + RTRIM(LTRIM(REPLACE(a.season_id,'"','""'))) + '"','"' + RTRIM(LTRIM(REPLACE(a. short_description,'"','""'))) + '"','"' + RTRIM(LTRIM(REPLACE(a.description,'"','""'))) + '"','"' + RTRIM(LTRIM(REPLACE(a.features,'"','""'))) + '"','"' + RTRIM(LTRIM(REPLACE(a.activities,'"','""'))) + '"','"' + RTRIM(LTRIM(REPLACE(a.weather,'"','""'))) + '"','"' + RTRIM(LTRIM(REPLACE(a.layering,'"','""'))) + '"','"' + RTRIM(LTRIM(REPLACE(a.care_instructions,'"','""'))) + '"',
 		'"' + RTRIM(LTRIM(REPLACE(a.fabric,'"','""'))) + '"','"' + RTRIM(LTRIM(REPLACE(a.fit,'"','""'))) + '"','"' + RTRIM(LTRIM(REPLACE(a.volume,'"','""'))) + '"','"' + RTRIM(LTRIM(REPLACE(a.manufacturer,'"','""'))) + '"','"' + RTRIM(LTRIM(REPLACE(a.qty,'"','""'))) + '"','"' + RTRIM(LTRIM(REPLACE(a.is_in_stock,'"','""'))) + '"','"' + RTRIM(LTRIM(REPLACE(a.simples_skus,'"','""'))) + '"','"' + RTRIM(LTRIM(REPLACE(a.url_key,'"','""'))) + '"',
 		'"' + RTRIM(LTRIM(REPLACE(a.videos,'"','""'))) + '"','"' + RTRIM(LTRIM(REPLACE(a.weight,'"','""'))) + '"','"' + RTRIM(LTRIM(REPLACE(a.merchandise_priority,'"','""'))) + '"','"' + RTRIM(LTRIM(REPLACE(a.backorders,'"','""'))) + '"','"' + RTRIM(LTRIM(REPLACE(a.manage_stock,'"','""'))) + '"','"' + RTRIM(LTRIM(REPLACE(a.never_backorder,'"','""'))) + '"','"' + RTRIM(LTRIM(REPLACE(a.use_config_manage_stock,'"','""'))) + '"','"' + RTRIM(LTRIM(REPLACE(a.use_config_backorders,'"','""'))) + '"','"' + RTRIM(LTRIM(REPLACE(a.meta_title,'"','""'))) + '"'
-FROM dbo.tbl_LoadFile_FW13_IB AS a
+FROM dbo.tbl_LoadFile_FW13_ARC AS a
 GO
 
 DECLARE @sql varchar(1024)
-SELECT @sql = 'bcp "SELECT * FROM LOT_Inventory.dbo.view_LoadFile_FW13_IB" queryout "C:\Data\Shared\FW13IB.csv" -w -t , -T -S ' + @@servername
+SELECT @sql = 'bcp "SELECT * FROM LOT_Inventory.dbo.view_LoadFile_FW13_ARC" queryout "C:\Data\Shared\FW13MHW.csv" -w -t , -T -S ' + @@servername
 EXEC master..xp_cmdshell @sql
 
-DROP VIEW view_LoadFile_FW13_IB
-	
-	
-
+DROP VIEW view_LoadFile_FW13_ARC

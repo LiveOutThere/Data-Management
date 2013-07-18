@@ -1,4 +1,4 @@
-USE LOT_Inventory
+USE LOT_Inventory 
 GO
 SET ANSI_NULLS ON
 GO
@@ -6,29 +6,29 @@ SET QUOTED_IDENTIFIER ON
 GO
 SET ANSI_PADDING ON
 GO
-
-IF EXISTS (SELECT * FROM sysobjects WHERE id = object_id(N'[dbo].[tbl_LoadFile_FW13_OSP]')
+ 
+IF EXISTS (SELECT * FROM sysobjects WHERE id = object_id(N'[dbo].[tbl_LoadFile_FW13_MERAPP]')
 AND OBJECTPROPERTY(id, N'IsUserTable') = 1)
-DROP TABLE [dbo].[tbl_LoadFile_FW13_OSP]
-
-CREATE TABLE [dbo].[tbl_LoadFile_FW13_OSP](
+DROP TABLE [dbo].[tbl_LoadFile_FW13_MERAPP]
+ 
+CREATE TABLE [dbo].[tbl_LoadFile_FW13_MERAPP](
 	[id] [int] IDENTITY(1,1) NOT NULL,
-	[store] [nvarchar](4000) COLLATE SQL_Latin1_General_CP1_CI_AS NULL CONSTRAINT [DF_tbl_LoadFile_FW13_OSP_store]  DEFAULT ('admin'),
-	[websites] [nvarchar](4000) COLLATE SQL_Latin1_General_CP1_CI_AS NULL CONSTRAINT [DF_tbl_LoadFile_FW13_OSP_websites]  DEFAULT ('base'),
+	[store] [nvarchar](4000) COLLATE SQL_Latin1_General_CP1_CI_AS NULL CONSTRAINT [DF_tbl_LoadFile_FW13_MERAPP_store] DEFAULT ('admin'),
+	[websites] [nvarchar](4000) COLLATE SQL_Latin1_General_CP1_CI_AS NULL CONSTRAINT [DF_tbl_LoadFile_FW13_MERAPP_websites] DEFAULT ('base'),
 	[type] [nvarchar](50) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
 	[sku] [nvarchar](50) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
 	[name] [nvarchar](4000) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
 	[categories] [nvarchar](4000) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
-	[attribute_set] [nvarchar](4000) COLLATE SQL_Latin1_General_CP1_CI_AS NULL CONSTRAINT [DF_tbl_LoadFile_FW13_OSP_attribute_set]  DEFAULT ('default'),
+	[attribute_set] [nvarchar](4000) COLLATE SQL_Latin1_General_CP1_CI_AS NULL CONSTRAINT [DF_tbl_LoadFile_FW13_MERAPP_attribute_set] DEFAULT ('default'),
 	[configurable_attributes] [nvarchar](4000) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
 	[has_options] [nvarchar](4000) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
 	[price] [nvarchar](4000) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
 	[cost] [nvarchar](4000) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
 	[super_attribute_pricing] [nvarchar](4000) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
-	[status] [nvarchar](4000) COLLATE SQL_Latin1_General_CP1_CI_AS NULL CONSTRAINT [DF_tbl_LoadFile_FW13_OSP_status]  DEFAULT ('Enabled'),
-	[tax_class_id] [nvarchar](4000) COLLATE SQL_Latin1_General_CP1_CI_AS NULL CONSTRAINT [DF_tbl_LoadFile_FW13_OSP_tax_class]  DEFAULT ('Taxable Goods'),
+	[status] [nvarchar](4000) COLLATE SQL_Latin1_General_CP1_CI_AS NULL CONSTRAINT [DF_tbl_LoadFile_FW13_MERAPP_status] DEFAULT ('Enabled'),
+	[tax_class_id] [nvarchar](4000) COLLATE SQL_Latin1_General_CP1_CI_AS NULL CONSTRAINT [DF_tbl_LoadFile_FW13_MERAPP_tax_class] DEFAULT ('Taxable Goods'),
 	[department] [nvarchar](4000) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
-	[visibility] [nvarchar](4000) COLLATE SQL_Latin1_General_CP1_CI_AS NULL CONSTRAINT [DF_tbl_LoadFile_FW13_OSP_visibility]  DEFAULT ('Not Visible Individually'),
+	[visibility] [nvarchar](4000) COLLATE SQL_Latin1_General_CP1_CI_AS NULL CONSTRAINT [DF_tbl_LoadFile_FW13_MERAPP_visibility] DEFAULT ('Not Visible Individually'),
 	[image] [nvarchar](4000) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
 	[image_label] [nvarchar](4000) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
 	[small_image] [nvarchar](4000) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
@@ -39,7 +39,7 @@ CREATE TABLE [dbo].[tbl_LoadFile_FW13_OSP](
 	[vendor_product_id] [nvarchar](50) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
 	[vendor_color_code] [nvarchar](4000) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
 	[vendor_size_code] [nvarchar](4000) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
-	[season_id] [nvarchar](4000) COLLATE SQL_Latin1_General_CP1_CI_AS NULL CONSTRAINT [DF_tbl_LoadFile_FW13_OSP_season]  DEFAULT (N'FW13 ASAP'),
+	[season_id] [nvarchar](4000) COLLATE SQL_Latin1_General_CP1_CI_AS NULL CONSTRAINT [DF_tbl_LoadFile_FW13_MERAPP_season] DEFAULT ('FW13 ASAP'),
 	[short_description] [nvarchar](4000) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
 	[description] [nvarchar](4000) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
 	[features] [nvarchar](4000) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
@@ -50,9 +50,9 @@ CREATE TABLE [dbo].[tbl_LoadFile_FW13_OSP](
 	[fabric] [nvarchar](4000) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
 	[fit] [nvarchar](4000) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
 	[volume] [nvarchar](4000) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
-	[manufacturer] [nvarchar](4000) COLLATE SQL_Latin1_General_CP1_CI_AS NULL CONSTRAINT [DF_tbl_LoadFile_FW13_OSP_manufacturer]  DEFAULT ('Osprey'),
-	[qty] [nvarchar](4000) COLLATE SQL_Latin1_General_CP1_CI_AS NULL CONSTRAINT [DF_tbl_LoadFile_FW13_OSP_qty]  DEFAULT ((0)),
-	[is_in_stock] [nvarchar](4000) COLLATE SQL_Latin1_General_CP1_CI_AS NULL CONSTRAINT [DF_tbl_LoadFile_FW13_OSP_is_in_stock]  DEFAULT ((0)),
+	[manufacturer] [nvarchar](4000) COLLATE SQL_Latin1_General_CP1_CI_AS NULL CONSTRAINT [DF_tbl_LoadFile_FW13_MERAPP_manufacturer] DEFAULT ('Merrell'),
+	[qty] [nvarchar](4000) COLLATE SQL_Latin1_General_CP1_CI_AS NULL CONSTRAINT [DF_tbl_LoadFile_FW13_MERAPP_qty] DEFAULT ((0)),
+	[is_in_stock] [nvarchar](4000) COLLATE SQL_Latin1_General_CP1_CI_AS NULL CONSTRAINT [DF_tbl_LoadFile_FW13_MERAPP_is_in_stock] DEFAULT ((0)),
 	[simples_skus] [nvarchar](4000) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
 	[url_key] [nvarchar](4000) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
 	[meta_title] [nvarchar](4000) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
@@ -60,176 +60,167 @@ CREATE TABLE [dbo].[tbl_LoadFile_FW13_OSP](
 	[weight] [nvarchar](4000) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
 	[merchandise_priority] [nvarchar](4000) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
 	[never_backorder] [nvarchar](4000) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
-	[backorders] [nvarchar](4000) COLLATE SQL_Latin1_General_CP1_CI_AS NULL CONSTRAINT [DF_tbl_LoadFile_FW13_OSP_backorders]  DEFAULT ((0)),
+	[backorders] [nvarchar](4000) COLLATE SQL_Latin1_General_CP1_CI_AS NULL CONSTRAINT [DF_tbl_LoadFile_FW13_MERAPP_backorders] DEFAULT ((0)),
 	[manage_stock] [nvarchar](4000) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
-	[use_config_backorders] [nvarchar](4000) COLLATE SQL_Latin1_General_CP1_CI_AS NULL CONSTRAINT [DF_tbl_LoadFile_FW13_OSP_use_config_backorders]  DEFAULT ((0)),
-	[use_config_manage_stock] [nvarchar](4000) COLLATE SQL_Latin1_General_CP1_CI_AS NULL CONSTRAINT [DF_tbl_LoadFile_FW13_OSP_use_config_manage_stock]  DEFAULT ((1))
- CONSTRAINT [PK_tbl_LoadFile_FW13_OSP] PRIMARY KEY CLUSTERED 
+	[use_config_backorders] [nvarchar](4000) COLLATE SQL_Latin1_General_CP1_CI_AS NULL CONSTRAINT [DF_tbl_LoadFile_FW13_MERAPP_use_config_backorders] DEFAULT ((0)),
+	[use_config_manage_stock] [nvarchar](4000) COLLATE SQL_Latin1_General_CP1_CI_AS NULL CONSTRAINT [DF_tbl_LoadFile_FW13_MERAPP_use_config_manage_stock] DEFAULT ((1))
+	
+ CONSTRAINT [PK_tbl_LoadFile_FW13_MERAPP] PRIMARY KEY CLUSTERED 
 (
 		[id] ASC
 )WITH (IGNORE_DUP_KEY = OFF) ON [PRIMARY]
 ) ON [PRIMARY]
-
-CREATE NONCLUSTERED INDEX [IX_tbl_LoadFile_FW13_OSP] ON [dbo].[tbl_LoadFile_FW13_OSP] 
+ 
+CREATE NONCLUSTERED INDEX [IX_tbl_LoadFile_FW13_MERAPP] ON [dbo].[tbl_LoadFile_FW13_MERAPP] 
 (
 	[sku] ASC,
 	[type] ASC,
 	[vendor_product_id] ASC
 )WITH (PAD_INDEX  = OFF, STATISTICS_NORECOMPUTE  = OFF, SORT_IN_TEMPDB = OFF, IGNORE_DUP_KEY = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS  = ON, ALLOW_PAGE_LOCKS  = ON) ON [PRIMARY]
+ 
 GO
-
-TRUNCATE TABLE tbl_LoadFile_FW13_OSP
+ 
+TRUNCATE TABLE tbl_LoadFile_FW13_MERAPP
+ 
 GO
-
-INSERT INTO tbl_LoadFile_FW13_OSP (
-		[type]		
+INSERT INTO tbl_LoadFile_FW13_MERAPP (
+		 type		
 		,sku
-		,[name]
+		,name
 		,has_options
-		,department 
+		,price
+		,cost
+		,department  
+		,visibility
 		,image_label
-		,choose_color
+		,choose_color 
 		,choose_size
 		,vendor_sku
 		,vendor_product_id
 		,vendor_color_code
-		,vendor_size_code
-		,url_key
-		,manage_stock
-		,never_backorder)
-		
-SELECT DISTINCT
-	'simple' AS type
-	,('FW13A-OSP-' + LEFT(us_internal_sku_and_style_number,6) + '-' +  SUBSTRING(us_internal_sku_and_style_number,CHARINDEX('-',us_internal_sku_and_style_number) + 1,LEN(us_internal_sku_and_style_number))+ '-' + dbo.getOSPSize(Size))AS sku
-	,dbo.getOSPName(Style)									AS name
+		,vendor_size_code 
+		,url_key  
+		,never_backorder
+		,manage_stock  
+		,use_config_manage_stock)
+
+SELECT DISTINCT 
+	'simple'												AS type
+ 	,'FW13A-MERAPP-' + LEFT(a.Material,8) + '-' + RIGHT(a.Material,3) + '-' + dbo.getMERAPPSize(a.SKU) AS sku												
+	,dbo.getMERAPPName(a.Model)							    AS name
 	,0														AS has_options
-	,dbo.getOSPDepartment(Style,Size)						AS department
-	,Color													AS image_label 
-	,Color													AS choose_color
-	,dbo.getOSPSize(Size)									AS choose_size
-	,CAST(UPC AS bigint)									AS vendor_sku
-	,LEFT(us_internal_sku_and_style_number,6)				AS vendor_product_id
-	,SUBSTRING(us_internal_sku_and_style_number,CHARINDEX('-',us_internal_sku_and_style_number) + 1,LEN(us_internal_sku_and_style_number)) AS vendor_color_code
-	,dbo.getOSPSize(Size)									AS vendor_size_code
-	,dbo.getUrlKey(dbo.getOSPName(Style),'Osprey',Color + '-' + dbo.getOSPSize(Size) + '-',dbo.getOSPDepartment(Style,Size)) + '-fw13a'	AS url_key 
-	,1														AS manage_stock
+	,CAST(b.Retail AS float) - .01							AS price
+	,b.Wholesale											AS cost
+	,dbo.getMERAPPDepartment(a.[Grouping])					AS department	
+	,'Not Visible Individually'								AS visibility
+	,dbo.getMERAPPColor(a.Color)							AS image_label 
+	,dbo.getMERAPPColor(a.Color)							AS choose_color 
+ 	,dbo.getMERAPPSize(a.SKU)								AS choose_size
+ 	,CASE WHEN LEN(a.UPC) = 11 THEN '0' + a.UPC ELSE a.UPC END AS vendor_sku
+	,LEFT(a.Material,8)										AS vendor_product_id
+	,RIGHT(a.Material,3)									AS vendor_color_code 
+	,dbo.getMERAPPSize(a.SKU)			 					AS vendor_size_code 
+	,dbo.getUrlKey(dbo.getMERAPPName(a.Model),'Merrell',dbo.getMERAPPColor(a.Color) + '-' + dbo.getMERAPPSize(a.SKU),dbo.getMERAPPDepartment(a.[Grouping])) + '-fw13a' AS url_key 	 												
 	,0														AS never_backorder
-FROM tbl_RawData_FW13_OSP_UPC
+	,1														AS manage_stock 
+	,1														AS use_config_manage_stock
+FROM tbl_RawData_FW13_MER_APP_UPC AS a 
+INNER JOIN tbl_RawData_FW13_MER_APP_Price_List AS b 
+ON LEFT(a.Material,8) = LEFT(b.Stock_Number,8)
 GO
-
-/* Use a correlated update to assign the price and cost values. 
-   Do this prior to the configurable section so that we can pull price and cost directly for the configs */
-   
-UPDATE a SET
-	a.price = CAST(b.Retail_price AS float) - .01,
-	a.cost = b.WholeSale_Price
-FROM tbl_LoadFile_FW13_OSP AS a
-INNER JOIN tbl_RawData_FW13_OSP_Price AS b
-ON a.vendor_product_id = LEFT(b.[ SKU],6)
-WHERE a.type = 'simple'
-
-DELETE FROM tbl_LoadFile_FW13_OSP WHERE price IS NULL OR cost IS NULL
-
-/* Use more correlated updates to assign the image values. Otherwise the SELECT statement would take far too long to run. */
-
-UPDATE a SET 
-	a.image = b.image 
-FROM tbl_LoadFile_FW13_OSP AS a
-INNER JOIN tbl_LoadFile_SS13_OSP AS b
-ON a.vendor_sku = b.vendor_sku
-WHERE a.type = 'simple'
-	 
-UPDATE a SET
-	a.image = b.Filename
-FROM tbl_LoadFile_FW13_OSP AS a 
-INNER JOIN tbl_RawData_FW13_Image_Filenames AS b 
-ON b.Filename LIKE '%' + dbo.ProperCase(REPLACE(LTRIM(RTRIM(a.name)),' ','_')) + '_' + SUBSTRING(a.choose_color,0,CHARINDEX(' ',a.choose_color)) + '%'
-WHERE a.type = 'simple' AND a.image IS NULL AND b.Brand = 'OSP'
-
-UPDATE a SET
-	a.image = b.Filename
-FROM tbl_LoadFile_FW13_OSP AS a 
-INNER JOIN tbl_RawData_FW13_Image_Filenames AS b 
-ON b.Filename LIKE '%' + dbo.ProperCase(REPLACE(LTRIM(RTRIM(a.name)),' ','_')) + '_' + SUBSTRING(a.choose_color,CHARINDEX(' ',a.choose_color)+1,30) + '%'
-WHERE a.type = 'simple' AND a.image IS NULL AND b.Brand = 'OSP'	
-
-UPDATE a SET
-	a.image = b.Filename
-FROM tbl_LoadFile_FW13_OSP AS a 
-INNER JOIN tbl_RawData_SS13_Image_Filenames AS b 
-ON b.Filename LIKE '%' + dbo.ProperCase(REPLACE(LTRIM(RTRIM(a.name)),' ','_')) + '_' + SUBSTRING(a.choose_color,0,CHARINDEX(' ',a.choose_color)) + '%'
-WHERE a.type = 'simple' AND a.image IS NULL AND b.Brand = 'OSP'
-
-UPDATE a SET
-	a.image = b.Filename
-FROM tbl_LoadFile_FW13_OSP AS a 
-INNER JOIN tbl_RawData_SS13_Image_Filenames AS b 
-ON b.Filename LIKE '%' + dbo.ProperCase(REPLACE(LTRIM(RTRIM(a.name)),' ','_')) + '_' + SUBSTRING(a.choose_color,CHARINDEX(' ',a.choose_color)+1,30) + '%'
-WHERE a.type = 'simple' AND a.image IS NULL AND b.Brand = 'OSP'	
-		
-INSERT INTO tbl_LoadFile_FW13_OSP (
-		[type]
-		,sku  		
+  
+INSERT INTO tbl_LoadFile_FW13_MERAPP (
+		 type		
+		,sku
 		,name
 		,configurable_attributes
 		,has_options
 		,price
 		,cost
-		,department
+		,department  
 		,visibility 
 		,vendor_product_id
-		,qty
-		,is_in_stock 
-		,url_key
+		,url_key 
 		,meta_title
 		,merchandise_priority
 		,never_backorder
-		,use_config_backorders
-		,manage_stock
-		,use_config_manage_stock)
-		
+		,manage_stock 
+		,use_config_manage_stock
+		,qty
+		,is_in_stock
+)
+			 
 SELECT DISTINCT 
-	'configurable'												AS type
-	,'OSP-' + vendor_product_id									AS sku
-	,name														AS name
-	,'choose_color,choose_size'									AS configurable_attributes
-	,1															AS has_options
-	,price														AS price
-	,cost														AS cost
-	,department													AS department
-	,'Catalog, Search'											AS visibility
-	,vendor_product_id											AS vendor_product_id
-	,NULL														AS qty
-	,NULL 														AS is_in_stock
-	,dbo.getUrlKey(name,'Osprey','',department)					AS url_key 
-	,'Osprey ' + REPLACE(REPLACE(department + '''s ','Men|Women''s ',''),'Boy|Girls''s ','') + name AS meta_title
-	,'F'														AS merchandise_priority 
-	,0															AS never_backorder
-	,0															AS use_config_backorders
-	,0															AS manage_stock
-	,0															AS use_config_manage_stock
-FROM tbl_LoadFile_FW13_OSP
+	'configurable'											AS type
+ 	,'MERAPP-' + vendor_product_id							AS sku											
+	,name													AS name
+	,'choose_color,choose_size'								AS configurable_attributes
+	,1														AS has_options
+	,price													AS price
+	,cost													AS cost
+	,department												AS department	
+	,'Catalog, Search'										AS visibility
+	,vendor_product_id 										AS vendor_product_id
+	,dbo.getUrlKey(name,'Merrell','',department)			AS url_key	
+	,'Merrell ' + REPLACE(REPLACE(department + '''s ','Men|Women''s ',''),'Boy|Girl''s ','') + name AS meta_title
+	,'F'													AS merchandise_priority												
+	,0														AS never_backorder
+	,0														AS manage_stock 
+	,0														AS use_config_manage_stock
+	,NULL													AS qty
+	,NULL													AS is_in_stock
+   
+FROM dbo.tbl_LoadFile_FW13_MERAPP
 GO
 
-UPDATE a SET 
-	categories = dbo.getMagentoCategories(a.vendor_product_id),
-	features = dbo.getOSPFeatures(a.vendor_product_id),
-	description = (SELECT TOP 1 Description FROM tbl_RawData_FW13_OSP_Marketing WHERE Style = a.vendor_product_id),
-	fabric = dbo.getOSPFabric(a.vendor_product_id),
-	simples_skus = dbo.getOSPAssociatedProducts(a.vendor_product_id)
-FROM tbl_LoadFile_FW13_OSP AS a
-GO
+UPDATE a SET
+	a.name = CASE WHEN b.type = 'Sock' THEN a.name + ' (Sock)' ELSE a.name END
+FROM tbl_LoadFile_FW13_MERAPP AS a
+INNER JOIN tbl_RawData_FW13_MER_APP_Marketing AS b
+ON a.vendor_product_id = LEFT(b.Stock#,8)
 
-UPDATE tbl_LoadFile_FW13_OSP SET videos = (SELECT TOP 1 SUBSTRING(Youtube,CHARINDEX('=',Youtube)+1,LEN(Youtube)) FROM tbl_RawData_FW13_OSP_Video WHERE Style1 = vendor_product_id AND type = 'configurable')
-UPDATE tbl_LoadFile_FW13_OSP SET categories = dbo.getCategory(categories,'Osprey',department) WHERE type = 'configurable'
-UPDATE tbl_LoadFile_FW13_OSP SET categories = NULL WHERE type = 'simple'
-UPDATE tbl_LoadFile_FW13_OSP SET status = 'Disabled' WHERE image IS NULL AND type = 'simple'
-UPDATE tbl_LoadFile_FW13_OSP SET small_image = image, thumbnail = image
+UPDATE a SET
+	a.image = b.image
+FROM tbl_LoadFile_FW13_MERAPP AS a 
+INNER JOIN tbl_LoadFile_F12_MER AS b
+ON a.vendor_sku = b.vendor_sku
+WHERE a.type ='simple'
 GO
-
-CREATE VIEW [dbo].[view_LoadFile_FW13_OSP]
+  
+UPDATE a SET
+	a.image = b.image
+FROM tbl_LoadFile_FW13_MERAPP AS a 
+INNER JOIN tbl_LoadFile_SS13_MER AS b
+ON a.vendor_sku = b.vendor_sku
+WHERE a.type ='simple' AND a.image IS NULL
+GO
+ 
+UPDATE a SET
+	a.image = b.Filename
+FROM tbl_LoadFile_FW13_MERAPP AS a 
+INNER JOIN tbl_RawData_FW13_Image_Filenames AS b
+ON b.Filename LIKE a.vendor_product_id + '-' + a.vendor_color_code + '-P%'
+WHERE b.Brand = 'MERAPP' AND a.type ='simple' AND a.image IS NULL
+GO
+ 
+UPDATE tbl_LoadFile_FW13_MERAPP SET
+	categories		= dbo.getMagentoCategories(a.vendor_product_id),	
+	simples_skus	= dbo.getMERAPPAssociatedProducts(a.vendor_product_id),
+	description		= dbo.getMERAPPLDesc(a.vendor_product_id)
+FROM tbl_LoadFile_FW13_MERAPP AS a
+WHERE a.type = 'configurable'
+GO
+ 	
+UPDATE tbl_LoadFile_FW13_MERAPP SET categories = dbo.getCategory(categories,'Merrell',department) WHERE type = 'configurable'
+UPDATE tbl_LoadFile_FW13_MERAPP SET categories = NULL WHERE type = 'simple'
+UPDATE tbl_LoadFile_FW13_MERAPP SET status = 'Disabled' WHERE image IS NULL AND type = 'simple'
+UPDATE tbl_LoadFile_FW13_MERAPP SET thumbnail = image, small_image = image WHERE type = 'simple'
+GO
+ 
+CREATE VIEW [dbo].[view_LoadFile_FW13_MERAPP]
 AS
-SELECT  '"store"' AS store,'"websites"' AS websites, 
+SELECT  '"store"' AS store, 
+		'"websites"' AS websites, 
 		'"type"' AS type, 
 		'"sku"' AS sku, 
 		'"name"' AS name, 
@@ -285,12 +276,11 @@ SELECT  '"' + RTRIM(LTRIM(REPLACE(a.store,'"','""'))) + '"','"' + RTRIM(LTRIM(RE
 		'"' + RTRIM(LTRIM(REPLACE(a.vendor_color_code,'"','""'))) + '"','"' + RTRIM(LTRIM(REPLACE(a.vendor_size_code,'"','""'))) + '"','"' + RTRIM(LTRIM(REPLACE(a.season_id,'"','""'))) + '"','"' + RTRIM(LTRIM(REPLACE(a. short_description,'"','""'))) + '"','"' + RTRIM(LTRIM(REPLACE(a.description,'"','""'))) + '"','"' + RTRIM(LTRIM(REPLACE(a.features,'"','""'))) + '"','"' + RTRIM(LTRIM(REPLACE(a.activities,'"','""'))) + '"','"' + RTRIM(LTRIM(REPLACE(a.weather,'"','""'))) + '"','"' + RTRIM(LTRIM(REPLACE(a.layering,'"','""'))) + '"','"' + RTRIM(LTRIM(REPLACE(a.care_instructions,'"','""'))) + '"',
 		'"' + RTRIM(LTRIM(REPLACE(a.fabric,'"','""'))) + '"','"' + RTRIM(LTRIM(REPLACE(a.fit,'"','""'))) + '"','"' + RTRIM(LTRIM(REPLACE(a.volume,'"','""'))) + '"','"' + RTRIM(LTRIM(REPLACE(a.manufacturer,'"','""'))) + '"','"' + RTRIM(LTRIM(REPLACE(a.qty,'"','""'))) + '"','"' + RTRIM(LTRIM(REPLACE(a.is_in_stock,'"','""'))) + '"','"' + RTRIM(LTRIM(REPLACE(a.simples_skus,'"','""'))) + '"','"' + RTRIM(LTRIM(REPLACE(a.url_key,'"','""'))) + '"',
 		'"' + RTRIM(LTRIM(REPLACE(a.videos,'"','""'))) + '"','"' + RTRIM(LTRIM(REPLACE(a.weight,'"','""'))) + '"','"' + RTRIM(LTRIM(REPLACE(a.merchandise_priority,'"','""'))) + '"','"' + RTRIM(LTRIM(REPLACE(a.backorders,'"','""'))) + '"','"' + RTRIM(LTRIM(REPLACE(a.manage_stock,'"','""'))) + '"','"' + RTRIM(LTRIM(REPLACE(a.never_backorder,'"','""'))) + '"','"' + RTRIM(LTRIM(REPLACE(a.use_config_manage_stock,'"','""'))) + '"','"' + RTRIM(LTRIM(REPLACE(a.use_config_backorders,'"','""'))) + '"','"' + RTRIM(LTRIM(REPLACE(a.meta_title,'"','""'))) + '"'
-FROM dbo.tbl_LoadFile_FW13_OSP AS a
+FROM dbo.tbl_LoadFile_FW13_MERAPP AS a
 GO
-
+ 
 DECLARE @sql varchar(1024)
-SELECT @sql = 'bcp "SELECT * FROM LOT_Inventory.dbo.view_LoadFile_FW13_OSP" queryout "C:\Data\Shared\FW13OSP.csv" -w -t , -T -S ' + @@servername
+SELECT @sql = 'bcp "SELECT * FROM LOT_Inventory.dbo.view_LoadFile_FW13_MERAPP" queryout "C:\Data\Shared\FW13MERAPP.csv" -w -t , -T -S ' + @@servername
 EXEC master..xp_cmdshell @sql
-
-DROP VIEW view_LoadFile_FW13_OSP
-	
+ 
+DROP VIEW view_LoadFile_FW13_MERAPP

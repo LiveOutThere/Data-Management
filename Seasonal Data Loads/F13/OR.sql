@@ -179,7 +179,7 @@ SELECT DISTINCT
 	'configurable'												AS type
 	,'OR-' + vendor_product_id									AS sku 
 	,name 														AS name
-	,'choose-color,choose-size'									AS configurable_attributes
+	,'choose_color,choose_size'									AS configurable_attributes
 	,1															AS has_options
 	,price														AS price
 	,cost														AS cost

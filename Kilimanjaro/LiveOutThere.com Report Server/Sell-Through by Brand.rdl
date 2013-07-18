@@ -2368,7 +2368,6 @@
                                           <PaddingBottom>2pt</PaddingBottom>
                                         </Style>
                                       </Textbox>
-                                      <rd:Selected>true</rd:Selected>
                                     </CellContents>
                                   </TablixCell>
                                   <TablixCell>
@@ -4288,12 +4287,10 @@
   <ReportParameters>
     <ReportParameter Name="start_date">
       <DataType>DateTime</DataType>
-      <Nullable>true</Nullable>
       <Prompt>Start Date</Prompt>
     </ReportParameter>
     <ReportParameter Name="end_date">
       <DataType>DateTime</DataType>
-      <Nullable>true</Nullable>
       <Prompt>End Date</Prompt>
     </ReportParameter>
   </ReportParameters>

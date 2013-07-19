@@ -86,11 +86,10 @@ GO
 INSERT INTO tbl_LoadFile_FW13_TNF (
 		[type]		
 		,sku
-		,[name]
 		,has_options
+		,department
 		,price
 		,cost
-		,department
 		,[image]
 		,image_label
 		,choose_color
@@ -98,31 +97,44 @@ INSERT INTO tbl_LoadFile_FW13_TNF (
 		,vendor_sku
 		,vendor_product_id
 		,vendor_color_code
-		,vendor_size_code
-		,url_key
-		,weight)
-
+		,vendor_size_code)
+		
 SELECT DISTINCT
 	'simple' AS type
-	,'FW13A-TNF-' + Style + '-' + Color + '-' + dbo.getHHSize(LTRIM(RTRIM(Size))) AS sku
-	,dbo.getHHName(StyleName) AS name
+	,'FW13A-TNF-' + Style + '-' + Color_Code + '-' + dbo.getTNFSize(Dim1_Description,Dim2_Description) AS sku
 	,0 AS has_options
-	,CAST(RetailPrice_CA AS float) +.99 AS price
-	,WholeSaleCost_CA AS cost
-	,dbo.getHHDepartment(Gender) AS department
+	,dbo.getTNFDepartment(Style_Description) AS department
+	,CAST(MSRP AS float) +.99 AS price
+	,Wholesale_Price AS cost
 	,NULL AS image
-	,dbo.getHHColorName(ColorName) AS image_label
-	,dbo.getHHColorName(ColorName) AS choose_color
-	,dbo.getHHSize(LTRIM(RTRIM(Size))) AS choose_size
-	,CAST(EAN AS bigint) AS vendor_sku
+	,dbo.getTNFColorName(Color_Description) AS image_label
+	,dbo.getTNFColorName(Color_Description) AS choose_color
+	,dbo.getTNFSize(Dim1_Description,Dim2_Description) AS choose_size
+	,CAST(CASE WHEN LEN(UPC) = 11 THEN '0' + UPC ELSE UPC END AS bigint) AS vendor_sku
 	,Style AS vendor_product_id
-	,Color AS vendor_color_code
-	,dbo.getHHSize(LTRIM(RTRIM(Size))) AS vendor_size_code
-	,dbo.getUrlKey(dbo.getHHName(StyleName),'The North Face',dbo.getHHColorName(ColorName) + '-' + dbo.getHHSize(LTRIM(RTRIM(Size))),dbo.getHHDepartment(Gender)) + '-fw13a' AS url_key
-	,NULL AS weight
+	,Color_Code AS vendor_color_code
+	,dbo.getTNFSize(Dim1_Description,Dim2_Description) AS vendor_size_code
 FROM tbl_RawData_FW13_TNF_UPC
 GO
-/*
+
+-- Update the name values. First from the description table because the names there are formatted better, 
+-- then from the rawdata to get the rest (because there aren't rows in the description table to match each distinct style in the rawdata)
+
+UPDATE a SET
+	a.name = dbo.getTNFName(b.[Style Name])
+FROM tbl_LoadFile_FW13_TNF AS a
+INNER JOIN tbl_RawData_FW13_TNF_Descriptions AS b
+ON a.vendor_product_id = b.Style
+
+UPDATE a SET
+	a.name = dbo.getTNFName2(b.Style_Description)
+FROM tbl_LoadFile_FW13_TNF AS a
+INNER JOIN tbl_RawData_FW13_TNF_UPC AS b
+ON a.vendor_product_id = b.Style
+WHERE a.name IS NULL
+
+--update the image column
+
 UPDATE a
 	SET a.image = b.image
 FROM tbl_LoadFile_FW13_TNF AS a
@@ -131,12 +143,11 @@ ON b.vendor_sku = a.vendor_sku
 WHERE a.type = 'simple'
 
 UPDATE a
-	SET a.image = b.Filename
+	SET a.image = b.filename + '.jpg'
 FROM tbl_LoadFile_FW13_TNF AS a
-INNER JOIN tbl_RawData_FW13_Image_Filenames AS b
-ON b.Filename = a.vendor_product_id + '_' + a.vendor_color_code + '.jpg' 
-WHERE b.Brand = 'TNF' AND a.type = 'simple' AND a.image IS NULL
-*/
+INNER JOIN tbl_RawData_FW13_TNF_Filenames AS b
+ON a.vendor_product_id = b.style_number AND a.vendor_color_code = b.color_code
+WHERE a.type = 'simple' AND a.image IS NULL
 	
 INSERT INTO tbl_LoadFile_FW13_TNF (
 	type
@@ -145,8 +156,6 @@ INSERT INTO tbl_LoadFile_FW13_TNF (
 	,categories
 	,configurable_attributes
 	,has_options
-	,price
-	,cost
 	,department
 	,visibility
 	,vendor_product_id
@@ -166,8 +175,6 @@ SELECT DISTINCT
 	,'Uncategorized' AS categories
 	,'choose_color,choose_size' AS configurable_attributes
 	,'1' AS has_options
-	,price AS price
-	,cost AS cost
 	,department AS department
 	,'Catalog, Search' AS visibility
 	,vendor_product_id AS vendor_product_id
@@ -181,12 +188,19 @@ SELECT DISTINCT
 FROM tbl_LoadFile_FW13_TNF
 GO
 
+UPDATE a SET 
+	a.price = (SELECT MIN(price) FROM tbl_LoadFile_FW13_TNF WHERE vendor_product_id = a.vendor_product_id AND type = 'simple'), 
+	a.cost = (SELECT MIN(cost) FROM tbl_LoadFile_FW13_TNF WHERE vendor_product_id = a.vendor_product_id AND type = 'simple')
+FROM tbl_LoadFile_FW13_TNF AS a
+WHERE type = 'configurable'
+
 UPDATE tbl_LoadFile_FW13_TNF SET
-	categories = dbo.getMagentoCategories(a.vendor_product_id)
-	,description = (SELECT TOP 1 Product_Statement FROM tbl_RawData_FW13_TNF_UPC_Marketing_Price WHERE Style = a.vendor_product_id)
-	,features = (SELECT TOP 1 Product_Features FROM tbl_RawData_FW13_TNF_UPC_Marketing_Price WHERE Style = a.vendor_product_id)
-	,fabric = (SELECT TOP 1 Fabric_Content FROM tbl_RawData_FW13_TNF_UPC_Marketing_Price WHERE Style = a.vendor_product_id)
-	,simples_skus = dbo.getTNFAssociatedProducts(a.vendor_product_id)
+	categories = dbo.getMagentoCategories(a.vendor_product_id),
+	description = dbo.getTNFLDesc(a.vendor_product_id),
+	features = dbo.getTNFFeatures(a.vendor_product_id),
+	fabric = dbo.getTNFFabric(a.vendor_product_id),
+	--super_attribute_pricing = dbo.getTNFSAP(a.vendor_product_id),
+	simples_skus = dbo.getTNFAssociatedProducts(a.vendor_product_id)
 FROM tbl_LoadFile_FW13_TNF AS a
 WHERE type = 'configurable'
 

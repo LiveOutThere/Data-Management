@@ -87,6 +87,7 @@ INSERT INTO tbl_LoadFile_FW13_TNF (
 		[type]		
 		,sku
 		,has_options
+		,name
 		,department
 		,price
 		,cost
@@ -103,6 +104,7 @@ SELECT DISTINCT
 	'simple' AS type
 	,'FW13A-TNF-' + Style + '-' + Color_Code + '-' + dbo.getTNFSize(Dim1_Description,Dim2_Description) AS sku
 	,0 AS has_options
+	,NULL AS name
 	,dbo.getTNFDepartment(Style_Description) AS department
 	,CAST(MSRP AS float) +.99 AS price
 	,Wholesale_Price AS cost
@@ -130,8 +132,7 @@ UPDATE a SET
 	a.name = dbo.getTNFName2(b.Style_Description)
 FROM tbl_LoadFile_FW13_TNF AS a
 INNER JOIN tbl_RawData_FW13_TNF_UPC AS b
-ON a.vendor_product_id = b.Style
-WHERE a.name IS NULL
+ON a.vendor_product_id = b.Style AND a.name IS NULL
 
 --update the image column
 

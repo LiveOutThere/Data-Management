@@ -818,32 +818,32 @@
         <ChartCategoryHierarchy>
           <ChartMembers>
             <ChartMember>
-              <Group Name="Chart2_CategoryGroup">
+              <Group Name="Chart2_CategoryGroup1">
                 <GroupExpressions>
-                  <GroupExpression>=Fields!day_range.Value</GroupExpression>
+                  <GroupExpression>=Fields!Month.Value</GroupExpression>
                 </GroupExpressions>
               </Group>
               <SortExpressions>
                 <SortExpression>
-                  <Value>=Fields!day_range.Value</Value>
+                  <Value>=Fields!Month.Value</Value>
                 </SortExpression>
               </SortExpressions>
               <ChartMembers>
                 <ChartMember>
-                  <Group Name="Chart2_CategoryGroup1">
+                  <Group Name="Chart2_CategoryGroup">
                     <GroupExpressions>
-                      <GroupExpression>=Fields!Month.Value</GroupExpression>
+                      <GroupExpression>=Fields!day_range.Value</GroupExpression>
                     </GroupExpressions>
                   </Group>
                   <SortExpressions>
                     <SortExpression>
-                      <Value>=Fields!Month.Value</Value>
+                      <Value>=Fields!day_range.Value</Value>
                     </SortExpression>
                   </SortExpressions>
-                  <Label>=Fields!Month.Value</Label>
+                  <Label>=Fields!day_range.Value</Label>
                 </ChartMember>
               </ChartMembers>
-              <Label>=Fields!day_range.Value</Label>
+              <Label>=Fields!Month.Value</Label>
             </ChartMember>
           </ChartMembers>
         </ChartCategoryHierarchy>
@@ -1427,32 +1427,32 @@
         <ChartCategoryHierarchy>
           <ChartMembers>
             <ChartMember>
-              <Group Name="Chart2_CategoryGroup3">
+              <Group Name="Chart2_CategoryGroup4">
                 <GroupExpressions>
-                  <GroupExpression>=Fields!day_range.Value</GroupExpression>
+                  <GroupExpression>=Fields!Month.Value</GroupExpression>
                 </GroupExpressions>
               </Group>
               <SortExpressions>
                 <SortExpression>
-                  <Value>=Fields!day_range.Value</Value>
+                  <Value>=Fields!Month.Value</Value>
                 </SortExpression>
               </SortExpressions>
               <ChartMembers>
                 <ChartMember>
-                  <Group Name="Chart2_CategoryGroup4">
+                  <Group Name="Chart2_CategoryGroup3">
                     <GroupExpressions>
-                      <GroupExpression>=Fields!Month.Value</GroupExpression>
+                      <GroupExpression>=Fields!day_range.Value</GroupExpression>
                     </GroupExpressions>
                   </Group>
                   <SortExpressions>
                     <SortExpression>
-                      <Value>=Fields!Month.Value</Value>
+                      <Value>=Fields!day_range.Value</Value>
                     </SortExpression>
                   </SortExpressions>
-                  <Label>=Fields!Month.Value</Label>
+                  <Label>=Fields!day_range.Value</Label>
                 </ChartMember>
               </ChartMembers>
-              <Label>=Fields!day_range.Value</Label>
+              <Label>=Fields!Month.Value</Label>
             </ChartMember>
           </ChartMembers>
         </ChartCategoryHierarchy>
@@ -2102,7 +2102,7 @@
       <Fields>
         <Field Name="Month">
           <DataField>Month</DataField>
-          <rd:TypeName>System.String</rd:TypeName>
+          <rd:TypeName>System.Byte</rd:TypeName>
         </Field>
         <Field Name="Manufacturer">
           <DataField>Manufacturer</DataField>

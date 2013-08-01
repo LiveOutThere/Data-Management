@@ -175,7 +175,7 @@ UPDATE a SET
 	a.simples_skus		  = dbo.getSWAssociatedProducts(a.vendor_product_id),
 	a.categories		  = dbo.getMagentoCategories(a.vendor_product_id),
 	a.fabric			  = (SELECT TOP 1 content_for_workbook FROM tbl_RawData_FW13_SW_Marketing WHERE style_number = a.vendor_product_id),
---	a.description	      = 
+	a.description	      = dbo.getSWLDesc(a.vendor_product_id),
 	a.features		      = dbo.getSWFeatures(a.vendor_product_id)
 FROM tbl_LoadFile_FW13_SW AS a
 WHERE a.type = 'configurable'

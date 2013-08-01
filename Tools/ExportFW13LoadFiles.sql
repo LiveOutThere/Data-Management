@@ -52,29 +52,22 @@ SELECT
     '"never_backorder"' AS never_backorder, 
     '"use_config_manage_stock"' AS use_config_manage_stock, 
     '"use_config_backorders"' AS use_config_backorders, 
-    '"meta_title"' AS meta_title,
-    '"pack_variant"' AS pack_variant,
-	'"footwear_variant"' AS footwear_variant,
-	'"handwear_variant"' AS handwear_variant,
-	'"headwear_variant"' AS headwear_varient,
-	'"jacket_variant"' AS jacket_variant,
-	'"pant_variant"' AS pant_variant,
-	'"shirt_variant"' AS shirt_variant,
-	'"dress_variant"' AS dress_variant,
-	'"sleeping_bag_variant"' AS sleeping_bag_variant,
-	'"tent_variant"' AS tent_variant,
-	'"underwear_variant"' AS underwear_variant
+    '"meta_title"' AS meta_title
 	UNION ALL
 	SELECT  '"' + RTRIM(LTRIM(REPLACE(a.store,'"','""'))) + '"','"' + RTRIM(LTRIM(REPLACE(a.websites,'"','""'))) + '"','"' + RTRIM(LTRIM(REPLACE(a.type,'"','""'))) + '"','"' + RTRIM(LTRIM(REPLACE(a.sku,'"','""'))) + '"','"' + RTRIM(LTRIM(REPLACE(a.name,'"','""'))) + '"','"' + RTRIM(LTRIM(REPLACE(a.categories,'"','""'))) + '"','"' + RTRIM(LTRIM(REPLACE(a.attribute_set,'"','""'))) + '"','"' + RTRIM(LTRIM(REPLACE(a.configurable_attributes,'"','""'))) + '"',
 			'"' + RTRIM(LTRIM(REPLACE(a.has_options,'"','""'))) + '"','"' + RTRIM(LTRIM(REPLACE(a.price,'"','""'))) + '"','"' + RTRIM(LTRIM(REPLACE(a.cost,'"','""'))) + '"','"' + RTRIM(LTRIM(REPLACE(a.status,'"','""'))) + '"','"' + RTRIM(LTRIM(REPLACE(a.tax_class_id,'"','""'))) + '"','"' + RTRIM(LTRIM(REPLACE(a.department,'"','""'))) + '"','"' + RTRIM(LTRIM(REPLACE(a.visibility,'"','""'))) + '"','"' + RTRIM(LTRIM(REPLACE(a.image,'"','""'))) + '"','"' + RTRIM(LTRIM(REPLACE(a.image_label,'"','""'))) + '"',
 			'"' + RTRIM(LTRIM(REPLACE(a.small_image,'"','""'))) + '"','"' + RTRIM(LTRIM(REPLACE(a.thumbnail,'"','""'))) + '"','"' + RTRIM(LTRIM(REPLACE(a.choose_color,'"','""'))) + '"','"' + RTRIM(LTRIM(REPLACE(a.choose_size,'"','""'))) + '"','"' + RTRIM(LTRIM(REPLACE(a.vendor_sku,'"','""'))) + '"','"' + RTRIM(LTRIM(REPLACE(a.vendor_product_id,'"','""'))) + '"',
 			'"' + RTRIM(LTRIM(REPLACE(a.vendor_color_code,'"','""'))) + '"','"' + RTRIM(LTRIM(REPLACE(a.vendor_size_code,'"','""'))) + '"','"' + RTRIM(LTRIM(REPLACE(a.season_id,'"','""'))) + '"','"' + RTRIM(LTRIM(REPLACE(a. short_description,'"','""'))) + '"','"' + RTRIM(LTRIM(REPLACE(REPLACE(REPLACE(a.description,'"','""'),CHAR(10),''),CHAR(13),''))) + '"','"' + RTRIM(LTRIM(REPLACE(REPLACE(REPLACE(a.features,'"','""'),CHAR(10),''),CHAR(13),''))) + '"','"' + RTRIM(LTRIM(REPLACE(a.activities,'"','""'))) + '"','"' + RTRIM(LTRIM(REPLACE(a.weather,'"','""'))) + '"','"' + RTRIM(LTRIM(REPLACE(a.layering,'"','""'))) + '"','"' + RTRIM(LTRIM(REPLACE(a.care_instructions,'"','""'))) + '"',
 			'"' + RTRIM(LTRIM(REPLACE(REPLACE(REPLACE(a.fabric,'"','""'),CHAR(10),''),CHAR(13),''))) + '"','"' + RTRIM(LTRIM(REPLACE(a.fit,'"','""'))) + '"','"' + RTRIM(LTRIM(REPLACE(REPLACE(REPLACE(a.volume,'"','""'),CHAR(13),''),CHAR(10),''))) + '"','"' + RTRIM(LTRIM(REPLACE(a.manufacturer,'"','""'))) + '"','"' + RTRIM(LTRIM(REPLACE(a.qty,'"','""'))) + '"','"' + RTRIM(LTRIM(REPLACE(a.is_in_stock,'"','""'))) + '"','"' + RTRIM(LTRIM(REPLACE(a.simples_skus,'"','""'))) + '"','"' + RTRIM(LTRIM(REPLACE(a.url_key,'"','""'))) + '"',
-			'"' + RTRIM(LTRIM(REPLACE(a.videos,'"','""'))) + '"','"' + RTRIM(LTRIM(REPLACE(a.weight,'"','""'))) + '"','"' + RTRIM(LTRIM(REPLACE(a.merchandise_priority,'"','""'))) + '"','"' + RTRIM(LTRIM(REPLACE(a.backorders,'"','""'))) + '"','"' + RTRIM(LTRIM(REPLACE(a.manage_stock,'"','""'))) + '"','"' + RTRIM(LTRIM(REPLACE(a.never_backorder,'"','""'))) + '"','"' + RTRIM(LTRIM(REPLACE(a.use_config_manage_stock,'"','""'))) + '"','"' + RTRIM(LTRIM(REPLACE(a.use_config_backorders,'"','""'))) + '"','"' + RTRIM(LTRIM(REPLACE(a.meta_title,'"','""'))) + '"',
-			'"' + RTRIM(LTRIM(REPLACE(a.pack_variant,'"','""'))) + '"','"' + RTRIM(LTRIM(REPLACE(a.footwear_variant,'"','""'))) + '"','"' + RTRIM(LTRIM(REPLACE(a.handwear_variant,'"','""'))) + '"','"' + RTRIM(LTRIM(REPLACE(a.headwear_variant,'"','""'))) + '"','"' + RTRIM(LTRIM(REPLACE(a.jacket_variant,'"','""'))) + '"','"' + RTRIM(LTRIM(REPLACE(a.pant_variant,'"','""'))) + '"','"' + RTRIM(LTRIM(REPLACE(a.shirt_variant,'"','""'))) + '"','"' + RTRIM(LTRIM(REPLACE(a.dress_variant,'"','""'))) + '"','"' + RTRIM(LTRIM(REPLACE(a.sleeping_bag_variant,'"','""'))) + '"','"' + RTRIM(LTRIM(REPLACE(a.tent_variant,'"','""'))) + '"','"' + RTRIM(LTRIM(REPLACE(a.underwear_variant,'"','""'))) + '"'
+			'"' + RTRIM(LTRIM(REPLACE(a.videos,'"','""'))) + '"','"' + RTRIM(LTRIM(REPLACE(a.weight,'"','""'))) + '"','"' + RTRIM(LTRIM(REPLACE(a.merchandise_priority,'"','""'))) + '"','"' + RTRIM(LTRIM(REPLACE(a.backorders,'"','""'))) + '"','"' + RTRIM(LTRIM(REPLACE(a.manage_stock,'"','""'))) + '"','"' + RTRIM(LTRIM(REPLACE(a.never_backorder,'"','""'))) + '"','"' + RTRIM(LTRIM(REPLACE(a.use_config_manage_stock,'"','""'))) + '"','"' + RTRIM(LTRIM(REPLACE(a.use_config_backorders,'"','""'))) + '"','"' + RTRIM(LTRIM(REPLACE(a.meta_title,'"','""'))) + '"'
 	FROM LOT_Inventory.dbo.tbl_FW13_LoadFiles AS a
 	GO
-	
+
+DECLARE @sql varchar(1024)
+SELECT @sql = 'bcp "SELECT * FROM LOT_Inventory.dbo.[view_Export_FW13_Loadfiles] ORDER BY type DESC" queryout "C:\Data\Shared\FW13DataLoad.csv" -w -t , -T -S ' + @@servername
+EXEC master..xp_cmdshell @sql
+
+/*	
 DECLARE @sql varchar(1024)
 SELECT @sql = 'bcp "SELECT * FROM LOT_Inventory.dbo.[view_Export_FW13_Loadfiles] WHERE manufacturer = ''\"manufacturer\"'' UNION ALL SELECT * FROM LOT_Inventory.dbo.[view_Export_FW13_Loadfiles]  WHERE LEFT(manufacturer,4) = ''\"Arc'' AND RIGHT(manufacturer,6) = ''teryx\"'' ORDER BY type DESC" queryout "C:\Data\Shared\FW13ARC.csv" -w -t , -T -S ' + @@servername
 EXEC master..xp_cmdshell @sql
@@ -138,5 +131,6 @@ EXEC master..xp_cmdshell @sql14
 DECLARE @sql15 varchar(1024)
 SELECT @sql15 = 'bcp "SELECT * FROM LOT_Inventory.dbo.[view_Export_FW13_Loadfiles] WHERE manufacturer = ''\"manufacturer\"'' UNION ALL SELECT * FROM LOT_Inventory.dbo.[view_Export_FW13_Loadfiles]  WHERE manufacturer = ''\"The North Face\"'' ORDER BY type DESC" queryout "C:\Data\Shared\FW13TNF.csv" -w -t , -T -S ' + @@servername
 EXEC master..xp_cmdshell @sql15
+*/
 
 DROP VIEW view_Export_FW13_Loadfiles

@@ -9,7 +9,7 @@
               <Width>2.875in</Width>
             </TablixColumn>
             <TablixColumn>
-              <Width>1in</Width>
+              <Width>1.44792in</Width>
             </TablixColumn>
             <TablixColumn>
               <Width>1.27083in</Width>
@@ -62,7 +62,7 @@
                         <Paragraph>
                           <TextRuns>
                             <TextRun>
-                              <Value>LOT QTY</Value>
+                              <Value>Available LOT QTY</Value>
                               <Style>
                                 <FontWeight>Bold</FontWeight>
                               </Style>
@@ -208,16 +208,16 @@
                 </TablixCell>
                 <TablixCell>
                   <CellContents>
-                    <Textbox Name="LOT_QTY">
+                    <Textbox Name="Available_LOT_QTY">
                       <CanGrow>true</CanGrow>
                       <KeepTogether>true</KeepTogether>
                       <Paragraphs>
                         <Paragraph>
                           <TextRuns>
                             <TextRun>
-                              <Value>=Fields!LOT_QTY.Value</Value>
+                              <Value>=Fields!Available_LOT_QTY.Value</Value>
                               <Style>
-                                <Format>0;(0)</Format>
+                                <Format>0;(0);'0'</Format>
                               </Style>
                             </TextRun>
                           </TextRuns>
@@ -226,7 +226,7 @@
                           </Style>
                         </Paragraph>
                       </Paragraphs>
-                      <rd:DefaultName>LOT_QTY</rd:DefaultName>
+                      <rd:DefaultName>Available_LOT_QTY</rd:DefaultName>
                       <Style>
                         <Border>
                           <Style>None</Style>
@@ -364,7 +364,7 @@
         <DataSetName>DataSet1</DataSetName>
         <Top>0.21in</Top>
         <Height>0.42in</Height>
-        <Width>7.9375in</Width>
+        <Width>8.38542in</Width>
         <Style />
       </Tablix>
       <Textbox Name="textbox1">
@@ -433,7 +433,7 @@
     <Height>3.32792in</Height>
     <Style />
   </Body>
-  <Width>8.23958in</Width>
+  <Width>8.38542in</Width>
   <Page>
     <LeftMargin>1in</LeftMargin>
     <RightMargin>1in</RightMargin>
@@ -461,8 +461,8 @@
           <DataField>sku</DataField>
           <rd:TypeName>System.String</rd:TypeName>
         </Field>
-        <Field Name="LOT_QTY">
-          <DataField>LOT_QTY</DataField>
+        <Field Name="Available_LOT_QTY">
+          <DataField>Available LOT_QTY</DataField>
           <rd:TypeName>System.Decimal</rd:TypeName>
         </Field>
         <Field Name="LOT_location">

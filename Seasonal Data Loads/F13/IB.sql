@@ -182,11 +182,11 @@ FROM tbl_LoadFile_FW13_IB
 GO
 
 UPDATE a SET 
-	a.care_instructions	  = (SELECT TOP 1 dbo.getIBCareInstruction(care_instructions + '|' + care_instructions_En) FROM tbl_RawData_FW13_IB_Marketing WHERE Style_Code COLLATE DATABASE_DEFAULT = a.vendor_product_id COLLATE DATABASE_DEFAULT),
+	a.care_instructions	  = (SELECT TOP 1 CareNotes FROM tbl_RawData_FW13_IB_Descriptions WHERE CAST(Style AS nvarchar(255)) = a.vendor_product_id),
 	a.simples_skus		  = (SELECT TOP 1 dbo.getIBAssociatedProducts(a.vendor_product_id)),
     a.categories		  =	(SELECT TOP 1 dbo.getMagentoCategories(a.vendor_product_id)),
-	a.fabric			  = (SELECT TOP 1 Fabric_Make_Up_EN FROM tbl_RawData_FW13_IB_Marketing WHERE Style_Code COLLATE DATABASE_DEFAULT = a.vendor_product_id COLLATE DATABASE_DEFAULT),
-	a.description		  = (SELECT TOP 1 Product_Description_EN FROM dbo.tbl_RawData_FW13_IB_Marketing WHERE Style_Code COLLATE DATABASE_DEFAULT = a.vendor_product_id COLLATE DATABASE_DEFAULT)
+	a.fabric			  = (SELECT TOP 1 FabricInfo FROM tbl_RawData_FW13_IB_Descriptions WHERE CAST(Style AS nvarchar(255)) = a.vendor_product_id),
+	a.description		  = (SELECT TOP 1 ProductCopy FROM tbl_RawData_FW13_IB_Descriptions WHERE CAST(Style AS nvarchar(255)) = a.vendor_product_id)
 FROM tbl_LoadFile_FW13_IB AS a
 WHERE type = 'configurable'
 	

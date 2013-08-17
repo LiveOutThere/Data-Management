@@ -122,14 +122,20 @@ SELECT DISTINCT
 	,NULL AS weight
 FROM tbl_RawData_FW13_SOR_UPC_Marketing
 GO
-/*
+
 UPDATE a
-	SET a.image = b.Filename
+	SET a.image = RIGHT(b.filename,CHARINDEX('/',REVERSE(b.filename)) - 1)
 FROM tbl_LoadFile_FW13_SOR AS a
-INNER JOIN tbl_RawData_FW13_Image_Filenames AS b
-ON b.Filename = a.vendor_product_id + '_' + a.vendor_color_code + '.jpg' 
-WHERE b.Brand = 'SOR' AND a.type = 'simple'
-*/
+INNER JOIN tbl_FW13_COLSORMHW_Filenames AS b
+ON RIGHT(b.filename,CHARINDEX('/',REVERSE(b.filename)) - 1) = a.vendor_product_id + '_' + a.vendor_color_code + '_f.jpg' 
+WHERE b.brand = 'COL/SOR' AND a.type = 'simple'
+
+UPDATE a
+	SET a.image = RIGHT(b.filename,CHARINDEX('/',REVERSE(b.filename)) - 1)
+FROM tbl_LoadFile_FW13_SOR AS a
+INNER JOIN tbl_FW13_COLSORMHW_Filenames AS b
+ON RIGHT(b.filename,CHARINDEX('/',REVERSE(b.filename)) - 1) = a.vendor_product_id + '_' + a.vendor_color_code + '%.jpg' 
+WHERE b.brand = 'COL/SOR' AND a.type = 'simple' AND image IS NULL
 	
 INSERT INTO tbl_LoadFile_FW13_SOR (
 	type

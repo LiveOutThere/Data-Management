@@ -131,14 +131,20 @@ FROM tbl_LoadFile_FW13_MHW AS a
 INNER JOIN tbl_LoadFile_SS13_MHW AS b
 ON b.vendor_sku = a.vendor_sku 
 WHERE a.type = 'simple'
-/*
+
 UPDATE a
-	SET a.image = b.Filename
+	SET a.image = RIGHT(b.Filename,CHARINDEX('/',REVERSE(b.Filename)) - 1)
 FROM tbl_LoadFile_FW13_MHW AS a
-INNER JOIN tbl_RawData_FW13_Image_Filenames AS b
-ON b.Filename = a.vendor_product_id + '_' + a.vendor_color_code + '.jpg' 
-WHERE b.Brand = 'MHW' AND a.type = 'simple' AND a.image IS NULL
-*/
+INNER JOIN tbl_FW13_COLSORMHW_Filenames AS b
+ON RIGHT(b.Filename,CHARINDEX('/',REVERSE(b.Filename)) - 1) = a.vendor_product_id + '_' + a.vendor_color_code + '_f.jpg' 
+WHERE b.Brand = 'MHW' AND a.type = 'simple'
+
+UPDATE a
+	SET a.image = RIGHT(b.Filename,CHARINDEX('/',REVERSE(b.Filename)) - 1)
+FROM tbl_LoadFile_FW13_MHW AS a
+INNER JOIN tbl_FW13_COLSORMHW_Filenames AS b
+ON RIGHT(b.Filename,CHARINDEX('/',REVERSE(b.Filename)) - 1) = a.vendor_product_id + '_' + a.vendor_color_code + '%.jpg' 
+WHERE b.Brand = 'MHW' AND a.type = 'simple' AND image IS NULL
 	
 INSERT INTO tbl_LoadFile_FW13_MHW (
 	type

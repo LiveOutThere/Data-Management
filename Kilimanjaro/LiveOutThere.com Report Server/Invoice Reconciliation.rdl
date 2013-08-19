@@ -1874,6 +1874,10 @@
             <Label>GC</Label>
           </ParameterValue>
           <ParameterValue>
+            <Value>PP</Value>
+            <Label>PayPal</Label>
+          </ParameterValue>
+          <ParameterValue>
             <Label>Any</Label>
           </ParameterValue>
         </ParameterValues>

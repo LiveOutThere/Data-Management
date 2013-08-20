@@ -6,7 +6,7 @@
         <TablixBody>
           <TablixColumns>
             <TablixColumn>
-              <Width>22.21875in</Width>
+              <Width>23.21874in</Width>
             </TablixColumn>
           </TablixColumns>
           <TablixRows>
@@ -132,6 +132,34 @@
                                           </Paragraph>
                                         </Paragraphs>
                                         <rd:DefaultName>textbox4</rd:DefaultName>
+                                        <Style>
+                                          <PaddingLeft>2pt</PaddingLeft>
+                                          <PaddingRight>2pt</PaddingRight>
+                                          <PaddingTop>2pt</PaddingTop>
+                                          <PaddingBottom>2pt</PaddingBottom>
+                                        </Style>
+                                      </Textbox>
+                                    </CellContents>
+                                  </TablixCell>
+                                  <TablixCell>
+                                    <CellContents>
+                                      <Textbox Name="Textbox47">
+                                        <CanGrow>true</CanGrow>
+                                        <KeepTogether>true</KeepTogether>
+                                        <Paragraphs>
+                                          <Paragraph>
+                                            <TextRuns>
+                                              <TextRun>
+                                                <Value>Entity ID</Value>
+                                                <Style>
+                                                  <FontWeight>Bold</FontWeight>
+                                                </Style>
+                                              </TextRun>
+                                            </TextRuns>
+                                            <Style />
+                                          </Paragraph>
+                                        </Paragraphs>
+                                        <rd:DefaultName>Textbox47</rd:DefaultName>
                                         <Style>
                                           <PaddingLeft>2pt</PaddingLeft>
                                           <PaddingRight>2pt</PaddingRight>
@@ -406,36 +434,6 @@
                                           <Paragraph>
                                             <TextRuns>
                                               <TextRun>
-                                                <Value>Cost</Value>
-                                                <Style>
-                                                  <FontWeight>Bold</FontWeight>
-                                                </Style>
-                                              </TextRun>
-                                            </TextRuns>
-                                            <Style>
-                                              <TextAlign>Right</TextAlign>
-                                            </Style>
-                                          </Paragraph>
-                                        </Paragraphs>
-                                        <rd:DefaultName>textbox14</rd:DefaultName>
-                                        <Style>
-                                          <PaddingLeft>2pt</PaddingLeft>
-                                          <PaddingRight>2pt</PaddingRight>
-                                          <PaddingTop>2pt</PaddingTop>
-                                          <PaddingBottom>2pt</PaddingBottom>
-                                        </Style>
-                                      </Textbox>
-                                    </CellContents>
-                                  </TablixCell>
-                                  <TablixCell>
-                                    <CellContents>
-                                      <Textbox Name="textbox15">
-                                        <CanGrow>true</CanGrow>
-                                        <KeepTogether>true</KeepTogether>
-                                        <Paragraphs>
-                                          <Paragraph>
-                                            <TextRuns>
-                                              <TextRun>
                                                 <Value>Avg. Cost $</Value>
                                                 <Style>
                                                   <FontWeight>Bold</FontWeight>
@@ -447,7 +445,7 @@
                                             </Style>
                                           </Paragraph>
                                         </Paragraphs>
-                                        <rd:DefaultName>textbox15</rd:DefaultName>
+                                        <rd:DefaultName>textbox14</rd:DefaultName>
                                         <Style>
                                           <PaddingLeft>2pt</PaddingLeft>
                                           <PaddingRight>2pt</PaddingRight>
@@ -766,6 +764,40 @@
                                   </TablixCell>
                                   <TablixCell>
                                     <CellContents>
+                                      <Textbox Name="Textbox63">
+                                        <CanGrow>true</CanGrow>
+                                        <KeepTogether>true</KeepTogether>
+                                        <Paragraphs>
+                                          <Paragraph>
+                                            <TextRuns>
+                                              <TextRun>
+                                                <Value />
+                                                <Style />
+                                              </TextRun>
+                                            </TextRuns>
+                                            <Style />
+                                          </Paragraph>
+                                        </Paragraphs>
+                                        <rd:DefaultName>Textbox63</rd:DefaultName>
+                                        <Style>
+                                          <Border>
+                                            <Style>None</Style>
+                                          </Border>
+                                          <TopBorder>
+                                            <Color>Black</Color>
+                                            <Style>Solid</Style>
+                                            <Width>1pt</Width>
+                                          </TopBorder>
+                                          <PaddingLeft>2pt</PaddingLeft>
+                                          <PaddingRight>2pt</PaddingRight>
+                                          <PaddingTop>2pt</PaddingTop>
+                                          <PaddingBottom>2pt</PaddingBottom>
+                                        </Style>
+                                      </Textbox>
+                                    </CellContents>
+                                  </TablixCell>
+                                  <TablixCell>
+                                    <CellContents>
                                       <Textbox Name="textbox21">
                                         <CanGrow>true</CanGrow>
                                         <KeepTogether>true</KeepTogether>
@@ -868,21 +900,23 @@
                                   </TablixCell>
                                   <TablixCell>
                                     <CellContents>
-                                      <Textbox Name="textbox24">
+                                      <Textbox Name="discount_invoiced">
                                         <CanGrow>true</CanGrow>
                                         <KeepTogether>true</KeepTogether>
                                         <Paragraphs>
                                           <Paragraph>
                                             <TextRuns>
                                               <TextRun>
-                                                <Value>=Sum(Fields!current_qty.Value)</Value>
-                                                <Style />
+                                                <Value>=Sum(Fields!discount_invoiced.Value)</Value>
+                                                <Style>
+                                                  <Format>0;(0)</Format>
+                                                </Style>
                                               </TextRun>
                                             </TextRuns>
                                             <Style />
                                           </Paragraph>
                                         </Paragraphs>
-                                        <rd:DefaultName>textbox24</rd:DefaultName>
+                                        <rd:DefaultName>discount_invoiced</rd:DefaultName>
                                         <Style>
                                           <Border>
                                             <Style>None</Style>
@@ -902,15 +936,17 @@
                                   </TablixCell>
                                   <TablixCell>
                                     <CellContents>
-                                      <Textbox Name="textbox25">
+                                      <Textbox Name="net_sold_qty">
                                         <CanGrow>true</CanGrow>
                                         <KeepTogether>true</KeepTogether>
                                         <Paragraphs>
                                           <Paragraph>
                                             <TextRuns>
                                               <TextRun>
-                                                <Value>=Sum(Fields!qty_sold.Value)</Value>
-                                                <Style />
+                                                <Value>=Sum(Fields!net_sold_qty.Value)</Value>
+                                                <Style>
+                                                  <Format>0;(0)</Format>
+                                                </Style>
                                               </TextRun>
                                             </TextRuns>
                                             <Style>
@@ -918,7 +954,7 @@
                                             </Style>
                                           </Paragraph>
                                         </Paragraphs>
-                                        <rd:DefaultName>textbox25</rd:DefaultName>
+                                        <rd:DefaultName>net_sold_qty</rd:DefaultName>
                                         <Style>
                                           <Border>
                                             <Style>None</Style>
@@ -945,7 +981,7 @@
                                           <Paragraph>
                                             <TextRuns>
                                               <TextRun>
-                                                <Value>=Sum(Fields!qty_sold.Value)/(Sum(Fields!current_qty.Value)+Sum(Fields!qty_sold.Value))</Value>
+                                                <Value>=Sum(Fields!net_sold_qty.Value)/(Sum(Fields!qty_on_hand.Value)+Sum(Fields!net_sold_qty.Value))</Value>
                                                 <Style>
                                                   <Format>0.00%</Format>
                                                 </Style>
@@ -1085,43 +1121,6 @@
                                   </TablixCell>
                                   <TablixCell>
                                     <CellContents>
-                                      <Textbox Name="textbox30">
-                                        <CanGrow>true</CanGrow>
-                                        <KeepTogether>true</KeepTogether>
-                                        <Paragraphs>
-                                          <Paragraph>
-                                            <TextRuns>
-                                              <TextRun>
-                                                <Value />
-                                                <Style>
-                                                  <Format>'$'0.00;('$'0.00)</Format>
-                                                  <rd:FormatSymbolCulture>en-US</rd:FormatSymbolCulture>
-                                                </Style>
-                                              </TextRun>
-                                            </TextRuns>
-                                            <Style />
-                                          </Paragraph>
-                                        </Paragraphs>
-                                        <rd:DefaultName>textbox30</rd:DefaultName>
-                                        <Style>
-                                          <Border>
-                                            <Style>None</Style>
-                                          </Border>
-                                          <TopBorder>
-                                            <Color>Black</Color>
-                                            <Style>Solid</Style>
-                                            <Width>1pt</Width>
-                                          </TopBorder>
-                                          <PaddingLeft>2pt</PaddingLeft>
-                                          <PaddingRight>2pt</PaddingRight>
-                                          <PaddingTop>2pt</PaddingTop>
-                                          <PaddingBottom>2pt</PaddingBottom>
-                                        </Style>
-                                      </Textbox>
-                                    </CellContents>
-                                  </TablixCell>
-                                  <TablixCell>
-                                    <CellContents>
                                       <Textbox Name="Textbox61">
                                         <CanGrow>true</CanGrow>
                                         <KeepTogether>true</KeepTogether>
@@ -1129,7 +1128,7 @@
                                           <Paragraph>
                                             <TextRuns>
                                               <TextRun>
-                                                <Value>=(Sum(Fields!price.Value)-Sum(Fields!avg_cost.Value))/Sum(Fields!price.Value)</Value>
+                                                <Value>=(Avg(Fields!msrp.Value)-Avg(Fields!cost.Value))/Avg(Fields!msrp.Value)</Value>
                                                 <Style>
                                                   <Format>0%</Format>
                                                 </Style>
@@ -1165,7 +1164,7 @@
                                           <Paragraph>
                                             <TextRuns>
                                               <TextRun>
-                                                <Value>=(Sum(Fields!row_price.Value)-Sum(Fields!row_cost.Value))/Sum(Fields!row_price.Value)</Value>
+                                                <Value>=(Sum(Fields!ext_net_sales_revenue.Value)-Sum(Fields!ext_net_sales_cost.Value))/Sum(Fields!ext_net_sales_revenue.Value)</Value>
                                                 <Style>
                                                   <Format>0%</Format>
                                                 </Style>
@@ -1194,14 +1193,14 @@
                                   </TablixCell>
                                   <TablixCell>
                                     <CellContents>
-                                      <Textbox Name="Textbox51">
+                                      <Textbox Name="ext_net_sales_cost">
                                         <CanGrow>true</CanGrow>
                                         <KeepTogether>true</KeepTogether>
                                         <Paragraphs>
                                           <Paragraph>
                                             <TextRuns>
                                               <TextRun>
-                                                <Value>=Sum(Fields!row_cost.Value)</Value>
+                                                <Value>=Sum(Fields!ext_net_sales_cost.Value)</Value>
                                                 <Style>
                                                   <Format>'$'#,0.00;('$'#,0.00)</Format>
                                                 </Style>
@@ -1210,7 +1209,7 @@
                                             <Style />
                                           </Paragraph>
                                         </Paragraphs>
-                                        <rd:DefaultName>Textbox51</rd:DefaultName>
+                                        <rd:DefaultName>ext_net_sales_cost</rd:DefaultName>
                                         <Style>
                                           <Border>
                                             <Style>None</Style>
@@ -1231,14 +1230,14 @@
                                   </TablixCell>
                                   <TablixCell>
                                     <CellContents>
-                                      <Textbox Name="textbox31">
+                                      <Textbox Name="ext_net_sales_revenue3">
                                         <CanGrow>true</CanGrow>
                                         <KeepTogether>true</KeepTogether>
                                         <Paragraphs>
                                           <Paragraph>
                                             <TextRuns>
                                               <TextRun>
-                                                <Value>=Sum(Fields!row_price.Value)</Value>
+                                                <Value>=Sum(Fields!ext_net_sales_revenue.Value)</Value>
                                                 <Style>
                                                   <Format>'$'#,0.00;('$'#,0.00)</Format>
                                                   <rd:FormatSymbolCulture>en-US</rd:FormatSymbolCulture>
@@ -1248,7 +1247,7 @@
                                             <Style />
                                           </Paragraph>
                                         </Paragraphs>
-                                        <rd:DefaultName>textbox31</rd:DefaultName>
+                                        <rd:DefaultName>ext_net_sales_revenue3</rd:DefaultName>
                                         <Style>
                                           <Border>
                                             <Style>None</Style>
@@ -1269,14 +1268,14 @@
                                   </TablixCell>
                                   <TablixCell>
                                     <CellContents>
-                                      <Textbox Name="row_QOH_cost">
+                                      <Textbox Name="ext_qoh_cost">
                                         <CanGrow>true</CanGrow>
                                         <KeepTogether>true</KeepTogether>
                                         <Paragraphs>
                                           <Paragraph>
                                             <TextRuns>
                                               <TextRun>
-                                                <Value>=Sum(Fields!row_QOH_cost.Value)</Value>
+                                                <Value>=Sum(Fields!ext_qoh_cost.Value)</Value>
                                                 <Style>
                                                   <Format>'$'#,0.00;('$'#,0.00)</Format>
                                                 </Style>
@@ -1285,7 +1284,7 @@
                                             <Style />
                                           </Paragraph>
                                         </Paragraphs>
-                                        <rd:DefaultName>row_QOH_cost</rd:DefaultName>
+                                        <rd:DefaultName>ext_qoh_cost</rd:DefaultName>
                                         <Style>
                                           <Border>
                                             <Style>None</Style>
@@ -1487,6 +1486,40 @@
                                   </TablixCell>
                                   <TablixCell>
                                     <CellContents>
+                                      <Textbox Name="Textbox65">
+                                        <CanGrow>true</CanGrow>
+                                        <KeepTogether>true</KeepTogether>
+                                        <Paragraphs>
+                                          <Paragraph>
+                                            <TextRuns>
+                                              <TextRun>
+                                                <Value />
+                                                <Style />
+                                              </TextRun>
+                                            </TextRuns>
+                                            <Style />
+                                          </Paragraph>
+                                        </Paragraphs>
+                                        <rd:DefaultName>Textbox65</rd:DefaultName>
+                                        <Style>
+                                          <Border>
+                                            <Style>None</Style>
+                                          </Border>
+                                          <TopBorder>
+                                            <Color>Black</Color>
+                                            <Style>Solid</Style>
+                                            <Width>1pt</Width>
+                                          </TopBorder>
+                                          <PaddingLeft>2pt</PaddingLeft>
+                                          <PaddingRight>2pt</PaddingRight>
+                                          <PaddingTop>2pt</PaddingTop>
+                                          <PaddingBottom>2pt</PaddingBottom>
+                                        </Style>
+                                      </Textbox>
+                                    </CellContents>
+                                  </TablixCell>
+                                  <TablixCell>
+                                    <CellContents>
                                       <Textbox Name="textbox36">
                                         <CanGrow>true</CanGrow>
                                         <KeepTogether>true</KeepTogether>
@@ -1589,21 +1622,23 @@
                                   </TablixCell>
                                   <TablixCell>
                                     <CellContents>
-                                      <Textbox Name="textbox39">
+                                      <Textbox Name="qty_on_hand2">
                                         <CanGrow>true</CanGrow>
                                         <KeepTogether>true</KeepTogether>
                                         <Paragraphs>
                                           <Paragraph>
                                             <TextRuns>
                                               <TextRun>
-                                                <Value>=Sum(Fields!current_qty.Value)</Value>
-                                                <Style />
+                                                <Value>=Sum(Fields!qty_on_hand.Value)</Value>
+                                                <Style>
+                                                  <Format>0;(0)</Format>
+                                                </Style>
                                               </TextRun>
                                             </TextRuns>
                                             <Style />
                                           </Paragraph>
                                         </Paragraphs>
-                                        <rd:DefaultName>textbox39</rd:DefaultName>
+                                        <rd:DefaultName>qty_on_hand2</rd:DefaultName>
                                         <Style>
                                           <Border>
                                             <Style>None</Style>
@@ -1623,15 +1658,17 @@
                                   </TablixCell>
                                   <TablixCell>
                                     <CellContents>
-                                      <Textbox Name="textbox40">
+                                      <Textbox Name="net_sold_qty1">
                                         <CanGrow>true</CanGrow>
                                         <KeepTogether>true</KeepTogether>
                                         <Paragraphs>
                                           <Paragraph>
                                             <TextRuns>
                                               <TextRun>
-                                                <Value>=Sum(Fields!qty_sold.Value)</Value>
-                                                <Style />
+                                                <Value>=Sum(Fields!net_sold_qty.Value)</Value>
+                                                <Style>
+                                                  <Format>0;(0)</Format>
+                                                </Style>
                                               </TextRun>
                                             </TextRuns>
                                             <Style>
@@ -1639,7 +1676,7 @@
                                             </Style>
                                           </Paragraph>
                                         </Paragraphs>
-                                        <rd:DefaultName>textbox40</rd:DefaultName>
+                                        <rd:DefaultName>net_sold_qty1</rd:DefaultName>
                                         <Style>
                                           <Border>
                                             <Style>None</Style>
@@ -1666,7 +1703,7 @@
                                           <Paragraph>
                                             <TextRuns>
                                               <TextRun>
-                                                <Value>=Sum(Fields!qty_sold.Value)/(Sum(Fields!current_qty.Value)+Sum(Fields!qty_sold.Value))</Value>
+                                                <Value>=Sum(Fields!net_sold_qty.Value)/(Sum(Fields!qty_on_hand.Value)+Sum(Fields!net_sold_qty.Value))</Value>
                                                 <Style>
                                                   <Format>0.00%</Format>
                                                 </Style>
@@ -1702,7 +1739,7 @@
                                           <Paragraph>
                                             <TextRuns>
                                               <TextRun>
-                                                <Value>=Avg(Fields!price.Value)</Value>
+                                                <Value>=Avg(Fields!msrp.Value)</Value>
                                                 <Style>
                                                   <Format>'$'0.00;('$'0.00)</Format>
                                                   <rd:FormatSymbolCulture>en-US</rd:FormatSymbolCulture>
@@ -1739,7 +1776,7 @@
                                           <Paragraph>
                                             <TextRuns>
                                               <TextRun>
-                                                <Value>=Avg(Fields!avg_price.Value)</Value>
+                                                <Value>=Avg(Fields!sale_price.Value)</Value>
                                                 <Style>
                                                   <Format>'$'0.00;('$'0.00)</Format>
                                                   <rd:FormatSymbolCulture>en-US</rd:FormatSymbolCulture>
@@ -1806,43 +1843,6 @@
                                   </TablixCell>
                                   <TablixCell>
                                     <CellContents>
-                                      <Textbox Name="textbox45">
-                                        <CanGrow>true</CanGrow>
-                                        <KeepTogether>true</KeepTogether>
-                                        <Paragraphs>
-                                          <Paragraph>
-                                            <TextRuns>
-                                              <TextRun>
-                                                <Value>=Avg(Fields!avg_cost.Value)</Value>
-                                                <Style>
-                                                  <Format>'$'0.00;('$'0.00)</Format>
-                                                  <rd:FormatSymbolCulture>en-US</rd:FormatSymbolCulture>
-                                                </Style>
-                                              </TextRun>
-                                            </TextRuns>
-                                            <Style />
-                                          </Paragraph>
-                                        </Paragraphs>
-                                        <rd:DefaultName>textbox45</rd:DefaultName>
-                                        <Style>
-                                          <Border>
-                                            <Style>None</Style>
-                                          </Border>
-                                          <TopBorder>
-                                            <Color>Black</Color>
-                                            <Style>Solid</Style>
-                                            <Width>1pt</Width>
-                                          </TopBorder>
-                                          <PaddingLeft>2pt</PaddingLeft>
-                                          <PaddingRight>2pt</PaddingRight>
-                                          <PaddingTop>2pt</PaddingTop>
-                                          <PaddingBottom>2pt</PaddingBottom>
-                                        </Style>
-                                      </Textbox>
-                                    </CellContents>
-                                  </TablixCell>
-                                  <TablixCell>
-                                    <CellContents>
                                       <Textbox Name="Textbox62">
                                         <CanGrow>true</CanGrow>
                                         <KeepTogether>true</KeepTogether>
@@ -1850,7 +1850,7 @@
                                           <Paragraph>
                                             <TextRuns>
                                               <TextRun>
-                                                <Value>=(Avg(Fields!price.Value)-Avg(Fields!avg_cost.Value))/Avg(Fields!price.Value)</Value>
+                                                <Value>=(Avg(Fields!msrp.Value)-Avg(Fields!cost.Value))/Avg(Fields!msrp.Value)</Value>
                                                 <Style>
                                                   <Format>0%</Format>
                                                 </Style>
@@ -1886,7 +1886,7 @@
                                           <Paragraph>
                                             <TextRuns>
                                               <TextRun>
-                                                <Value>=(Sum(Fields!row_price.Value)-Sum(Fields!row_cost.Value))/Sum(Fields!row_price.Value)</Value>
+                                                <Value>=(Sum(Fields!ext_net_sales_revenue.Value)-Sum(Fields!ext_net_sales_cost.Value))/Sum(Fields!ext_net_sales_revenue.Value)</Value>
                                                 <Style>
                                                   <Format>0%</Format>
                                                 </Style>
@@ -1915,14 +1915,14 @@
                                   </TablixCell>
                                   <TablixCell>
                                     <CellContents>
-                                      <Textbox Name="Textbox52">
+                                      <Textbox Name="ext_net_sales_cost1">
                                         <CanGrow>true</CanGrow>
                                         <KeepTogether>true</KeepTogether>
                                         <Paragraphs>
                                           <Paragraph>
                                             <TextRuns>
                                               <TextRun>
-                                                <Value>=Sum(Fields!row_cost.Value)</Value>
+                                                <Value>=Sum(Fields!ext_net_sales_cost.Value)</Value>
                                                 <Style>
                                                   <Format>'$'#,0.00;('$'#,0.00)</Format>
                                                 </Style>
@@ -1931,7 +1931,7 @@
                                             <Style />
                                           </Paragraph>
                                         </Paragraphs>
-                                        <rd:DefaultName>Textbox52</rd:DefaultName>
+                                        <rd:DefaultName>ext_net_sales_cost1</rd:DefaultName>
                                         <Style>
                                           <Border>
                                             <Style>None</Style>
@@ -1952,14 +1952,14 @@
                                   </TablixCell>
                                   <TablixCell>
                                     <CellContents>
-                                      <Textbox Name="textbox46">
+                                      <Textbox Name="ext_net_sales_revenue2">
                                         <CanGrow>true</CanGrow>
                                         <KeepTogether>true</KeepTogether>
                                         <Paragraphs>
                                           <Paragraph>
                                             <TextRuns>
                                               <TextRun>
-                                                <Value>=Sum(Fields!row_price.Value)</Value>
+                                                <Value>=Sum(Fields!ext_net_sales_revenue.Value)</Value>
                                                 <Style>
                                                   <Format>'$'#,0.00;('$'#,0.00)</Format>
                                                   <rd:FormatSymbolCulture>en-US</rd:FormatSymbolCulture>
@@ -1969,7 +1969,7 @@
                                             <Style />
                                           </Paragraph>
                                         </Paragraphs>
-                                        <rd:DefaultName>textbox46</rd:DefaultName>
+                                        <rd:DefaultName>ext_net_sales_revenue2</rd:DefaultName>
                                         <Style>
                                           <Border>
                                             <Style>None</Style>
@@ -1990,14 +1990,14 @@
                                   </TablixCell>
                                   <TablixCell>
                                     <CellContents>
-                                      <Textbox Name="row_QOH_cost1">
+                                      <Textbox Name="ext_qoh_cost1">
                                         <CanGrow>true</CanGrow>
                                         <KeepTogether>true</KeepTogether>
                                         <Paragraphs>
                                           <Paragraph>
                                             <TextRuns>
                                               <TextRun>
-                                                <Value>=Sum(Fields!row_QOH_cost.Value)</Value>
+                                                <Value>=Sum(Fields!ext_qoh_cost.Value)</Value>
                                                 <Style>
                                                   <Format>'$'#,0.00;('$'#,0.00)</Format>
                                                 </Style>
@@ -2006,7 +2006,7 @@
                                             <Style />
                                           </Paragraph>
                                         </Paragraphs>
-                                        <rd:DefaultName>row_QOH_cost1</rd:DefaultName>
+                                        <rd:DefaultName>ext_qoh_cost1</rd:DefaultName>
                                         <Style>
                                           <Border>
                                             <Style>None</Style>
@@ -2198,7 +2198,7 @@
                                         <ActionInfo>
                                           <Actions>
                                             <Action>
-                                              <Hyperlink>="javascript:void(window.open('http://www.liveoutthere.com/lightspeed.php/AdvancedStock/Products/Edit/product_id/" &amp; Fields!sm_product_id.Value &amp; "','_blank'))"</Hyperlink>
+                                              <Hyperlink>="javascript:void(window.open('http://www.liveoutthere.com/lightspeed.php/AdvancedStock/Products/Edit/product_id/" &amp; Fields!entity_id.Value &amp; "','_blank'))"</Hyperlink>
                                             </Action>
                                           </Actions>
                                         </ActionInfo>
@@ -2219,14 +2219,14 @@
                                   </TablixCell>
                                   <TablixCell>
                                     <CellContents>
-                                      <Textbox Name="style">
+                                      <Textbox Name="entity_id">
                                         <CanGrow>true</CanGrow>
                                         <KeepTogether>true</KeepTogether>
                                         <Paragraphs>
                                           <Paragraph>
                                             <TextRuns>
                                               <TextRun>
-                                                <Value>=Fields!style.Value</Value>
+                                                <Value>=Fields!entity_id.Value</Value>
                                                 <Style>
                                                   <Color>DimGray</Color>
                                                 </Style>
@@ -2235,7 +2235,43 @@
                                             <Style />
                                           </Paragraph>
                                         </Paragraphs>
-                                        <rd:DefaultName>style</rd:DefaultName>
+                                        <rd:DefaultName>entity_id</rd:DefaultName>
+                                        <Style>
+                                          <Border>
+                                            <Style>None</Style>
+                                          </Border>
+                                          <TopBorder>
+                                            <Color>Black</Color>
+                                            <Style>Solid</Style>
+                                            <Width>1pt</Width>
+                                          </TopBorder>
+                                          <PaddingLeft>2pt</PaddingLeft>
+                                          <PaddingRight>2pt</PaddingRight>
+                                          <PaddingTop>2pt</PaddingTop>
+                                          <PaddingBottom>2pt</PaddingBottom>
+                                        </Style>
+                                      </Textbox>
+                                    </CellContents>
+                                  </TablixCell>
+                                  <TablixCell>
+                                    <CellContents>
+                                      <Textbox Name="vendor_product_id">
+                                        <CanGrow>true</CanGrow>
+                                        <KeepTogether>true</KeepTogether>
+                                        <Paragraphs>
+                                          <Paragraph>
+                                            <TextRuns>
+                                              <TextRun>
+                                                <Value>=Fields!vendor_product_id.Value</Value>
+                                                <Style>
+                                                  <Color>DimGray</Color>
+                                                </Style>
+                                              </TextRun>
+                                            </TextRuns>
+                                            <Style />
+                                          </Paragraph>
+                                        </Paragraphs>
+                                        <rd:DefaultName>vendor_product_id</rd:DefaultName>
                                         <Style>
                                           <Border>
                                             <Style>None</Style>
@@ -2327,15 +2363,16 @@
                                   </TablixCell>
                                   <TablixCell>
                                     <CellContents>
-                                      <Textbox Name="current_qty">
+                                      <Textbox Name="qty_on_hand">
                                         <CanGrow>true</CanGrow>
                                         <KeepTogether>true</KeepTogether>
                                         <Paragraphs>
                                           <Paragraph>
                                             <TextRuns>
                                               <TextRun>
-                                                <Value>=Fields!current_qty.Value</Value>
+                                                <Value>=Fields!qty_on_hand.Value</Value>
                                                 <Style>
+                                                  <Format>0;(0)</Format>
                                                   <Color>DimGray</Color>
                                                 </Style>
                                               </TextRun>
@@ -2343,7 +2380,7 @@
                                             <Style />
                                           </Paragraph>
                                         </Paragraphs>
-                                        <rd:DefaultName>current_qty</rd:DefaultName>
+                                        <rd:DefaultName>qty_on_hand</rd:DefaultName>
                                         <Style>
                                           <Border>
                                             <Style>None</Style>
@@ -2363,15 +2400,16 @@
                                   </TablixCell>
                                   <TablixCell>
                                     <CellContents>
-                                      <Textbox Name="qty_sold">
+                                      <Textbox Name="net_sold_qty2">
                                         <CanGrow>true</CanGrow>
                                         <KeepTogether>true</KeepTogether>
                                         <Paragraphs>
                                           <Paragraph>
                                             <TextRuns>
                                               <TextRun>
-                                                <Value>=Fields!qty_sold.Value</Value>
+                                                <Value>=Fields!net_sold_qty.Value</Value>
                                                 <Style>
+                                                  <Format>0;(0)</Format>
                                                   <Color>DimGray</Color>
                                                 </Style>
                                               </TextRun>
@@ -2381,7 +2419,7 @@
                                             </Style>
                                           </Paragraph>
                                         </Paragraphs>
-                                        <rd:DefaultName>qty_sold</rd:DefaultName>
+                                        <rd:DefaultName>net_sold_qty2</rd:DefaultName>
                                         <Style>
                                           <Border>
                                             <Style>None</Style>
@@ -2438,14 +2476,14 @@
                                   </TablixCell>
                                   <TablixCell>
                                     <CellContents>
-                                      <Textbox Name="price">
+                                      <Textbox Name="msrp">
                                         <CanGrow>true</CanGrow>
                                         <KeepTogether>true</KeepTogether>
                                         <Paragraphs>
                                           <Paragraph>
                                             <TextRuns>
                                               <TextRun>
-                                                <Value>=Fields!price.Value</Value>
+                                                <Value>=Fields!msrp.Value</Value>
                                                 <Style>
                                                   <Format>'$'0.00;('$'0.00)</Format>
                                                   <Color>DimGray</Color>
@@ -2455,7 +2493,7 @@
                                             <Style />
                                           </Paragraph>
                                         </Paragraphs>
-                                        <rd:DefaultName>price</rd:DefaultName>
+                                        <rd:DefaultName>msrp</rd:DefaultName>
                                         <Style>
                                           <Border>
                                             <Style>None</Style>
@@ -2475,14 +2513,14 @@
                                   </TablixCell>
                                   <TablixCell>
                                     <CellContents>
-                                      <Textbox Name="avg_price">
+                                      <Textbox Name="sale_price">
                                         <CanGrow>true</CanGrow>
                                         <KeepTogether>true</KeepTogether>
                                         <Paragraphs>
                                           <Paragraph>
                                             <TextRuns>
                                               <TextRun>
-                                                <Value>=Fields!avg_price.Value</Value>
+                                                <Value>=Fields!sale_price.Value</Value>
                                                 <Style>
                                                   <Format>'$'0.00;('$'0.00)</Format>
                                                   <Color>DimGray</Color>
@@ -2492,7 +2530,7 @@
                                             <Style />
                                           </Paragraph>
                                         </Paragraphs>
-                                        <rd:DefaultName>avg_price</rd:DefaultName>
+                                        <rd:DefaultName>sale_price</rd:DefaultName>
                                         <Style>
                                           <Border>
                                             <Style>None</Style>
@@ -2549,51 +2587,14 @@
                                   </TablixCell>
                                   <TablixCell>
                                     <CellContents>
-                                      <Textbox Name="avg_cost">
+                                      <Textbox Name="opening_margin">
                                         <CanGrow>true</CanGrow>
                                         <KeepTogether>true</KeepTogether>
                                         <Paragraphs>
                                           <Paragraph>
                                             <TextRuns>
                                               <TextRun>
-                                                <Value>=Fields!avg_cost.Value</Value>
-                                                <Style>
-                                                  <Format>'$'0.00;('$'0.00)</Format>
-                                                  <Color>DimGray</Color>
-                                                </Style>
-                                              </TextRun>
-                                            </TextRuns>
-                                            <Style />
-                                          </Paragraph>
-                                        </Paragraphs>
-                                        <rd:DefaultName>avg_cost</rd:DefaultName>
-                                        <Style>
-                                          <Border>
-                                            <Style>None</Style>
-                                          </Border>
-                                          <TopBorder>
-                                            <Color>Black</Color>
-                                            <Style>Solid</Style>
-                                            <Width>1pt</Width>
-                                          </TopBorder>
-                                          <PaddingLeft>2pt</PaddingLeft>
-                                          <PaddingRight>2pt</PaddingRight>
-                                          <PaddingTop>2pt</PaddingTop>
-                                          <PaddingBottom>2pt</PaddingBottom>
-                                        </Style>
-                                      </Textbox>
-                                    </CellContents>
-                                  </TablixCell>
-                                  <TablixCell>
-                                    <CellContents>
-                                      <Textbox Name="base_margin">
-                                        <CanGrow>true</CanGrow>
-                                        <KeepTogether>true</KeepTogether>
-                                        <Paragraphs>
-                                          <Paragraph>
-                                            <TextRuns>
-                                              <TextRun>
-                                                <Value>=Fields!base_margin.Value</Value>
+                                                <Value>=Fields!opening_margin.Value</Value>
                                                 <Style>
                                                   <Format>0%</Format>
                                                   <Color>DimGray</Color>
@@ -2603,7 +2604,7 @@
                                             <Style />
                                           </Paragraph>
                                         </Paragraphs>
-                                        <rd:DefaultName>base_margin</rd:DefaultName>
+                                        <rd:DefaultName>opening_margin</rd:DefaultName>
                                         <Style>
                                           <Border>
                                             <Style>None</Style>
@@ -2623,14 +2624,14 @@
                                   </TablixCell>
                                   <TablixCell>
                                     <CellContents>
-                                      <Textbox Name="avg_margin">
+                                      <Textbox Name="margin">
                                         <CanGrow>true</CanGrow>
                                         <KeepTogether>true</KeepTogether>
                                         <Paragraphs>
                                           <Paragraph>
                                             <TextRuns>
                                               <TextRun>
-                                                <Value>=Fields!avg_margin.Value</Value>
+                                                <Value>=Fields!margin.Value</Value>
                                                 <Style>
                                                   <Format>0%</Format>
                                                   <Color>DimGray</Color>
@@ -2640,7 +2641,7 @@
                                             <Style />
                                           </Paragraph>
                                         </Paragraphs>
-                                        <rd:DefaultName>avg_margin</rd:DefaultName>
+                                        <rd:DefaultName>margin</rd:DefaultName>
                                         <Style>
                                           <Border>
                                             <Style>None</Style>
@@ -2660,14 +2661,14 @@
                                   </TablixCell>
                                   <TablixCell>
                                     <CellContents>
-                                      <Textbox Name="Textbox53">
+                                      <Textbox Name="ext_net_sales_cost2">
                                         <CanGrow>true</CanGrow>
                                         <KeepTogether>true</KeepTogether>
                                         <Paragraphs>
                                           <Paragraph>
                                             <TextRuns>
                                               <TextRun>
-                                                <Value>=Fields!row_cost.Value</Value>
+                                                <Value>=Fields!ext_net_sales_cost.Value</Value>
                                                 <Style>
                                                   <Format>'$'#,0.00;('$'#,0.00)</Format>
                                                   <Color>DimGray</Color>
@@ -2677,7 +2678,7 @@
                                             <Style />
                                           </Paragraph>
                                         </Paragraphs>
-                                        <rd:DefaultName>Textbox53</rd:DefaultName>
+                                        <rd:DefaultName>ext_net_sales_cost2</rd:DefaultName>
                                         <Style>
                                           <Border>
                                             <Style>None</Style>
@@ -2698,14 +2699,14 @@
                                   </TablixCell>
                                   <TablixCell>
                                     <CellContents>
-                                      <Textbox Name="row_price">
+                                      <Textbox Name="ext_net_sales_revenue1">
                                         <CanGrow>true</CanGrow>
                                         <KeepTogether>true</KeepTogether>
                                         <Paragraphs>
                                           <Paragraph>
                                             <TextRuns>
                                               <TextRun>
-                                                <Value>=Fields!row_price.Value</Value>
+                                                <Value>=Fields!ext_net_sales_revenue.Value</Value>
                                                 <Style>
                                                   <Format>'$'#,0.00;('$'#,0.00)</Format>
                                                   <Color>DimGray</Color>
@@ -2716,7 +2717,7 @@
                                             <Style />
                                           </Paragraph>
                                         </Paragraphs>
-                                        <rd:DefaultName>row_price</rd:DefaultName>
+                                        <rd:DefaultName>ext_net_sales_revenue1</rd:DefaultName>
                                         <Style>
                                           <Border>
                                             <Style>None</Style>
@@ -2737,14 +2738,14 @@
                                   </TablixCell>
                                   <TablixCell>
                                     <CellContents>
-                                      <Textbox Name="row_QOH_cost2">
+                                      <Textbox Name="ext_qoh_cost2">
                                         <CanGrow>true</CanGrow>
                                         <KeepTogether>true</KeepTogether>
                                         <Paragraphs>
                                           <Paragraph>
                                             <TextRuns>
                                               <TextRun>
-                                                <Value>=Fields!row_QOH_cost.Value</Value>
+                                                <Value>=Fields!ext_qoh_cost.Value</Value>
                                                 <Style>
                                                   <Format>'$'#,0.00;('$'#,0.00)</Format>
                                                   <Color>DimGray</Color>
@@ -2754,7 +2755,7 @@
                                             <Style />
                                           </Paragraph>
                                         </Paragraphs>
-                                        <rd:DefaultName>row_QOH_cost2</rd:DefaultName>
+                                        <rd:DefaultName>ext_qoh_cost2</rd:DefaultName>
                                         <Style>
                                           <Border>
                                             <Style>None</Style>
@@ -2963,6 +2964,42 @@
                                   </TablixCell>
                                   <TablixCell>
                                     <CellContents>
+                                      <Textbox Name="Textbox67">
+                                        <CanGrow>true</CanGrow>
+                                        <KeepTogether>true</KeepTogether>
+                                        <Paragraphs>
+                                          <Paragraph>
+                                            <TextRuns>
+                                              <TextRun>
+                                                <Value />
+                                                <Style>
+                                                  <FontStyle>Italic</FontStyle>
+                                                </Style>
+                                              </TextRun>
+                                            </TextRuns>
+                                            <Style />
+                                          </Paragraph>
+                                        </Paragraphs>
+                                        <rd:DefaultName>Textbox67</rd:DefaultName>
+                                        <Style>
+                                          <Border>
+                                            <Style>None</Style>
+                                          </Border>
+                                          <TopBorder>
+                                            <Color>Black</Color>
+                                            <Style>Solid</Style>
+                                            <Width>1pt</Width>
+                                          </TopBorder>
+                                          <PaddingLeft>2pt</PaddingLeft>
+                                          <PaddingRight>2pt</PaddingRight>
+                                          <PaddingTop>2pt</PaddingTop>
+                                          <PaddingBottom>2pt</PaddingBottom>
+                                        </Style>
+                                      </Textbox>
+                                    </CellContents>
+                                  </TablixCell>
+                                  <TablixCell>
+                                    <CellContents>
                                       <Textbox Name="Textbox132">
                                         <CanGrow>true</CanGrow>
                                         <KeepTogether>true</KeepTogether>
@@ -3071,23 +3108,24 @@
                                   </TablixCell>
                                   <TablixCell>
                                     <CellContents>
-                                      <Textbox Name="current_qty1">
+                                      <Textbox Name="qty_on_hand1">
                                         <CanGrow>true</CanGrow>
                                         <KeepTogether>true</KeepTogether>
                                         <Paragraphs>
                                           <Paragraph>
                                             <TextRuns>
                                               <TextRun>
-                                                <Value>=Sum(Fields!current_qty.Value)</Value>
+                                                <Value>=Sum(Fields!qty_on_hand.Value)</Value>
                                                 <Style>
                                                   <FontStyle>Italic</FontStyle>
+                                                  <Format>0;(0)</Format>
                                                 </Style>
                                               </TextRun>
                                             </TextRuns>
                                             <Style />
                                           </Paragraph>
                                         </Paragraphs>
-                                        <rd:DefaultName>current_qty1</rd:DefaultName>
+                                        <rd:DefaultName>qty_on_hand1</rd:DefaultName>
                                         <Style>
                                           <Border>
                                             <Style>None</Style>
@@ -3107,16 +3145,17 @@
                                   </TablixCell>
                                   <TablixCell>
                                     <CellContents>
-                                      <Textbox Name="qty_sold1">
+                                      <Textbox Name="net_sold_qty3">
                                         <CanGrow>true</CanGrow>
                                         <KeepTogether>true</KeepTogether>
                                         <Paragraphs>
                                           <Paragraph>
                                             <TextRuns>
                                               <TextRun>
-                                                <Value>=Sum(Fields!qty_sold.Value)</Value>
+                                                <Value>=Sum(Fields!net_sold_qty.Value)</Value>
                                                 <Style>
                                                   <FontStyle>Italic</FontStyle>
+                                                  <Format>0;(0)</Format>
                                                 </Style>
                                               </TextRun>
                                             </TextRuns>
@@ -3125,7 +3164,7 @@
                                             </Style>
                                           </Paragraph>
                                         </Paragraphs>
-                                        <rd:DefaultName>qty_sold1</rd:DefaultName>
+                                        <rd:DefaultName>net_sold_qty3</rd:DefaultName>
                                         <Style>
                                           <Border>
                                             <Style>None</Style>
@@ -3152,7 +3191,7 @@
                                           <Paragraph>
                                             <TextRuns>
                                               <TextRun>
-                                                <Value>=Sum(Fields!qty_sold.Value)/(Sum(Fields!current_qty.Value)+Sum(Fields!qty_sold.Value))</Value>
+                                                <Value>=Sum(Fields!net_sold_qty.Value)/(Sum(Fields!qty_on_hand.Value)+Sum(Fields!net_sold_qty.Value))</Value>
                                                 <Style>
                                                   <FontStyle>Italic</FontStyle>
                                                   <Format>0.00%</Format>
@@ -3290,42 +3329,6 @@
                                   </TablixCell>
                                   <TablixCell>
                                     <CellContents>
-                                      <Textbox Name="Textbox141">
-                                        <CanGrow>true</CanGrow>
-                                        <KeepTogether>true</KeepTogether>
-                                        <Paragraphs>
-                                          <Paragraph>
-                                            <TextRuns>
-                                              <TextRun>
-                                                <Value />
-                                                <Style>
-                                                  <FontStyle>Italic</FontStyle>
-                                                </Style>
-                                              </TextRun>
-                                            </TextRuns>
-                                            <Style />
-                                          </Paragraph>
-                                        </Paragraphs>
-                                        <rd:DefaultName>Textbox141</rd:DefaultName>
-                                        <Style>
-                                          <Border>
-                                            <Style>None</Style>
-                                          </Border>
-                                          <TopBorder>
-                                            <Color>Black</Color>
-                                            <Style>Solid</Style>
-                                            <Width>1pt</Width>
-                                          </TopBorder>
-                                          <PaddingLeft>2pt</PaddingLeft>
-                                          <PaddingRight>2pt</PaddingRight>
-                                          <PaddingTop>2pt</PaddingTop>
-                                          <PaddingBottom>2pt</PaddingBottom>
-                                        </Style>
-                                      </Textbox>
-                                    </CellContents>
-                                  </TablixCell>
-                                  <TablixCell>
-                                    <CellContents>
                                       <Textbox Name="Textbox64">
                                         <CanGrow>true</CanGrow>
                                         <KeepTogether>true</KeepTogether>
@@ -3369,7 +3372,7 @@
                                           <Paragraph>
                                             <TextRuns>
                                               <TextRun>
-                                                <Value>=(Sum(Fields!row_price.Value)-Sum(Fields!row_cost.Value))/Sum(Fields!row_price.Value)</Value>
+                                                <Value>=(Sum(Fields!ext_net_sales_revenue.Value)-Sum(Fields!ext_net_sales_cost.Value))/Sum(Fields!ext_net_sales_revenue.Value)</Value>
                                                 <Style>
                                                   <FontStyle>Italic</FontStyle>
                                                   <Format>0%</Format>
@@ -3399,14 +3402,14 @@
                                   </TablixCell>
                                   <TablixCell>
                                     <CellContents>
-                                      <Textbox Name="Textbox54">
+                                      <Textbox Name="ext_net_sales_cost3">
                                         <CanGrow>true</CanGrow>
                                         <KeepTogether>true</KeepTogether>
                                         <Paragraphs>
                                           <Paragraph>
                                             <TextRuns>
                                               <TextRun>
-                                                <Value>=Sum(Fields!row_cost.Value)</Value>
+                                                <Value>=Sum(Fields!ext_net_sales_cost.Value)</Value>
                                                 <Style>
                                                   <FontStyle>Italic</FontStyle>
                                                   <Format>'$'#,0.00;('$'#,0.00)</Format>
@@ -3416,7 +3419,7 @@
                                             <Style />
                                           </Paragraph>
                                         </Paragraphs>
-                                        <rd:DefaultName>Textbox54</rd:DefaultName>
+                                        <rd:DefaultName>ext_net_sales_cost3</rd:DefaultName>
                                         <Style>
                                           <Border>
                                             <Style>None</Style>
@@ -3437,14 +3440,14 @@
                                   </TablixCell>
                                   <TablixCell>
                                     <CellContents>
-                                      <Textbox Name="Textbox142">
+                                      <Textbox Name="ext_net_sales_revenue">
                                         <CanGrow>true</CanGrow>
                                         <KeepTogether>true</KeepTogether>
                                         <Paragraphs>
                                           <Paragraph>
                                             <TextRuns>
                                               <TextRun>
-                                                <Value>=Sum(Fields!row_price.Value)</Value>
+                                                <Value>=Sum(Fields!ext_net_sales_revenue.Value)</Value>
                                                 <Style>
                                                   <FontStyle>Italic</FontStyle>
                                                   <Format>'$'#,0.00;('$'#,0.00)</Format>
@@ -3454,7 +3457,7 @@
                                             <Style />
                                           </Paragraph>
                                         </Paragraphs>
-                                        <rd:DefaultName>Textbox142</rd:DefaultName>
+                                        <rd:DefaultName>ext_net_sales_revenue</rd:DefaultName>
                                         <Style>
                                           <Border>
                                             <Style>None</Style>
@@ -3475,14 +3478,14 @@
                                   </TablixCell>
                                   <TablixCell>
                                     <CellContents>
-                                      <Textbox Name="row_QOH_cost3">
+                                      <Textbox Name="ext_qoh_cost3">
                                         <CanGrow>true</CanGrow>
                                         <KeepTogether>true</KeepTogether>
                                         <Paragraphs>
                                           <Paragraph>
                                             <TextRuns>
                                               <TextRun>
-                                                <Value>=Sum(Fields!row_QOH_cost.Value)</Value>
+                                                <Value>=Sum(Fields!ext_qoh_cost.Value)</Value>
                                                 <Style>
                                                   <FontStyle>Italic</FontStyle>
                                                   <Format>'$'#,0.00;('$'#,0.00)</Format>
@@ -3492,7 +3495,7 @@
                                             <Style />
                                           </Paragraph>
                                         </Paragraphs>
-                                        <rd:DefaultName>row_QOH_cost3</rd:DefaultName>
+                                        <rd:DefaultName>ext_qoh_cost3</rd:DefaultName>
                                         <Style>
                                           <Border>
                                             <Style>None</Style>
@@ -3796,7 +3799,7 @@
         </PageBreak>
         <Top>0.21in</Top>
         <Height>1.59in</Height>
-        <Width>22.21875in</Width>
+        <Width>23.21874in</Width>
         <Style />
       </Tablix>
       <Textbox Name="textbox1">
@@ -3830,7 +3833,7 @@
     <Height>1.8in</Height>
     <Style />
   </Body>
-  <Width>22.21875in</Width>
+  <Width>23.21874in</Width>
   <Page>
     <LeftMargin>1in</LeftMargin>
     <RightMargin>1in</RightMargin>
@@ -3860,7 +3863,7 @@
             <rd:UserDefined>true</rd:UserDefined>
           </QueryParameter>
         </QueryParameters>
-        <CommandText>EXEC report_Sell_Through @start_date, @end_date</CommandText>
+        <CommandText>EXEC report_Sell_Through_New @start_date, @end_date</CommandText>
         <rd:UseGenericDesigner>true</rd:UseGenericDesigner>
       </Query>
       <Fields>
@@ -3868,9 +3871,9 @@
           <DataField>brand</DataField>
           <rd:TypeName>System.String</rd:TypeName>
         </Field>
-        <Field Name="sm_product_id">
-          <DataField>sm_product_id</DataField>
-          <rd:TypeName>System.Int32</rd:TypeName>
+        <Field Name="entity_id">
+          <DataField>entity_id</DataField>
+          <rd:TypeName>System.Decimal</rd:TypeName>
         </Field>
         <Field Name="sku">
           <DataField>sku</DataField>
@@ -3880,8 +3883,8 @@
           <DataField>name</DataField>
           <rd:TypeName>System.String</rd:TypeName>
         </Field>
-        <Field Name="style">
-          <DataField>style</DataField>
+        <Field Name="vendor_product_id">
+          <DataField>vendor_product_id</DataField>
           <rd:TypeName>System.String</rd:TypeName>
         </Field>
         <Field Name="color">
@@ -3896,49 +3899,57 @@
           <DataField>season</DataField>
           <rd:TypeName>System.String</rd:TypeName>
         </Field>
-        <Field Name="current_qty">
-          <DataField>current_qty</DataField>
-          <rd:TypeName>System.Decimal</rd:TypeName>
+        <Field Name="invt_type">
+          <DataField>invt_type</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
         </Field>
-        <Field Name="qty_sold">
-          <DataField>qty_sold</DataField>
-          <rd:TypeName>System.Int32</rd:TypeName>
+        <Field Name="department">
+          <DataField>department</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
         </Field>
         <Field Name="sell_through">
           <DataField>sell_through</DataField>
-          <rd:TypeName>System.Double</rd:TypeName>
-        </Field>
-        <Field Name="price">
-          <DataField>price</DataField>
           <rd:TypeName>System.Decimal</rd:TypeName>
         </Field>
-        <Field Name="avg_price">
-          <DataField>avg_price</DataField>
+        <Field Name="row_total">
+          <DataField>row_total</DataField>
+          <rd:TypeName>System.Decimal</rd:TypeName>
+        </Field>
+        <Field Name="row_total_incl_tax">
+          <DataField>row_total_incl_tax</DataField>
+          <rd:TypeName>System.Decimal</rd:TypeName>
+        </Field>
+        <Field Name="tax_invoiced">
+          <DataField>tax_invoiced</DataField>
           <rd:TypeName>System.Decimal</rd:TypeName>
         </Field>
         <Field Name="cost">
           <DataField>cost</DataField>
           <rd:TypeName>System.Decimal</rd:TypeName>
         </Field>
-        <Field Name="avg_cost">
-          <DataField>avg_cost</DataField>
-          <rd:TypeName>System.Double</rd:TypeName>
-        </Field>
-        <Field Name="row_price">
-          <DataField>row_price</DataField>
+        <Field Name="discount_invoiced">
+          <DataField>discount_invoiced</DataField>
           <rd:TypeName>System.Decimal</rd:TypeName>
         </Field>
-        <Field Name="base_margin">
-          <DataField>base_margin</DataField>
-          <rd:TypeName>System.Double</rd:TypeName>
+        <Field Name="qty_on_hand">
+          <DataField>qty_on_hand</DataField>
+          <rd:TypeName>System.Decimal</rd:TypeName>
+        </Field>
+        <Field Name="gross_sold_qty">
+          <DataField>gross_sold_qty</DataField>
+          <rd:TypeName>System.Decimal</rd:TypeName>
+        </Field>
+        <Field Name="refunded_qty">
+          <DataField>refunded_qty</DataField>
+          <rd:TypeName>System.Decimal</rd:TypeName>
+        </Field>
+        <Field Name="net_sold_qty">
+          <DataField>net_sold_qty</DataField>
+          <rd:TypeName>System.Decimal</rd:TypeName>
         </Field>
         <Field Name="last_sold">
           <DataField>last_sold</DataField>
           <rd:TypeName>System.DateTime</rd:TypeName>
-        </Field>
-        <Field Name="avg_margin">
-          <DataField>avg_margin</DataField>
-          <rd:TypeName>System.Double</rd:TypeName>
         </Field>
         <Field Name="first_received">
           <DataField>first_received</DataField>
@@ -3948,13 +3959,57 @@
           <DataField>last_received</DataField>
           <rd:TypeName>System.DateTime</rd:TypeName>
         </Field>
-        <Field Name="row_QOH_cost">
-          <DataField>row_QOH_cost</DataField>
-          <rd:TypeName>System.Double</rd:TypeName>
+        <Field Name="msrp">
+          <DataField>msrp</DataField>
+          <rd:TypeName>System.Decimal</rd:TypeName>
         </Field>
-        <Field Name="row_cost">
-          <DataField>row_cost</DataField>
-          <rd:TypeName>System.Double</rd:TypeName>
+        <Field Name="sale_price">
+          <DataField>sale_price</DataField>
+          <rd:TypeName>System.Decimal</rd:TypeName>
+        </Field>
+        <Field Name="opening_margin">
+          <DataField>opening_margin</DataField>
+          <rd:TypeName>System.Decimal</rd:TypeName>
+        </Field>
+        <Field Name="category">
+          <DataField>category</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="subcategory">
+          <DataField>subcategory</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="ext_qoh_cost">
+          <DataField>ext_qoh_cost</DataField>
+          <rd:TypeName>System.Decimal</rd:TypeName>
+        </Field>
+        <Field Name="ext_gross_sales_cost">
+          <DataField>ext_gross_sales_cost</DataField>
+          <rd:TypeName>System.Decimal</rd:TypeName>
+        </Field>
+        <Field Name="ext_refunds_cost">
+          <DataField>ext_refunds_cost</DataField>
+          <rd:TypeName>System.Decimal</rd:TypeName>
+        </Field>
+        <Field Name="ext_net_sales_cost">
+          <DataField>ext_net_sales_cost</DataField>
+          <rd:TypeName>System.Decimal</rd:TypeName>
+        </Field>
+        <Field Name="ext_gross_sales_revenue">
+          <DataField>ext_gross_sales_revenue</DataField>
+          <rd:TypeName>System.Decimal</rd:TypeName>
+        </Field>
+        <Field Name="ext_net_sales_revenue">
+          <DataField>ext_net_sales_revenue</DataField>
+          <rd:TypeName>System.Decimal</rd:TypeName>
+        </Field>
+        <Field Name="margin">
+          <DataField>margin</DataField>
+          <rd:TypeName>System.Decimal</rd:TypeName>
+        </Field>
+        <Field Name="gross_profit">
+          <DataField>gross_profit</DataField>
+          <rd:TypeName>System.Decimal</rd:TypeName>
         </Field>
       </Fields>
     </DataSet>

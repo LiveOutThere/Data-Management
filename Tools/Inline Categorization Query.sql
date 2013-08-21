@@ -1,2 +1,5 @@
-SELECT DISTINCT sku, dbo.getCategoryFromSS13Categorization(sku) FROM tbl_SS13_Categorization
-WHERE SKU IN('SS13A-MAR-16410')
+SELECT DISTINCT b.sku, dbo.getCategory(b.categories,'Patagonia',a.department) 
+FROM tbl_LoadFile_FW13_PAT AS a
+INNER JOIN tbl_FW13_Final_Categorization AS b
+ON a.sku = b.sku
+WHERE b.sku IN('PAT-28471')

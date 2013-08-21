@@ -191,7 +191,7 @@ GO
 UPDATE a SET
 	categories = dbo.getMagentoCategories(a.vendor_product_id),
 	[description] = (SELECT positioning_text FROM dbo.tbl_RawData_FW13_PAT_Marketing WHERE style = a.vendor_product_id),
-	features = (SELECT dbo.getPATFeatures(style) FROM tbl_RawData_FW13_PAT_Marketing WHERE style = a.vendor_product_id),
+	features = dbo.getPATFeatures(a.vendor_product_id),
 	fabric = (SELECT fabric_desc FROM tbl_RawData_FW13_PAT_Marketing WHERE style = a.vendor_product_id),
 	simples_skus = (SELECT dbo.getPATAssociatedProducts(style) FROM tbl_RawData_FW13_PAT_Marketing WHERE style = a.vendor_product_id),
 	care_instructions = (SELECT dbo.getPATCareInstructions(style) FROM tbl_RawData_FW13_PAT_Marketing WHERE style = a.vendor_product_id),

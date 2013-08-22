@@ -107,7 +107,7 @@ SELECT DISTINCT
 	,'FW13A-ARC-' + CAST(model AS nvarchar(255)) + '-' + UPPER(REPLACE(color,' ','')) + '-' + dbo.getARCSize(size) AS sku
 	,dbo.getARCName(description) AS name
 	,0 AS has_options
-	,CAST(suggested_retail AS float) +.99 AS price
+	,CAST(suggested_retail AS float) - 0.01 AS price
 	,wholesale AS cost
 	,dbo.getARCDepartment(description) AS department
 	,NULL AS image

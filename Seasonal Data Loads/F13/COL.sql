@@ -107,7 +107,7 @@ SELECT DISTINCT
 	,'FW13A-COL-' + LEFT(a.JDE_Style_Color,6) + '-' + a.Color_Code + '-' + dbo.getCOLSize(a.Size,a.Dimension) AS sku
 	,dbo.getCOLName(a.Style_Name) AS name
 	,0 AS has_options
-	,CAST(b.MSRP AS float) +.99 AS price
+	,CAST(b.MSRP AS float) - 0.01 AS price
 	,b.Dealer_Cost AS cost
 	,dbo.getCOLDepartment(a.Gender) AS department
 	,NULL AS image

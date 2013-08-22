@@ -107,7 +107,7 @@ SELECT DISTINCT
 	,'FW13A-MHW-' + LEFT(a.JDE_Style_Color,6) + '-' + a.Color_Code + '-' + dbo.getMHWSize(a.Size,a.Dimension) AS sku
 	,dbo.getMHWName(a.Style_Name) AS name
 	,0 AS has_options
-	,CAST(b.MSRP AS float) +.99 AS price
+	,CAST(b.MSRP AS float) - 0.01 AS price
 	,b.Cost AS cost
 	,dbo.getMHWDepartment(LEFT(a.JDE_Style_Color,6)) AS department
 	,NULL AS image

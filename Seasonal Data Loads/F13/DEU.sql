@@ -127,7 +127,7 @@ SELECT DISTINCT
 	,REPLACE(('FW13A-DEU-' +  CAST(a.Style as nvarchar) + '-' +  CAST(a.Color_Code as nvarchar) + '-' + REPLACE(a.Size_Code,'OS','O/S')),'--','-') AS sku
 	,dbo.getDEUName(a.Name) AS name
 	,0 AS has_options
-	,CAST(b.MSRP AS float) +.99 AS price
+	,CAST(b.MSRP AS float) - 0.01 AS price
 	,b.Wholesale AS cost
 	,dbo.getDEUDepartment(a.Name) AS department
 	,NULL AS image

@@ -106,7 +106,7 @@ SELECT DISTINCT
 	,0 AS has_options
 	,NULL AS name
 	,dbo.getTNFDepartment(Style_Description) AS department
-	,CAST(MSRP AS float) +.99 AS price
+	,CAST(MSRP AS float) - 0.01 AS price
 	,Wholesale_Price AS cost
 	,NULL AS image
 	,dbo.getTNFColorName(Color_Description) AS image_label

@@ -107,7 +107,7 @@ SELECT DISTINCT
 	,'FW13A-HH-' + Style + '-' + Color + '-' + dbo.getHHSize(LTRIM(RTRIM(Size))) AS sku
 	,dbo.getHHName(StyleName) AS name
 	,0 AS has_options
-	,CAST(RetailPrice_CA AS float) +.99 AS price
+	,CAST(RetailPrice_CA AS float) - 0.01 AS price
 	,WholeSaleCost_CA AS cost
 	,dbo.getHHDepartment(Gender) AS department
 	,NULL AS image

@@ -107,7 +107,7 @@ SELECT DISTINCT
 	,'FW13A-SOR-' + LEFT(JDE_Style_Color,6) + '-' + Color_Code + '-' + Size AS sku
 	,dbo.getSORName(Style_Name) AS name
 	,0 AS has_options
-	,CAST(MSRP AS float) +.99 AS price
+	,CAST(MSRP AS float) - 0.01 AS price
 	,Wholesale AS cost
 	,dbo.getSORDepartment(Gender) AS department
 	,NULL AS image

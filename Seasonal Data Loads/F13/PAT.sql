@@ -107,7 +107,7 @@ SELECT DISTINCT
 	'FW13A-PAT-' +  b.Style_number + '-' +  a.[color number]+ '-' +  a.size AS sku,
 	dbo.getPATName(a.[Style Description]) AS name,
 	0 AS has_options,
-	CAST(b.Published_Retail_Price AS float) +.99 AS price,
+	CAST(b.Published_Retail_Price AS float) - 0.01 AS price,
 	b.Published_Wholesale_Price AS cost,
 	dbo.getPATGender(a.[Style Description]) AS department,
 	NULL AS [image],

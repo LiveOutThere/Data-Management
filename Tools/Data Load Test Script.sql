@@ -1,13 +1,13 @@
 DECLARE @output varchar(MAX), @count nvarchar(MAX)
 
-PRINT 'OR'
+PRINT 'MAR'
 
 -- Price/Cost test
 PRINT ''
 SELECT @output = COALESCE(@output + CHAR(13) + '		', '') + vendor_product_id FROM
-(SELECT DISTINCT vendor_product_id FROM tbl_LoadFile_FW13_OR WHERE type = 'configurable' AND CAST(price AS float) <= 0 OR price IS NULL OR cost IS NULL) AS x
+(SELECT DISTINCT vendor_product_id FROM tbl_LoadFile_FW13_MAR WHERE type = 'configurable' AND CAST(price AS float) <= 0 OR price IS NULL OR cost IS NULL) AS x
 
-SET @count = (SELECT COUNT(DISTINCT vendor_product_id) FROM tbl_LoadFile_FW13_OR WHERE type = 'configurable' AND CAST(price AS float) <= 0 OR price IS NULL OR cost IS NULL)
+SET @count = (SELECT COUNT(DISTINCT vendor_product_id) FROM tbl_LoadFile_FW13_MAR WHERE type = 'configurable' AND CAST(price AS float) <= 0 OR price IS NULL OR cost IS NULL)
 
 IF @count <> 0 BEGIN
 	PRINT 'Failed Price/Cost test'
@@ -23,13 +23,13 @@ SET @output = NULL
 -- One-off Simples test (Single row for a color-way on UPC list)
 PRINT ''
 SELECT @output = COALESCE(@output + CHAR(13) + '		', '') + name FROM
-(SELECT vendor_product_id + ' (' + name + ' - ' + vendor_color_code + ')' AS name FROM tbl_LoadFile_FW13_OR
+(SELECT vendor_product_id + ' (' + name + ' - ' + vendor_color_code + ')' AS name FROM tbl_LoadFile_FW13_MAR
 			  WHERE type = 'simple' AND vendor_size_code <> 'O/S'
 			  GROUP BY name, vendor_product_id, vendor_color_code
 			  HAVING COUNT(*) = 1) AS x
 			  
 SET @count = (SELECT COUNT(*) FROM (SELECT name, vendor_product_id, vendor_color_code
-			 FROM tbl_LoadFile_FW13_OR
+			 FROM tbl_LoadFile_FW13_MAR
 			 WHERE type = 'simple' AND vendor_size_code <> 'O/S'
 			 GROUP BY name, vendor_product_id, vendor_color_code
 			 HAVING COUNT(*) = 1) AS y)
@@ -47,9 +47,9 @@ SET @output = NULL
 
 -- Duplicate SKUs test
 PRINT ''
-SELECT @output = COALESCE(@output + CHAR(13) + '		', '') + sku + ' ' + vendor_sku FROM
-(SELECT sku, vendor_sku
- FROM tbl_LoadFile_FW13_OR AS a WHERE (SELECT COUNT(*) FROM tbl_LoadFile_FW13_OR WHERE sku = a.sku) > 1) AS x
+SELECT @output = COALESCE(@output + CHAR(13) + '		', '') + sku /*+ ' ' + vendor_sku*/ FROM
+(SELECT sku
+ FROM (SELECT sku, COUNT(*) AS total FROM tbl_LoadFile_FW13_MAR GROUP BY sku HAVING MAX(type) = 'simple') AS a WHERE a.total > 1) AS x
  
 IF @output <> '' BEGIN
 	PRINT 'Failed Duplicate SKUs test'
@@ -64,9 +64,9 @@ END
 -- Descriptions test
 PRINT ''
 SELECT @output = COALESCE(@output + CHAR(13) + '		', '') + name FROM
-(SELECT name + ' (' + vendor_product_id + ')' AS name FROM tbl_LoadFile_FW13_OR WHERE type = 'configurable' AND (description IS NULL OR description = '')) AS x
+(SELECT name + ' (' + vendor_product_id + ')' AS name FROM tbl_LoadFile_FW13_MAR WHERE type = 'configurable' AND (description IS NULL OR description = '')) AS x
 
-SET @count = (SELECT COUNT(*) FROM tbl_LoadFile_FW13_OR WHERE type = 'configurable' AND (description IS NULL OR description = ''))
+SET @count = (SELECT COUNT(*) FROM tbl_LoadFile_FW13_MAR WHERE type = 'configurable' AND (description IS NULL OR description = ''))
 
 IF @count <> 0 BEGIN
 	PRINT 'Failed Descriptions test'
@@ -82,9 +82,9 @@ SET @output = NULL
 -- Simples Without Photos test
 PRINT ''
 SELECT @output = COALESCE(@output + CHAR(13) + '		', '') + name FROM
-(SELECT DISTINCT vendor_product_id + '-' + vendor_color_code  + ' (' + choose_color + ')' AS name FROM tbl_LoadFile_FW13_OR WHERE type = 'simple' AND (image = '' OR image IS NULL)) AS x
+(SELECT DISTINCT vendor_product_id + '-' + vendor_color_code  + ' (' + choose_color + ')' AS name FROM tbl_LoadFile_FW13_MAR WHERE type = 'simple' AND (image = '' OR image IS NULL)) AS x
 
-SET @count = (SELECT COUNT(DISTINCT vendor_product_id + ' ' + choose_color) FROM tbl_LoadFile_FW13_OR WHERE type = 'simple' AND (image = '' OR image IS NULL))
+SET @count = (SELECT COUNT(DISTINCT vendor_product_id + ' ' + choose_color) FROM tbl_LoadFile_FW13_MAR WHERE type = 'simple' AND (image = '' OR image IS NULL))
 IF @count <> 0 BEGIN
 	PRINT 'Failed Simples Without Photos test'
 	PRINT '	There are ' + @count + ' simple products that don''t have images:'
@@ -99,9 +99,9 @@ SET @output = NULL
 -- Categories test
 PRINT ''
 SELECT @output = COALESCE(@output + CHAR(13) + '		', '') + name FROM
-(SELECT name FROM tbl_LoadFile_FW13_OR WHERE type = 'configurable' AND categories IS NULL OR categories = 'Uncategorized') AS x
+(SELECT name FROM tbl_LoadFile_FW13_MAR WHERE type = 'configurable' AND categories IS NULL OR categories = 'Uncategorized') AS x
 
-SET @count = (SELECT COUNT(*) FROM tbl_LoadFile_FW13_OR WHERE type = 'configurable' AND categories IS NULL OR categories = 'Uncategorized')
+SET @count = (SELECT COUNT(*) FROM tbl_LoadFile_FW13_MAR WHERE type = 'configurable' AND categories IS NULL OR categories = 'Uncategorized')
 
 IF @count <> 0 BEGIN
 	PRINT 'Failed Categories test'
@@ -116,7 +116,7 @@ SET @output = NULL
 -- Associated Simple/Configurables test
 PRINT ''
 SELECT @output = COALESCE(@output + CHAR(13) + '		', '') + sku FROM
-(SELECT a.sku AS sku FROM tbl_LoadFile_FW13_OR AS a LEFT JOIN tbl_LoadFile_FW13_OR AS b
+(SELECT a.sku AS sku FROM tbl_LoadFile_FW13_MAR AS a LEFT JOIN tbl_LoadFile_FW13_MAR AS b
  ON b.type = 'configurable' AND b.simples_skus LIKE '%' + a.sku + '%'
  WHERE a.type = 'simple' AND b.sku IS NULL) AS x
  
@@ -133,9 +133,9 @@ END
 -- Features test
 PRINT ''
 SELECT @output = COALESCE(@output + CHAR(13) + '		', '') + name FROM
-(SELECT name + ' (' + vendor_product_id + ')' AS name FROM tbl_LoadFile_FW13_OR WHERE type = 'configurable' AND (features IS NULL OR features = '')) AS x
+(SELECT name + ' (' + vendor_product_id + ')' AS name FROM tbl_LoadFile_FW13_MAR WHERE type = 'configurable' AND (features IS NULL OR features = '')) AS x
 
-SET @count = (SELECT COUNT(*) FROM tbl_LoadFile_FW13_OR WHERE type = 'configurable' AND (features IS NULL OR features = ''))
+SET @count = (SELECT COUNT(*) FROM tbl_LoadFile_FW13_MAR WHERE type = 'configurable' AND (features IS NULL OR features = ''))
 
 IF @count <> 0 BEGIN
 	PRINT 'Failed Features test'
@@ -151,9 +151,9 @@ SET @output = NULL
 -- Fabric test
 PRINT ''
 SELECT @output = COALESCE(@output + CHAR(13) + '		', '') + name FROM
-(SELECT name + ' (' + vendor_product_id + ')' AS name FROM tbl_LoadFile_FW13_OR WHERE type = 'configurable' AND (fabric IS NULL OR fabric = '')) AS x
+(SELECT name + ' (' + vendor_product_id + ')' AS name FROM tbl_LoadFile_FW13_MAR WHERE type = 'configurable' AND (fabric IS NULL OR fabric = '')) AS x
 
-SET @count = (SELECT COUNT(*) FROM tbl_LoadFile_FW13_OR WHERE type = 'configurable' AND (fabric IS NULL OR fabric = ''))
+SET @count = (SELECT COUNT(*) FROM tbl_LoadFile_FW13_MAR WHERE type = 'configurable' AND (fabric IS NULL OR fabric = ''))
 
 IF @count <> 0 BEGIN
 	PRINT 'Failed Fabric test'

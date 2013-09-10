@@ -176,7 +176,7 @@
             </TablixMember>
           </TablixMembers>
         </TablixRowHierarchy>
-        <DataSetName>DataSet1</DataSetName>
+        <DataSetName>CartValues</DataSetName>
         <Top>0.21in</Top>
         <Height>0.42in</Height>
         <Width>2.78125in</Width>
@@ -211,10 +211,10 @@
         </Style>
       </Textbox>
     </ReportItems>
-    <Height>0.63in</Height>
+    <Height>3.23778in</Height>
     <Style />
   </Body>
-  <Width>5in</Width>
+  <Width>7.00917in</Width>
   <Page>
     <LeftMargin>1in</LeftMargin>
     <RightMargin>1in</RightMargin>
@@ -231,7 +231,7 @@
     </DataSource>
   </DataSources>
   <DataSets>
-    <DataSet Name="DataSet1">
+    <DataSet Name="CartValues">
       <Query>
         <DataSourceName>LOT_Reporting</DataSourceName>
         <QueryParameters>
@@ -263,6 +263,11 @@
   <ReportParameters>
     <ReportParameter Name="low_date">
       <DataType>String</DataType>
+      <DefaultValue>
+        <Values>
+          <Value>2013-01-01</Value>
+        </Values>
+      </DefaultValue>
       <Prompt>Start Date:</Prompt>
     </ReportParameter>
     <ReportParameter Name="high_date">

@@ -125,11 +125,19 @@ INNER JOIN tbl_RawData_FW13_PAT_Price_List AS b
 ON a.[style #] = b.style_number
 GO	
 
+UPDATE tbl_LoadFile_FW13_PAT SET image = NULL
+
 UPDATE a SET image = b.image
 FROM tbl_LoadFile_FW13_PAT AS a
 INNER JOIN tbl_LoadFile_SS13_PAT AS b
 ON a.vendor_sku = b.vendor_sku
 WHERE a.type = 'simple'
+
+UPDATE a SET image = b.image
+FROM tbl_LoadFile_FW13_PAT AS a
+INNER JOIN tbl_LoadFile_F12_PAT AS b
+ON a.vendor_sku = b.vendor_sku
+WHERE a.type = 'simple' AND a.image IS NULL
 
 UPDATE a SET image = c.Filename
 FROM tbl_LoadFile_FW13_PAT AS a
@@ -137,13 +145,27 @@ INNER JOIN tbl_RawData_FW13_PAT_UPC AS b
 ON a.vendor_product_id = b.[Style #] AND a.vendor_color_code = b.[Color Number]
 INNER JOIN tbl_RawData_SS13_Image_Filenames AS c
 ON c.Filename LIKE '%' + vendor_product_id + '%' + b.[Color Code] + '%' AND c.Brand = 'PAT'
-WHERE a.type = 'simple'
+WHERE a.type = 'simple' AND a.image IS NULL
+
+UPDATE a SET image = b.Filename
+FROM tbl_LoadFile_FW13_PAT AS a
+INNER JOIN tbl_RawData_SS13_Image_Filenames AS b
+ON b.Filename LIKE '%' + vendor_product_id + '%' + vendor_color_code + '%' AND b.Brand = 'PAT'
+WHERE a.type = 'simple' AND a.image IS NULL
+
+UPDATE a SET image = c.Filename
+FROM tbl_LoadFile_FW13_PAT AS a
+INNER JOIN tbl_RawData_FW13_PAT_UPC AS b
+ON a.vendor_product_id = b.[Style #] AND a.vendor_color_code = b.[Color Number]
+INNER JOIN tbl_RawData_FW13_Image_Filenames AS c
+ON c.Filename LIKE '%' + vendor_product_id + '%' + b.[Color Code] + '%' AND c.Brand = 'PAT'
+WHERE a.type = 'simple' AND a.image IS NULL
 
 UPDATE a SET image = b.Filename
 FROM tbl_LoadFile_FW13_PAT AS a
 INNER JOIN tbl_RawData_FW13_Image_Filenames AS b
 ON b.Filename LIKE '%' + vendor_product_id + '%' + vendor_color_code + '%' AND b.Brand = 'PAT'
-WHERE a.type = 'simple'
+WHERE a.type = 'simple' AND a.image IS NULL
 
 INSERT INTO tbl_LoadFile_FW13_PAT (
 	[type],

@@ -124,6 +124,8 @@ SELECT DISTINCT
 FROM tbl_RawData_FW13_IB_UPC_Price
 GO
 
+UPDATE tbl_LoadFile_FW13_IB SET image = NULL
+
 UPDATE a
 	SET a.image = b.image
 FROM tbl_LoadFile_FW13_IB AS a
@@ -132,11 +134,18 @@ ON a.vendor_sku = b.vendor_sku
 WHERE a.type = 'simple'
 
 UPDATE a
+	SET a.image = b.image
+FROM tbl_LoadFile_FW13_IB AS a
+INNER JOIN tbl_LoadFile_F12_IB AS b
+ON a.vendor_sku = b.vendor_sku 
+WHERE a.type = 'simple' AND a.image IS NULL
+
+UPDATE a
 	SET a.image = b.Filename 
 FROM tbl_LoadFile_FW13_IB AS a
 INNER JOIN tbl_RawData_FW13_Image_Filenames AS b
 ON b.Filename LIKE '%' + a.vendor_product_id + a.vendor_color_code + '_1.png'
-WHERE a.type = 'simple' AND a.image IS NULL
+WHERE a.type = 'simple' AND b.Brand = 'IB' AND a.image IS NULL
 	
 INSERT INTO tbl_LoadFile_FW13_IB (
 	type

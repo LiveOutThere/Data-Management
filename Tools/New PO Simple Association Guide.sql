@@ -6,7 +6,7 @@ INNER JOIN (SELECT DISTINCT b.sku, a.product_id
 		    FROM catalog_product_super_link AS a
 			INNER JOIN catalog_product_entity AS b
 			ON a.parent_id = b.entity_id
-			WHERE b.sku IN(.../*Insert configurable SKUs*/)) AS x
+			WHERE b.sku IN('SS13A-IB-100269')) AS x
 ON a.entity_id = x.product_id
 
 --If the query above returns an empty result set you are free to proceed as there is no risk of overwriting any existing associations.
@@ -60,12 +60,11 @@ ON a.entity_id = x.product_id) AS simple_products
 INNER JOIN catalog_product_flat_1 AS z
 ON simple_products.child_sku = z.sku
 INNER JOIN catalog_product_entity_varchar AS color_code
-ON z.entity_id = color_code.entity_id
+ON z.entity_id = color_code.entity_id AND color_code.attribute_id = (SELECT attribute_id FROM eav_attribute WHERE entity_type_id = 4 AND attribute_code = ''vendor_color_code'')
 INNER JOIN catalog_product_entity_varchar AS size_code
-ON z.entity_id = size_code.entity_id
+ON z.entity_id = size_code.entity_id AND size_code.attribute_id = (SELECT attribute_id FROM eav_attribute WHERE entity_type_id = 4 AND attribute_code = ''vendor_size_code'')
 INNER JOIN cataloginventory_stock_item AS stock
-ON z.entity_id = stock.product_id
-WHERE size_code.attribute_id = (SELECT attribute_id FROM eav_attribute WHERE entity_type_id = 4 AND attribute_code = ''vendor_size_code'') AND color_code.attribute_id = (SELECT attribute_id FROM eav_attribute WHERE entity_type_id = 4 AND attribute_code = ''vendor_color_code'')')) AS b
+ON z.entity_id = stock.product_id AND stock.stock_id = 1')) AS b
 ON a.style = b.style AND a.color_code = b.color_code AND a.size_code = b.size_code
 
 --By taking a look at the output of the query above you can quickly see any overlap between what is already associated and what we are trying to add.
@@ -75,7 +74,7 @@ See below for rules regarding which new SKUs to associate depending on which exi
 
 	1.If there is a style-color-size match where the existing associated simple is Inline, only associate the new SKU if the existing Inline SKU is OOS
 	2.If there is a style-color-size match where the existing associated simple is Closeout, only associate the new SKU if existing Closeout SKU is OOS
-	3.If there is a style-color-size match where the existing associated simple is ASAP, associate the new SKU
+	3.If there is a style-color-size match where the existing associated simple is ASAP, remove the ASAP qty from ERP and add it on the qty from the PO, then associate the new SKU
 */
 
 

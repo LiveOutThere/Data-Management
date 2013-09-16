@@ -1,5 +1,5 @@
 -- Create temp table that houses the distinct color names, as well as a column for the brand value
-SELECT DISTINCT choose_color INTO #colors FROM view_Join_FW13_Loadfiles WHERE type = 'simple' AND manufacturer = 'Icebreaker'
+SELECT DISTINCT choose_color INTO #colors FROM view_Join_FW13_Loadfiles WHERE type = 'simple' AND manufacturer = 'Icebreaker' AND sku LIKE '%IB-%'
 	ALTER TABLE #colors
 	ADD manufacturer nvarchar(255)
 UPDATE #colors SET manufacturer = 'Icebreaker'
@@ -16,4 +16,6 @@ ORDER BY a.choose_color
 -- Useful lines for troubleshooting / investigation
 DROP TABLE #colors
 SELECT DISTINCT choose_color FROM view_Join_FW13_Loadfiles WHERE type = 'simple' AND manufacturer = 'Icebreaker' ORDER BY choose_color
-SELECT * FROM view_Join_FW13_Loadfiles WHERE manufacturer = 'Icebreaker' AND choose_color = 'Big Sky'
+SELECT * FROM view_Join_FW13_Loadfiles WHERE manufacturer = 'Marmot' AND choose_color = 'Big Sky'
+
+SELECT * FROM tbl_LoadFile_FW13_OSP WHERE choose_color = 'N/A' 

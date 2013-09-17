@@ -20,6 +20,31 @@ ELSE BEGIN
 END
 SET @output = NULL
 
+-- Multiple Price/Cost test
+PRINT ''
+SELECT @output = COALESCE(@output + CHAR(13) + '		', '') + x.error FROM
+(SELECT DISTINCT name + ' (' + vendor_product_id + ')' AS error
+ FROM tbl_LoadFile_FW13_MAR 
+ WHERE type = 'configurable'
+ GROUP BY vendor_product_id, price, cost
+ HAVING SUM(COUNT(price) + COUNT(cost)) > 2) AS x
+
+SET @count = (SELECT CASE WHEN SUM(COUNT(price) + COUNT(cost)) > 2 THEN 1 ELSE 0 END
+			  FROM tbl_LoadFile_FW13_MAR 
+			  WHERE type = 'configurable'
+			  GROUP BY vendor_product_id, price, cost)
+
+IF @count <> 0 BEGIN
+	PRINT 'Failed Multiple Price/Cost test'
+	PRINT '	There are ' + @count + ' styles with more than one price or more than one cost:'
+	PRINT '		' + @output
+	SET @output = ''
+END
+ELSE BEGIN
+	PRINT 'Passed Multiple Price/Cost test'
+END
+SET @output = NULL
+
 -- One-off Simples test (Single row for a color-way on UPC list)
 PRINT ''
 SELECT @output = COALESCE(@output + CHAR(13) + '		', '') + name FROM

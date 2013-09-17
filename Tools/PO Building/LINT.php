@@ -1,4 +1,7 @@
 <?php
+
+ini_set("auto_detect_line_endings", true);
+
 class Linter 
 {
 	const STORE = 0;
@@ -114,7 +117,7 @@ class Linter
 				return 'Women\'s';
 				break;
 			case 'Men|Women':
-				return 'Unisex';
+				return '';
 				break;
 			case 'Boy':
 				return 'Boy\'s';
@@ -250,8 +253,8 @@ class Linter
 							$simple_styles[] = $data[Linter::VENDOR_PRODUCT_ID];
 							$this->simple_skus[] = $data[Linter::SKU];
 
-							if (count(explode('-', $data[Linter::SKU])) != 5) 
-								$simple_errors[] = 'The SKU is improperly formatted on row ' . ($row+1) . '. It should have four dashes but it looks like this: ' . $data[Linter::SKU];
+							//if (count(explode('-', $data[Linter::SKU])) != 5) 
+							//	$simple_errors[] = 'The SKU is improperly formatted on row ' . ($row+1) . '. It should have four dashes but it looks like this: ' . $data[Linter::SKU];
 							
 							if (!empty($data[Linter::CATEGORIES])) 
 								$simple_errors[] = 'Check the categories value for row ' . ($row+1) . '. It should be NULL but it contains this value: ' . $data[Linter::CATEGORIES];
@@ -295,8 +298,8 @@ class Linter
 							if (!in_array($data[Linter::VENDOR_COLOR_CODE],explode('-',$data[Linter::SKU])))
 								$simple_errors[] = 'Check the vendor_color_code value for row ' . ($row+1) . '. It should equal the 4th SKU section for that row (' . $data[Linter::SKU] . '), but it looks like this: ' . $data[Linter::VENDOR_COLOR_CODE];
 
-							if (!in_array($data[Linter::VENDOR_SIZE_CODE],explode('-',$data[Linter::SKU])))
-								$simple_errors[] = 'Check the vendor_size_code value for row ' . ($row+1) . '. It should equal the 5th SKU section for that row (' . $data[Linter::SKU] . '), but it looks like this: ' . $data[Linter::VENDOR_SIZE_CODE];
+							//if (!in_array($data[Linter::VENDOR_SIZE_CODE],explode('-',$data[Linter::SKU])))
+							//	$simple_errors[] = 'Check the vendor_size_code value for row ' . ($row+1) . '. It should equal the 5th SKU section for that row (' . $data[Linter::SKU] . '), but it looks like this: ' . $data[Linter::VENDOR_SIZE_CODE];
 						
 							if (!empty($data[Linter::DESCRIPTION]))
 								$simple_errors[] = 'Check the description value for row ' . ($row+1) . '. It should be NULL but it looks like this: ' . $data[Linter::DESCRIPTION];
@@ -325,8 +328,8 @@ class Linter
 							if (!empty($data[Linter::MERCHANDISE_PRIORITY]))
 								$simple_errors[] = 'Check the merchandise_priority value for row ' . ($row+1) . '. It should be NULL but it looks like this: ' . $data[Linter::MERCHANDISE_PRIORITY];
 						
-							if (empty($data[Linter::URL_KEY]) || preg_match('/[^a-zA-Z0-9\-]/',$data[Linter::URL_KEY]) || (substr_count($data[Linter::URL_KEY],'-') != (substr_count($data[Linter::MANUFACTURER],' ') + substr_count($data[Linter::NAME],' ') + substr_count($data[Linter::NAME],'-') + substr_count($data[Linter::CHOOSE_COLOR],' ') + substr_count($data[Linter::CHOOSE_COLOR],'/') + 5)))
-								$simple_errors[] = 'Check the url_key value for row ' . ($row+1) . '. It is either NULL, contains an incorrect number of dashes, or contains a special character we may not want: ' . $data[Linter::URL_KEY];
+							if (empty($data[Linter::URL_KEY]) || preg_match('/[^a-zA-Z0-9\-]/',$data[Linter::URL_KEY])) //|| (substr_count($data[Linter::URL_KEY],'-') != (substr_count($data[Linter::MANUFACTURER],' ') + substr_count($data[Linter::NAME],' ') + substr_count($data[Linter::NAME],'-') + substr_count($data[Linter::CHOOSE_COLOR],' ') + substr_count($data[Linter::CHOOSE_COLOR],'/') + substr_count($data[Linter::CHOOSE_SIZE],' ') + substr_count($data[Linter::CHOOSE_SIZE],'/') + 5)))
+								$simple_errors[] = 'Check the url_key value for row ' . ($row+1) . '. It is either NULL, or contains a special character we may not want: ' . $data[Linter::URL_KEY];
 						}	
 						// Simple Inline & Closeout //
 
@@ -420,10 +423,10 @@ class Linter
 								$configurable_errors[] = 'Check the description value on row ' . ($row+1) . '. It is either NULL, or does not contain the product name & brand. Name:' . (strpos($data[Linter::DESCRIPTION],$data[Linter::NAME]) ? ' is present.' : ' is missing.') . ' Brand:' . (strpos($data[Linter::DESCRIPTION],$data[Linter::MANUFACTURER]) ? ' is present.' : ' is missing.');
 							
 							// This is a simples_skus test //						
-							if (count($missing_skus)) 
-								$configurable_errors[] = 'There are SKUs in the simples_skus value on row ' . ($row+1) . ' that are not in the loadfile: ' . implode(', ', $missing_skus);
+							//if (count($missing_skus)) 
+							//	$configurable_errors[] = 'There are SKUs in the simples_skus value on row ' . ($row+1) . ' that are not in the loadfile: ' . implode(', ', $missing_skus);
 						
-							if (empty($data[Linter::FEATURES]) || preg_match('/[^a-zA-Z0-9®™%";:()\/,|\.\-\' ]/',$data[Linter::FEATURES]) || substr_count($data[Linter::FEATURES],'||') > 0)
+							if (empty($data[Linter::FEATURES]) || preg_match('/[^a-zA-Z0-9®™%<>&";:()\/,|\.\-\' ]/',$data[Linter::FEATURES]) || substr_count($data[Linter::FEATURES],'||') > 0)
 								$configurable_errors[] = 'Check the features value on row ' . ($row+1) . '. It is either NULL, contains a special character we may not want, or has a double pipe: ' . $data[Linter::FEATURES];
 
 							if (!empty($data[Linter::FABRIC]) && preg_match('/[^a-zA-Z0-9®™%;:()\/,|\.\-\' ]/',$data[Linter::FABRIC]))
@@ -444,10 +447,10 @@ class Linter
 							if ($data[Linter::USE_CONFIG_MANAGE_STOCK] != '0')
 								$configurable_errors[] = 'Check the use_config_manage_stock value for row ' . ($row+1) . '. It should equal 0, but it looks like this: ' . $data[Linter::USE_CONFIG_MANAGE_STOCK];
 							
-							if (empty($data[Linter::URL_KEY]) || preg_match('/[^a-zA-Z0-9\-]/',$data[Linter::URL_KEY]) || (substr_count($data[Linter::URL_KEY],'-') != (substr_count($data[Linter::MANUFACTURER],' ') + substr_count($data[Linter::NAME],' ') + substr_count($data[Linter::NAME],'-') + 3)))
-								$configurable_errors[] = 'Check the url_key value for row ' . ($row+1) . '. It is either NULL, contains an incorrect number of dashes, or contains a special character we may not want: ' . $data[Linter::URL_KEY];
+							if (empty($data[Linter::URL_KEY]) || preg_match('/[^a-zA-Z0-9\-]/',$data[Linter::URL_KEY])) //|| (substr_count($data[Linter::URL_KEY],'-') != (substr_count($data[Linter::MANUFACTURER],' ') + substr_count($data[Linter::NAME],' ') + substr_count($data[Linter::NAME],'-') + 3)))
+								$configurable_errors[] = 'Check the url_key value for row ' . ($row+1) . '. It is either NULL, or contains a special character we may not want: ' . $data[Linter::URL_KEY];
 							
-							if (empty($data[Linter::META_TITLE]) || $data[Linter::META_TITLE] != ($data[Linter::MANUFACTURER] . ' ' . $data[Linter::NAME] . ' - ' . $this->getMetaTitleDepartment($data[Linter::DEPARTMENT])))
+							if (empty($data[Linter::META_TITLE]) || $data[Linter::META_TITLE] != ($data[Linter::MANUFACTURER] . ' ' . ($this->getMetaTitleDepartment($data[Linter::DEPARTMENT]) ? $this->getMetaTitleDepartment($data[Linter::DEPARTMENT]) . ' ' : '' ) . $data[Linter::NAME]))
 								$configurable_errors[] = 'Check the meta_title value on row ' . ($row+1) . '. It is either NULL or does not follow our meta_title conventions: ' . $data[Linter::META_TITLE];
 						}
 						// Inline Merchandising Rules //

@@ -35,18 +35,20 @@ class Linter
 	const FABRIC = 28;
 	const CARE_INSTRUCTIONS = 29;
 	const FIT = 30;
-	const MANUFACTURER = 31;
-	const QTY = 32;
-	const IS_IN_STOCK = 33;
-	const SIMPLES_SKUS = 34;
-	const URL_KEY = 35;
-	const META_TITLE = 36;
-	const MERCHANDISE_PRIORITY = 37;
-	const NEVER_BACKORDER = 38;
-	const BACKORDERS = 39;
-	const MANAGE_STOCK = 40;
-	const USE_CONFIG_BACKORDERS = 41;
-	const USE_CONFIG_MANAGE_STOCK = 42;
+	const VOLUME = 31;
+	const MANUFACTURER = 32;
+	const QTY = 33;
+	const IS_IN_STOCK = 34;
+	const SIMPLES_SKUS = 35;
+	const URL_KEY = 36;
+	const META_TITLE = 37;
+	const MERCHANDISE_PRIORITY = 38;
+	const NEVER_BACKORDER = 39;
+	const BACKORDERS = 40;
+	const MANAGE_STOCK = 41;
+	const USE_CONFIG_BACKORDERS = 42;
+	const USE_CONFIG_MANAGE_STOCK = 43;
+	const VENDOR_SKU = 44;
 
 	var $simple_skus = Array();
 
@@ -84,6 +86,7 @@ class Linter
 		'fabric',
 		'care_instructions',
 		'fit',
+		'volume',
 		'manufacturer',
 		'qty',
 		'is_in_stock',
@@ -95,7 +98,8 @@ class Linter
 		'backorders',
 		'manage_stock',
 		'use_config_backorders',
-		'use_config_manage_stock');
+		'use_config_manage_stock',
+		'vendor_sku');
 		return $columns;
 	}
 
@@ -271,7 +275,7 @@ class Linter
 							if (!empty($data[Linter::SUPER_ATTRIBUTE_PRICING])) 
 								$simple_errors[] = 'Check the super_attribute_pricing value for row ' . ($row+1) . '. It should be NULL but it contains this value: ' . $data[Linter::SUPER_ATTRIBUTE_PRICING];		
 
-							if ($data[Linter::STATUS] = 'Enabled' && empty($data[Linter::IMAGE]) || $data[Linter::STATUS] != 'Enabled' && !empty($data[Linter::IMAGE])) 
+							if ($data[Linter::STATUS] == 'Enabled' && empty($data[Linter::IMAGE]) || $data[Linter::STATUS] != 'Enabled' && !empty($data[Linter::IMAGE])) 
 								$simple_errors[] = 'Check the image value for row ' . ($row+1) . '. Either that row has a status of Enabled but the image value is NULL, or that row has a status that <> Enabled and the image value is not NULL: ' . $data[Linter::HAS_OPTIONS];		
 						
 							if ($data[Linter::VISIBILITY] != 'Not Visible Individually')
@@ -330,6 +334,10 @@ class Linter
 						
 							if (empty($data[Linter::URL_KEY]) || preg_match('/[^a-zA-Z0-9\-]/',$data[Linter::URL_KEY])) //|| (substr_count($data[Linter::URL_KEY],'-') != (substr_count($data[Linter::MANUFACTURER],' ') + substr_count($data[Linter::NAME],' ') + substr_count($data[Linter::NAME],'-') + substr_count($data[Linter::CHOOSE_COLOR],' ') + substr_count($data[Linter::CHOOSE_COLOR],'/') + substr_count($data[Linter::CHOOSE_SIZE],' ') + substr_count($data[Linter::CHOOSE_SIZE],'/') + 5)))
 								$simple_errors[] = 'Check the url_key value for row ' . ($row+1) . '. It is either NULL, or contains a special character we may not want: ' . $data[Linter::URL_KEY];
+
+							if (count(array_unique($sku_parts)) > 1)
+	    						$simple_errors[] = 'simple product SKUs are not consistent. Check season & brand codes.';
+
 						}	
 						// Simple Inline & Closeout //
 
@@ -368,7 +376,7 @@ class Linter
 							if ($simple_price_cost[$data[Linter::VENDOR_PRODUCT_ID]]['cost'] != $data[Linter::COST])
 								$configurable_errors[] = 'The cost value for the configurable on row ' . ($row+1) . ' does not match the last cost value for it\'s simple products.';
 
-							if (count(explode('-', $data[Linter::SKU])) != 3) 
+							if (count(explode('-', $data[Linter::SKU])) != 2) 
 								$configurable_errors[] = 'The SKU is improperly formatted on row ' . ($row+1) . '. It should have two dashes but it looks like this: ' . $data[Linter::SKU];
 							
 							if (empty($data[Linter::CATEGORIES])) 
@@ -427,7 +435,7 @@ class Linter
 							//	$configurable_errors[] = 'There are SKUs in the simples_skus value on row ' . ($row+1) . ' that are not in the loadfile: ' . implode(', ', $missing_skus);
 						
 							if (empty($data[Linter::FEATURES]) || preg_match('/[^a-zA-Z0-9®™%<>&";:()\/,|\.\-\' ]/',$data[Linter::FEATURES]) || substr_count($data[Linter::FEATURES],'||') > 0)
-								$configurable_errors[] = 'Check the features value on row ' . ($row+1) . '. It is either NULL, contains a special character we may not want, or has a double pipe: ' . $data[Linter::FEATURES];
+								$configurable_errors[] = 'Check the features value on row ' . ($row+1) . '. It is either NULL, contains a special character we may not want, or has a double pipe.';// . $data[Linter::FEATURES];
 
 							if (!empty($data[Linter::FABRIC]) && preg_match('/[^a-zA-Z0-9®™%;:()\/,|\.\-\' ]/',$data[Linter::FABRIC]))
 								$configurable_errors[] = 'Check the fabric value on row ' . ($row+1) . '. It contains a special character we may not want: ' . $data[Linter::FABRIC];		
@@ -456,7 +464,7 @@ class Linter
 						// Inline Merchandising Rules //
 						if ($data[Linter::TYPE] == 'configurable' && substr($data[Linter::SEASON_ID],-6) == 'Inline') {
 							
-							if (!in_array($data[Linter::MERCHANDISE_PRIORITY],$inline_merchandising_letters) || $data[Linter::MERCHANDISE_PRIORITY] = 'C' && substr_count($data[Linter::CATEGORIES],'Accessories') < 1)
+							if (!in_array($data[Linter::MERCHANDISE_PRIORITY],$inline_merchandising_letters) || $data[Linter::MERCHANDISE_PRIORITY] == 'C' && substr_count($data[Linter::CATEGORIES],'Accessories') < 1)
 								$configurable_errors[] = 'Check the merchandise_priority value on row ' . ($row+1) . '. It should equal "B" or "C" (if the configurable in questions is an accessory), but it looks like this: ' . $data[Linter::MERCHANDISE_PRIORITY];	
 						}
 						// Closeout Merchandising Rules //
@@ -498,10 +506,7 @@ class Linter
 
 	    		if (count(array_diff($simple_styles,$configurable_styles)))
 	    			$global_errors[] = 'There is a style code mismatch - either a simple has a different style than a configurable or vice-versa: ' . implode(',',array_diff($simple_styles,$configurable_styles));
-
-	    		if (count(array_unique($sku_parts)) > 1)
-	    			$global_errors[] = 'SKUs are not consistent. Check season & brand codes.';
-
+	    		
 	    		if (count(array_unique($types)) != 2)
 	    			$global_errors[] = 'There is an inconsistency in the type field. Check for values other than simple or configurable.';
 			

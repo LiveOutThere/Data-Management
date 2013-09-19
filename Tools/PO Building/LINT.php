@@ -296,7 +296,7 @@ class Linter
 							if (preg_match('/[^a-zA-Z0-9 \/]/',$data[Linter::CHOOSE_COLOR]) || empty($data[Linter::CHOOSE_COLOR]) || !preg_match('/[e|a|i|o|u|y]/',$data[Linter::CHOOSE_COLOR])) 
 								$simple_errors[] = 'Check the choose_color value on row ' . ($row+1) . '. It is either NULL, contains no vowels, or contains a special character that we may not want: ' . $data[Linter::CHOOSE_COLOR];
 
-							if (empty($data[Linter::CHOOSE_SIZE]) || substr($data[Linter::CHOOSE_SIZE],-2) == '.5')
+							if ($data[Linter::CHOOSE_SIZE] !== '0' && empty($data[Linter::CHOOSE_SIZE]) || substr($data[Linter::CHOOSE_SIZE],-2) == '.5')
 								$simple_errors[] = 'Check the choose_size value for row ' . ($row+1) . '. It is either NULL or contains a ".5" that has not been converted into a fraction: ' . $data[Linter::CHOOSE_SIZE];
 
 							if (!in_array($data[Linter::VENDOR_COLOR_CODE],explode('-',$data[Linter::SKU])))

@@ -14,14 +14,11 @@ SELECT  '"' + RTRIM(LTRIM(REPLACE(a.store,'"','""'))) + '"','"' + RTRIM(LTRIM(RE
 		'"' + RTRIM(LTRIM(REPLACE(a.vendor_color_code,'"','""'))) + '"','"' + RTRIM(LTRIM(REPLACE(a.vendor_size_code,'"','""'))) + '"','"FW13 Inline"','"' + RTRIM(LTRIM(REPLACE(a.description,'"','""'))) + '"','"' + RTRIM(LTRIM(REPLACE(a.features,'"','""'))) + '"','"' + RTRIM(LTRIM(REPLACE(a.fabric,'"','""'))) + '"',
 		'"' + RTRIM(LTRIM(REPLACE(a.care_instructions,'"','""'))) + '"','"' + RTRIM(LTRIM(REPLACE(a.fit,'"','""'))) + '"','"' + RTRIM(LTRIM(REPLACE(a.volume,'"','""'))) + '"','"' + RTRIM(LTRIM(REPLACE(a.manufacturer,'"','""'))) + '"',/*qty:*/'"0"',/*is_in_stock:*/'"0"','"' + RTRIM(LTRIM(REPLACE(REPLACE(a.simples_skus,'FW13A','FW13I'),'"','""'))) + '"','"' + RTRIM(LTRIM(REPLACE(REPLACE(a.url_key,'fw13a','fw13i'),'"','""'))) + '"','"' + RTRIM(LTRIM(REPLACE(a.meta_title,'"','""'))) + '"',
 		/*merchandise_priority:*/'""',/*never_backorder:*/'"1"',/*backorders:*/'"0"',/*manage_stock:*/'"1"',/*use_config_backorders:*/'"1"',/*use_config_manage_stock:*/'"1"','"' + RTRIM(LTRIM(REPLACE(a.vendor_sku,'"','""'))) + '"'
-FROM dbo.tbl_LoadFile_FW13_MERAPP AS a
-WHERE type = 'simple' AND vendor_product_id + '-' + vendor_color_code IN('JWF20840-010',
-'JWF20840-056',
-'JMF21392-021',
-'JMF21392-206',
-'JMF21412-021',
-'JMF21440-206',
-'JMF21440-021') AND vendor_size_code <> 'XXL'
+FROM dbo.tbl_LoadFile_FW13_MERFOOT AS a
+WHERE type = 'simple' AND vendor_color_code + '-' + choose_color IN('J87005-Black',
+'J39573-Dark Earth',
+'J68012-Black')
+
 UNION ALL
 SELECT  '"' + RTRIM(LTRIM(REPLACE(a.store,'"','""'))) + '"','"' + RTRIM(LTRIM(REPLACE(a.websites,'"','""'))) + '"','"' + RTRIM(LTRIM(REPLACE(a.type,'"','""'))) + '"','"' + RTRIM(LTRIM(REPLACE(REPLACE(a.sku,'FW13A','FW13I'),'"','""'))) + '"','"' + RTRIM(LTRIM(REPLACE(a.name,'"','""'))) + '"','"' + RTRIM(LTRIM(REPLACE(a.categories,'"','""'))) + '"','"default"','"' + RTRIM(LTRIM(REPLACE(a.configurable_attributes,'"','""'))) + '"',
 		'"' + RTRIM(LTRIM(REPLACE(a.has_options,'"','""'))) + '"','"' + RTRIM(LTRIM(REPLACE(a.price,'"','""'))) + '"','"' + RTRIM(LTRIM(REPLACE(a.cost,'"','""'))) + '"','"' + RTRIM(LTRIM(REPLACE(a.super_attribute_pricing,'"','""'))) + '"','"' + RTRIM(LTRIM(REPLACE(a.status,'"','""'))) + '"','"' + RTRIM(LTRIM(REPLACE(a.tax_class_id,'"','""'))) + '"','"' + RTRIM(LTRIM(REPLACE(a.department,'"','""'))) + '"','"' + RTRIM(LTRIM(REPLACE(a.visibility,'"','""'))) + '"','"' + RTRIM(LTRIM(REPLACE(a.image,'"','""'))) + '"','"' + RTRIM(LTRIM(REPLACE(a.image_label,'"','""'))) + '"',
@@ -29,11 +26,10 @@ SELECT  '"' + RTRIM(LTRIM(REPLACE(a.store,'"','""'))) + '"','"' + RTRIM(LTRIM(RE
 		'"' + RTRIM(LTRIM(REPLACE(a.vendor_color_code,'"','""'))) + '"','"' + RTRIM(LTRIM(REPLACE(a.vendor_size_code,'"','""'))) + '"','"FW13 Inline"','"' + RTRIM(LTRIM(REPLACE(a.description,'"','""'))) + '"','"' + RTRIM(LTRIM(REPLACE(a.features,'"','""'))) + '"','"' + RTRIM(LTRIM(REPLACE(a.fabric,'"','""'))) + '"',
 		'"' + RTRIM(LTRIM(REPLACE(a.care_instructions,'"','""'))) + '"','"' + RTRIM(LTRIM(REPLACE(a.fit,'"','""'))) + '"','"' + RTRIM(LTRIM(REPLACE(a.volume,'"','""'))) + '"','"' + RTRIM(LTRIM(REPLACE(a.manufacturer,'"','""'))) + '"',/*qty:*/'""',/*is_in_stock:*/'""','"' + RTRIM(LTRIM(REPLACE(REPLACE(a.simples_skus,'FW13A','FW13I'),'"','""'))) + '"','"' + RTRIM(LTRIM(REPLACE(REPLACE(a.url_key,'fw13a','fw13i'),'"','""'))) + '"','"' + RTRIM(LTRIM(REPLACE(a.meta_title,'"','""'))) + '"',
 		/*merchandise_priority:*/'"B"',/*never_backorder:*/'"1"',/*backorders:*/'"0"',/*manage_stock:*/'"0"',/*use_config_backorders:*/'"1"',/*use_config_manage_stock:*/'"0"','"' + RTRIM(LTRIM(REPLACE(a.vendor_sku,'"','""'))) + '"'
-FROM dbo.tbl_LoadFile_FW13_MERAPP AS a
-WHERE type = 'configurable' AND vendor_product_id IN('JMF21392',
-'JMF21412',
-'JMF21440',
-'JWF20840')
+FROM dbo.tbl_LoadFile_FW13_MERFOOT AS a
+WHERE type = 'configurable' AND vendor_product_id IN('120CD',
+'5491F',
+'6E195')
 GO
 
 DECLARE @sql varchar(1024)

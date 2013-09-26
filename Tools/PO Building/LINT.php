@@ -212,7 +212,7 @@ class Linter
 						if ($data[Linter::WEBSITES] != 'base') 
 								$global_errors[] = 'The websites value is wrong on row ' . ($row+1) . '. It should be set to base but it is set to: ' . $data[Linter::WEBSITES];
 						
-						if (preg_match('/[^a-zA-Z0-9®™\- ]/',$data[Linter::NAME])) 
+						if (preg_match('/[^a-zA-Z0-9®™\-\/ ]/',$data[Linter::NAME])) 
 								$global_errors[] = 'Check the name value on row ' . ($row+1) . '. It contains a special character that we may not want: ' . $data[Linter::NAME];
 
 						if (empty($data[Linter::NAME]) || strlen($data[Linter::NAME]) <= 5 || !preg_match('/[e|a|i|o|u|y]/',$data[Linter::NAME])) 
@@ -382,8 +382,8 @@ class Linter
 							if (empty($data[Linter::CATEGORIES])) 
 								$configurable_errors[] = 'The categories value for row ' . ($row+1) . ' is NULL: "' . $data[Linter::CATEGORIES] . '"';
 							
-							if (count(array_unique(explode(';;', $data[Linter::CATEGORIES]))) < 3)
-								$configurable_errors[] = 'Check the categories value for row ' . ($row+1) . '. It contains less than three categories: ' . $data[Linter::CATEGORIES];
+							//if (count(array_unique(explode(';;', $data[Linter::CATEGORIES]))) < 2)
+							//	$configurable_errors[] = 'Check the categories value for row ' . ($row+1) . '. It contains less than two categories: ' . $data[Linter::CATEGORIES];
 							
 							if (!in_array($data[Linter::ATTRIBUTE_SET],$attribute_sets)) 
 								$configurable_errors[] = 'The attribute set is wrong on row ' . ($row+1) . '. It is not one of our custom Magento attribute sets: ' . $data[Linter::ATTRIBUTE_SET];
@@ -434,7 +434,7 @@ class Linter
 							//if (count($missing_skus)) 
 							//	$configurable_errors[] = 'There are SKUs in the simples_skus value on row ' . ($row+1) . ' that are not in the loadfile: ' . implode(', ', $missing_skus);
 						
-							if (empty($data[Linter::FEATURES]) || preg_match('/[^a-zA-Z0-9®!™%<>&";:()\/,|\.\-\' ]/',$data[Linter::FEATURES]) || substr_count($data[Linter::FEATURES],'||') > 0)
+							if (empty($data[Linter::FEATURES]) && $data[Linter::MANUFACTURER] != 'Icebreaker' || preg_match('/[^a-zA-Z0-9®!™%<>&";:()\/,|\.\-\' ]/',$data[Linter::FEATURES]) || substr_count($data[Linter::FEATURES],'||') > 0)
 								$configurable_errors[] = 'Check the features value on row ' . ($row+1) . '. It is either NULL, contains a special character we may not want, or has a double pipe.';// . $data[Linter::FEATURES];
 
 							if (!empty($data[Linter::FABRIC]) && preg_match('/[^a-zA-Z0-9®™²<>•+&%;:()\/,|\.\-\' ]/',$data[Linter::FABRIC]))

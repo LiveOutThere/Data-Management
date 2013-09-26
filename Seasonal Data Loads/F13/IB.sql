@@ -105,7 +105,7 @@ INSERT INTO tbl_LoadFile_FW13_IB (
 
 SELECT DISTINCT
 	'simple' AS type
-	,'FW13A-IB-' + ItemNumber + '-' + ColorCode + '-' + Size AS sku
+	,'FW13A-IB-' + ItemNumber + '-' + ColorCode + '-' + REPLACE(Size,'OS','O/S') AS sku
 	,dbo.getIBName(ItemNumber) AS name
 	,0 AS has_options
 	,ROUND(MSRP,2) AS price
@@ -114,14 +114,14 @@ SELECT DISTINCT
 	,NULL AS image
 	,dbo.getIBColorName(Color) AS image_label
 	,dbo.getIBColorName(Color) AS choose_color
-	,Size AS choose_size
+	,REPLACE(Size,'OS','O/S') AS choose_size
 	,CAST(UPC AS bigint) AS vendor_sku
 	,ItemNumber AS vendor_product_id
 	,ColorCode AS vendor_color_code
-	,Size AS vendor_size_code
+	,REPLACE(Size,'OS','O/S') AS vendor_size_code
 	,dbo.getUrlKey(dbo.getIBName(ItemNumber), 'Icebreaker', dbo.getIBColorName(Color) + '-' + Size, dbo.getIBGender(Directory)) + '-fw13a' AS url_key
 	,NULL AS weight
-FROM tbl_RawData_FW13_IB_UPC_Price
+FROM tbl_RawData_FW13_IB_UPC_Price2
 GO
 
 UPDATE tbl_LoadFile_FW13_IB SET image = NULL

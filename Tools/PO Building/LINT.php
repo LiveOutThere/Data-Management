@@ -293,7 +293,7 @@ class Linter
 							if ($data[Linter::THUMBNAIL] != $data[Linter::IMAGE])
 								$simple_errors[] = 'Check the image_label value for row ' . ($row+1) . '. It should equal the image value, but it looks like this: ' . $data[Linter::THUMBNAIL];
 
-							if (preg_match('/[^a-zA-Z0-9 \/]/',$data[Linter::CHOOSE_COLOR]) || empty($data[Linter::CHOOSE_COLOR]) || !preg_match('/[e|a|i|o|u|y]/',$data[Linter::CHOOSE_COLOR])) 
+							if (preg_match('/[^a-zA-Z0-9, \/]/',$data[Linter::CHOOSE_COLOR]) || empty($data[Linter::CHOOSE_COLOR]) || !preg_match('/[e|E|a|i|o|u|y]/',$data[Linter::CHOOSE_COLOR])) 
 								$simple_errors[] = 'Check the choose_color value on row ' . ($row+1) . '. It is either NULL, contains no vowels, or contains a special character that we may not want: ' . $data[Linter::CHOOSE_COLOR];
 
 							if ($data[Linter::CHOOSE_SIZE] !== '0' && empty($data[Linter::CHOOSE_SIZE]) || substr($data[Linter::CHOOSE_SIZE],-2) == '.5')

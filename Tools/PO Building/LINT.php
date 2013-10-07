@@ -332,8 +332,8 @@ class Linter
 							if (!empty($data[Linter::MERCHANDISE_PRIORITY]))
 								$simple_errors[] = 'Check the merchandise_priority value for row ' . ($row+1) . '. It should be NULL but it looks like this: ' . $data[Linter::MERCHANDISE_PRIORITY];
 						
-							if (empty($data[Linter::URL_KEY]) || preg_match('/[^a-zA-Z0-9\-]/',$data[Linter::URL_KEY])) //|| (substr_count($data[Linter::URL_KEY],'-') != (substr_count($data[Linter::MANUFACTURER],' ') + substr_count($data[Linter::NAME],' ') + substr_count($data[Linter::NAME],'-') + substr_count($data[Linter::CHOOSE_COLOR],' ') + substr_count($data[Linter::CHOOSE_COLOR],'/') + substr_count($data[Linter::CHOOSE_SIZE],' ') + substr_count($data[Linter::CHOOSE_SIZE],'/') + 5)))
-								$simple_errors[] = 'Check the url_key value for row ' . ($row+1) . '. It is either NULL, or contains a special character we may not want: ' . $data[Linter::URL_KEY];
+							if (preg_match('/[^a-zA-Z0-9\-]/',$data[Linter::URL_KEY])) //|| (substr_count($data[Linter::URL_KEY],'-') != (substr_count($data[Linter::MANUFACTURER],' ') + substr_count($data[Linter::NAME],' ') + substr_count($data[Linter::NAME],'-') + substr_count($data[Linter::CHOOSE_COLOR],' ') + substr_count($data[Linter::CHOOSE_COLOR],'/') + substr_count($data[Linter::CHOOSE_SIZE],' ') + substr_count($data[Linter::CHOOSE_SIZE],'/') + 5)))
+								$simple_errors[] = 'Check the url_key value for row ' . ($row+1) . '. It contains a special character we may not want: ' . $data[Linter::URL_KEY];
 
 							if (count(array_unique($sku_parts)) > 1)
 	    						$simple_errors[] = 'simple product SKUs are not consistent. Check season & brand codes.';
@@ -434,10 +434,10 @@ class Linter
 							//if (count($missing_skus)) 
 							//	$configurable_errors[] = 'There are SKUs in the simples_skus value on row ' . ($row+1) . ' that are not in the loadfile: ' . implode(', ', $missing_skus);
 						
-							if (empty($data[Linter::FEATURES]) && $data[Linter::MANUFACTURER] != 'Icebreaker' || preg_match('/[^a-zA-Z0-9®!™%<>•&+";’:()\/,|\.\-\' ]/',$data[Linter::FEATURES]) || substr_count($data[Linter::FEATURES],'||') > 0)
+							if (empty($data[Linter::FEATURES]) && $data[Linter::MANUFACTURER] != 'Icebreaker' || preg_match('/[^a-zA-Z0-9®!™%<>•&+";’:[]()\/,|\.\-\' ]/',$data[Linter::FEATURES]) || substr_count($data[Linter::FEATURES],'||') > 0)
 								$configurable_errors[] = 'Check the features value on row ' . ($row+1) . '. It is either NULL, contains a special character we may not want, or has a double pipe.';// . $data[Linter::FEATURES];
 
-							if (!empty($data[Linter::FABRIC]) && preg_match('/[^a-zA-Z0-9®™²<>•+&%;:()\/,|\.\-\' ]/',$data[Linter::FABRIC]))
+							if (!empty($data[Linter::FABRIC]) && preg_match('/[^a-zA-Z0-9®²<>•+™%&;:[]()\/,\—|\.\-\' ]/',$data[Linter::FABRIC]))
 								$configurable_errors[] = 'Check the fabric value on row ' . ($row+1) . '. It contains a special character we may not want: ' . $data[Linter::FABRIC];		
 						
 							if (!empty($data[Linter::QTY]))

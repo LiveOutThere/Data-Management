@@ -3983,7 +3983,7 @@
                                           <Paragraph>
                                             <TextRuns>
                                               <TextRun>
-                                                <Value>=Fields!name.Value</Value>
+                                                <Value>=Fields!name.Value &amp; " - " &amp; Fields!department.Value</Value>
                                                 <Style>
                                                   <TextDecoration>None</TextDecoration>
                                                 </Style>
@@ -5737,7 +5737,7 @@
                                           <TablixMember>
                                             <Group Name="table1_name">
                                               <GroupExpressions>
-                                                <GroupExpression>=Fields!name.Value</GroupExpression>
+                                                <GroupExpression>=Fields!name.Value &amp; " - " &amp; Fields!department.Value</GroupExpression>
                                               </GroupExpressions>
                                             </Group>
                                             <SortExpressions>
@@ -6074,10 +6074,20 @@
   <ReportParameters>
     <ReportParameter Name="start_date">
       <DataType>DateTime</DataType>
+      <DefaultValue>
+        <Values>
+          <Value>2/1/2013 12:00:00 AM</Value>
+        </Values>
+      </DefaultValue>
       <Prompt>Start Date</Prompt>
     </ReportParameter>
     <ReportParameter Name="end_date">
       <DataType>DateTime</DataType>
+      <DefaultValue>
+        <Values>
+          <Value>=Now()</Value>
+        </Values>
+      </DefaultValue>
       <Prompt>End Date</Prompt>
     </ReportParameter>
   </ReportParameters>

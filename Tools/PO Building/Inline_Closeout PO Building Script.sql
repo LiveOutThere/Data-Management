@@ -20,134 +20,75 @@ BEGIN
 
 	CREATE TABLE #PO_DATA (style_color_size nvarchar(255), vendor_product_id nvarchar(255), config_sku nvarchar(255))
 	INSERT INTO #PO_DATA (style_color_size) (
-	SELECT 'A0NK-D0R-M' UNION ALL
-	SELECT 'A0NK-D0R-L' UNION ALL
-	SELECT 'A0NK-D0R-XL' UNION ALL
-	SELECT 'A0NK-JK3-S' UNION ALL
-	SELECT 'A0NK-JK3-M' UNION ALL
-	SELECT 'A0NK-JK3-L' UNION ALL
-	SELECT 'A0NK-JK3-XL' UNION ALL
-	SELECT 'A213-128-O/S' UNION ALL
-	SELECT 'A213-ET8-O/S' UNION ALL
-	SELECT 'A213-H8H-O/S' UNION ALL
-	SELECT 'A213-KX7-O/S' UNION ALL
-	SELECT 'A51S-44A-XS' UNION ALL
-	SELECT 'A51S-44A-S' UNION ALL
-	SELECT 'A51S-44A-M' UNION ALL
-	SELECT 'A51S-44A-L' UNION ALL
-	SELECT 'A51S-44A-XL' UNION ALL
-	SELECT 'A51S-JK3-XS' UNION ALL
-	SELECT 'A51S-JK3-S' UNION ALL
-	SELECT 'A51S-JK3-M' UNION ALL
-	SELECT 'A51S-JK3-L' UNION ALL
-	SELECT 'A51S-JK3-XL' UNION ALL
-	SELECT 'A6YC-D3R-XS' UNION ALL
-	SELECT 'A6YC-D3R-S' UNION ALL
-	SELECT 'A6YC-D3R-M' UNION ALL
-	SELECT 'A6YC-D3R-L' UNION ALL
-	SELECT 'A6YC-D3R-XL' UNION ALL
-	SELECT 'A6YC-JK3-XS' UNION ALL
-	SELECT 'A6YC-JK3-S' UNION ALL
-	SELECT 'A6YC-JK3-M' UNION ALL
-	SELECT 'A6YC-JK3-L' UNION ALL
-	SELECT 'A6YC-JK3-XL' UNION ALL
-	SELECT 'A7MP-D3R-XS-REG' UNION ALL
-	SELECT 'A7MP-D3R-S-REG' UNION ALL
-	SELECT 'A7MP-D3R-M-REG' UNION ALL
-	SELECT 'A7MP-D3R-L-REG' UNION ALL
-	SELECT 'A7MP-D3R-XL-REG' UNION ALL
-	SELECT 'A7SA-JK3-S' UNION ALL
-	SELECT 'A7SA-JK3-M' UNION ALL
-	SELECT 'A7SA-JK3-L' UNION ALL
-	SELECT 'A7SA-JK3-XL' UNION ALL
-	SELECT 'A8LQ-JK3-XS-REG' UNION ALL
-	SELECT 'A8LQ-JK3-S-REG' UNION ALL
-	SELECT 'A8LQ-JK3-M-REG' UNION ALL
-	SELECT 'A8LQ-JK3-L-REG' UNION ALL
-	SELECT 'A8LQ-JK3-XL-REG' UNION ALL
-	SELECT 'A8WE-044-XS' UNION ALL
-	SELECT 'A8WE-044-S' UNION ALL
-	SELECT 'A8WE-044-M' UNION ALL
-	SELECT 'A8WE-044-L' UNION ALL
-	SELECT 'A8WE-044-XL' UNION ALL
-	SELECT 'A8WE-682-XS' UNION ALL
-	SELECT 'A8WE-682-S' UNION ALL
-	SELECT 'A8WE-682-M' UNION ALL
-	SELECT 'A8WE-682-L' UNION ALL
-	SELECT 'A8WE-682-XL' UNION ALL
-	SELECT 'A8WE-JK3-XS' UNION ALL
-	SELECT 'A8WE-JK3-S' UNION ALL
-	SELECT 'A8WE-JK3-M' UNION ALL
-	SELECT 'A8WE-JK3-L' UNION ALL
-	SELECT 'A8WE-JK3-XL' UNION ALL
-	SELECT 'A8WW-E8T-S' UNION ALL
-	SELECT 'A8WW-E8T-M' UNION ALL
-	SELECT 'A8WW-E8T-L' UNION ALL
-	SELECT 'A8WW-E8T-XL' UNION ALL
-	SELECT 'A8WW-KX9-S' UNION ALL
-	SELECT 'A8WW-KX9-M' UNION ALL
-	SELECT 'A8WW-KX9-L' UNION ALL
-	SELECT 'A8WW-KX9-XL' UNION ALL
-	SELECT 'A8XC-JK3-S' UNION ALL
-	SELECT 'A8XC-JK3-M' UNION ALL
-	SELECT 'A8XC-JK3-L' UNION ALL
-	SELECT 'A8XC-JK3-XL' UNION ALL
-	SELECT 'A8XZ-62X-S' UNION ALL
-	SELECT 'A8XZ-62X-M' UNION ALL
-	SELECT 'A8XZ-62X-L' UNION ALL
-	SELECT 'A8XZ-62X-XL' UNION ALL
-	SELECT 'A8XZ-62X-XXL' UNION ALL
-	SELECT 'A8XZ-JK3-S' UNION ALL
-	SELECT 'A8XZ-JK3-M' UNION ALL
-	SELECT 'A8XZ-JK3-L' UNION ALL
-	SELECT 'A8XZ-JK3-XL' UNION ALL
-	SELECT 'A8XZ-JK3-XXL' UNION ALL
-	SELECT 'A9FA-D1T-O/S' UNION ALL
-	SELECT 'A9FA-D3R-O/S' UNION ALL
-	SELECT 'A9FA-FN4-O/S' UNION ALL
-	SELECT 'AJGW-D2R-M' UNION ALL
-	SELECT 'AJGW-D2R-L' UNION ALL
-	SELECT 'AJGW-D2R-XL' UNION ALL
-	SELECT 'AMVY-A8U-S' UNION ALL
-	SELECT 'AMVY-A8U-M' UNION ALL
-	SELECT 'AMVY-A8U-L' UNION ALL
-	SELECT 'AMVY-A8U-XL' UNION ALL
-	SELECT 'AMVY-A8U-XXL' UNION ALL
-	SELECT 'AMVY-H6A-S' UNION ALL
-	SELECT 'AMVY-H6A-M' UNION ALL
-	SELECT 'AMVY-H6A-L' UNION ALL
-	SELECT 'AMVY-H6A-XL' UNION ALL
-	SELECT 'AMVY-H6A-XXL' UNION ALL
-	SELECT 'AUEY-E0R-S' UNION ALL
-	SELECT 'AUEY-E0R-M' UNION ALL
-	SELECT 'AUEY-E0R-L' UNION ALL
-	SELECT 'AUEY-E0R-XL' UNION ALL
-	SELECT 'AUEY-E0R-XXL' UNION ALL
-	SELECT 'AUEY-KX7-S' UNION ALL
-	SELECT 'AUEY-KX7-M' UNION ALL
-	SELECT 'AUEY-KX7-L' UNION ALL
-	SELECT 'AUEY-KX7-XL' UNION ALL
-	SELECT 'AUEY-KX7-XXL')
+	SELECT 'AM1480-010-S' UNION ALL
+	SELECT 'AM1480-010-M' UNION ALL
+	SELECT 'AM1480-010-L' UNION ALL
+	SELECT 'AM1480-010-XL' UNION ALL
+	SELECT 'AM1480-048-S' UNION ALL
+	SELECT 'AM1480-048-M' UNION ALL
+	SELECT 'AM1480-048-L' UNION ALL
+	SELECT 'AM1480-048-XL' UNION ALL
+	SELECT 'AM6889-010-S' UNION ALL
+	SELECT 'AM6889-010-M' UNION ALL
+	SELECT 'AM6889-010-L' UNION ALL
+	SELECT 'AM6889-010-XL' UNION ALL
+	SELECT 'AM6889-402-S' UNION ALL
+	SELECT 'AM6889-402-M' UNION ALL
+	SELECT 'AM6889-402-L' UNION ALL
+	SELECT 'AM6889-402-XL' UNION ALL
+	SELECT 'AM8672-010-S' UNION ALL
+	SELECT 'AM8672-010-M' UNION ALL
+	SELECT 'AM8672-010-L' UNION ALL
+	SELECT 'AM8672-010-XL' UNION ALL
+	SELECT 'CU9514-010-S' UNION ALL
+	SELECT 'CU9514-010-M' UNION ALL
+	SELECT 'CU9514-010-L' UNION ALL
+	SELECT 'CU9514-010-XL' UNION ALL
+	SELECT 'CU9514-225-S' UNION ALL
+	SELECT 'CU9514-225-M' UNION ALL
+	SELECT 'CU9514-225-L' UNION ALL
+	SELECT 'CU9514-225-XL' UNION ALL
+	SELECT 'SM8386-010-30' UNION ALL
+	SELECT 'SM8386-010-32' UNION ALL
+	SELECT 'SM8386-010-34' UNION ALL
+	SELECT 'SM8386-010-36' UNION ALL
+	SELECT 'SM8386-010-38' UNION ALL
+	SELECT 'SM8386-010-40' UNION ALL
+	SELECT 'WL3243-402-XS' UNION ALL
+	SELECT 'WL3243-402-S' UNION ALL
+	SELECT 'WL3243-402-M' UNION ALL
+	SELECT 'WL3243-402-L' UNION ALL
+	SELECT 'WL3243-402-XL' UNION ALL
+	SELECT 'WL3243-439-XS' UNION ALL
+	SELECT 'WL3243-439-S' UNION ALL
+	SELECT 'WL3243-439-M' UNION ALL
+	SELECT 'WL3243-439-L' UNION ALL
+	SELECT 'WL3243-439-XL' UNION ALL
+	SELECT 'WL5033-011-XS' UNION ALL
+	SELECT 'WL5033-011-S' UNION ALL
+	SELECT 'WL5033-011-M' UNION ALL
+	SELECT 'WL5033-011-L' UNION ALL
+	SELECT 'WL5033-011-XL' UNION ALL
+	SELECT 'WL5033-565-XS' UNION ALL
+	SELECT 'WL5033-565-S' UNION ALL
+	SELECT 'WL5033-565-M' UNION ALL
+	SELECT 'WL5033-565-L' UNION ALL
+	SELECT 'WL5033-565-XL' UNION ALL
+	SELECT 'WM5079-010-O/S' UNION ALL
+	SELECT 'WM5079-350-O/S')
 
 	INSERT INTO #PO_DATA (vendor_product_id) (
-	SELECT 'A0NK' UNION ALL
-	SELECT 'A213' UNION ALL
-	SELECT 'A51S' UNION ALL
-	SELECT 'A6YC' UNION ALL
-	SELECT 'A7MP' UNION ALL
-	SELECT 'A7SA' UNION ALL
-	SELECT 'A8LQ' UNION ALL
-	SELECT 'A8WE' UNION ALL
-	SELECT 'A8WW' UNION ALL
-	SELECT 'A8XC' UNION ALL
-	SELECT 'A8XZ' UNION ALL
-	SELECT 'A9FA' UNION ALL
-	SELECT 'AJGW' UNION ALL
-	SELECT 'AMVY' UNION ALL
-	SELECT 'AUEY')
+	SELECT 'AM1480' UNION ALL
+	SELECT 'AM6889' UNION ALL
+	SELECT 'AM8672' UNION ALL
+	SELECT 'CU9514' UNION ALL
+	SELECT 'SM8386' UNION ALL
+	SELECT 'WL3243' UNION ALL
+	SELECT 'WL5033' UNION ALL
+	SELECT 'WM5079')
 	
 	DECLARE @config_string varchar(MAX)
-	SET @config_string = '''''TNF-A0NK'''',''''TNF-A213'''',''''TNF-A51S'''',''''TNF-A6YC'''',''''TNF-A7MP'''',''''TNF-A7SA'''',''''TNF-A8LQ'''',''''TNF-A8WE'''',''''TNF-A8WW'''',''''TNF-A8XC'''',''''TNF-A8XZ'''',''''TNF-A9FA'''',''''TNF-AJGW'''',''''TNF-AMVY'''',''''TNF-AUEY'''''
+	SET @config_string = '''''COL-AM1480'''',''''COL-AM6889'''',''''COL-AM8672'''',''''COL-CU9514'''',''''COL-SM8386'''',''''COL-WL3243'''',''''COL-WL5033'''',''''COL-WM5079'''''
 	
 	--Here #view_PO_LoadFile gets created and then populated with the desired rows from your desired loadfile:
 	IF OBJECT_ID('tempdb..#view_PO_LoadFile') IS NOT NULL BEGIN
@@ -223,47 +164,6 @@ BEGIN
 	--Insert the contents of #view_PO_LoadFile into tbl_Purchase_Order, as well as a PO_NUM value:
 	INSERT INTO tbl_Purchase_Order SELECT *, @po_num AS PO_NUM FROM #view_PO_LoadFile
 
-	--Create the #missing_data table and insert rows for any and all issues:
-	IF OBJECT_ID('tempdb..#missing_data') IS NOT NULL BEGIN
-		DROP TABLE #missing_data
-	END	
-
-	CREATE TABLE #missing_data (id int IDENTITY(1,1), issue nvarchar(255),name nvarchar(MAX),vendor_product_id nvarchar(100),choose_color nvarchar(MAX),vendor_color_code nvarchar(MAX))
-	INSERT INTO #missing_data
-	SELECT DISTINCT 'Missing Image', name, vendor_product_id, choose_color, vendor_color_code
-	FROM tbl_Purchase_Order
-	WHERE PO_NUM = @po_num AND type = 'simple' AND image IS NULL
-	UNION ALL
-	SELECT DISTINCT 'Missing Description', name, vendor_product_id, '', ''
-	FROM tbl_Purchase_Order
-	WHERE PO_NUM = @po_num AND type = 'configurable' AND description IS NULL
-	UNION ALL
-	SELECT DISTINCT 'Missing Features', name, vendor_product_id, '', ''
-	FROM tbl_Purchase_Order
-	WHERE PO_NUM = @po_num AND type = 'configurable' AND features IS NULL
-	
-	UPDATE #missing_data SET issue = 'Missing Description & Features' WHERE name IN(
-		SELECT DISTINCT name
-		FROM #missing_data
-		GROUP BY name
-		HAVING COUNT(*) > 1 AND MAX(issue) <> 'Missing Image')
-	
-	DELETE FROM #missing_data WHERE id IN(
-		SELECT MAX(id)
-		FROM #missing_data
-		GROUP BY name
-		HAVING MAX(issue) = 'Missing Description & Features')
-	
-	/* BEGIN DATA MANIPULATION */
-	
-	--Update the categories values for configurables without categories:
-	UPDATE a SET
-		a.categories = b.categories
-	FROM tbl_Purchase_Order AS a
-	INNER JOIN LOT_Inventory.dbo.tbl_Magento_Categories AS b
-	ON a.sku COLLATE SQL_Latin1_General_CP1_CI_AS = b.sku COLLATE SQL_Latin1_General_CP1_CI_AS
-	WHERE a.PO_NUM = @po_num AND a.type = 'configurable'
-	
 	--Pull the SEO optimized product descriptions from the MYSQL database and assign them to the configurables from the loadfile:
 	SET @sql = '
 	UPDATE a SET
@@ -278,7 +178,48 @@ BEGIN
 	ON a.sku = b.sku
 	WHERE a.PO_NUM = ' + '''' + @po_num + '''' + ''
 	EXEC (@sql)
+
+	--Create the #missing_data table and insert rows for any and all issues:
+	IF OBJECT_ID('tempdb..#missing_data') IS NOT NULL BEGIN
+		DROP TABLE #missing_data
+	END	
+
+	CREATE TABLE #missing_data (id int IDENTITY(1,1), issue nvarchar(255),name nvarchar(MAX),vendor_product_id nvarchar(100),choose_color nvarchar(MAX),vendor_color_code nvarchar(MAX))
+	INSERT INTO #missing_data
+	SELECT DISTINCT 'Missing Image', name, vendor_product_id, choose_color, vendor_color_code
+	FROM tbl_Purchase_Order
+	WHERE PO_NUM = @po_num AND type = 'simple' AND image IS NULL
+	UNION ALL
+	SELECT DISTINCT 'Missing Description', name, vendor_product_id, '', ''
+	FROM tbl_Purchase_Order
+	WHERE PO_NUM = @po_num AND (type = 'configurable' AND description IS NULL OR type = 'configurable' AND description = '')
+	UNION ALL
+	SELECT DISTINCT 'Missing Features', name, vendor_product_id, '', ''
+	FROM tbl_Purchase_Order
+	WHERE PO_NUM = @po_num AND (type = 'configurable' AND features IS NULL OR type = 'configurable' AND features = '')
 	
+	UPDATE #missing_data SET issue = 'Missing Description & Features' WHERE name IN(
+		SELECT DISTINCT name
+		FROM #missing_data
+		GROUP BY name,vendor_product_id
+		HAVING COUNT(*) > 1 AND MAX(issue) <> 'Missing Image')
+	
+	DELETE FROM #missing_data WHERE id IN(
+		SELECT MAX(id)
+		FROM #missing_data
+		GROUP BY name,vendor_product_id
+		HAVING MAX(issue) = 'Missing Description & Features')
+	
+	/* BEGIN DATA MANIPULATION */
+	
+	--Update the categories values for configurables without categories:
+	UPDATE a SET
+		a.categories = b.categories
+	FROM tbl_Purchase_Order AS a
+	INNER JOIN LOT_Inventory.dbo.tbl_Magento_Categories AS b
+	ON a.sku COLLATE SQL_Latin1_General_CP1_CI_AS = b.sku COLLATE SQL_Latin1_General_CP1_CI_AS
+	WHERE a.PO_NUM = @po_num AND a.type = 'configurable'
+		
 	--Purchase Order Type-Specific correlated update:	
 	UPDATE a SET
 		a.never_backorder = '1',
@@ -415,7 +356,7 @@ GO
 
 /* START: */
 
-EXEC Inline_Closeout_PO_Building 'TNF-F13-ADDON', 'Inline', 'The North Face', 'TNF', 108, 15
+EXEC Inline_Closeout_PO_Building 'COL-F13-1', 'Inline', 'Columbia', 'COL', 56, 8
 
 /*
 See below for rules regarding which new SKUs to associate depending on which existing simple products are already associated:

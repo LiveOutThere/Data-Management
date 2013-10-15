@@ -1,12 +1,49 @@
--- Recreate the scenario that I used to find products to delete earlier today on Production
-SELECT * INTO sales_flat_order_item FROM OPENQUERY(DGDEV,'SELECT DISTINCT sku FROM sales_flat_order_item')
+--DROP TABLE catalog_product_entity
 
-SELECT * INTO catalog_product_entity FROM OPENQUERY(DGDEV,'SELECT * FROM catalog_product_entity WHERE type_id = ''simple''')
+DROP TABLE catalog_product_entity_varchar_restore
+DROP TABLE catalog_product_entity_datetime_restore
+DROP TABLE catalog_product_entity_decimal_restore
+DROP TABLE catalog_product_entity_int_restore
+DROP TABLE catalog_product_entity_media_gallery_restore
+DROP TABLE catalog_product_entity_media_gallery_value_restore
+DROP TABLE catalog_product_entity_text_restore
+DROP TABLE catalog_product_super_link_restore
+DROP TABLE catalog_product_relation_restore
+DROP TABLE cataloginventory_stock_item_restore
+DROP TABLE cataloginventory_stock_status_restore
+DROP TABLE catalog_product_website_restore
+DROP TABLE catalog_product_entity_restore
+DROP TABLE catalog_category_product_restore
+DROP TABLE catalog_product_super_attribute_restore
+DROP TABLE catalog_product_super_attribute_label_restore
 
--- Get catalog_product_entity rows for Closeout and Inline SKUs that had never been purchased and were accidentally deleted
+--SELECT * INTO catalog_product_entity FROM OPENQUERY(DGDEV,'SELECT * FROM catalog_product_entity')
+
 SELECT a.* INTO catalog_product_entity_restore FROM catalog_product_entity AS a
-LEFT JOIN sales_flat_order_item AS b ON a.sku = b.sku
-WHERE b.sku IS NULL AND (a.sku LIKE '____I-%' OR a.sku LIKE '____C-%') -- this was the bad line, I forgot to exclude Inline and Closeout items that we have in the warehouse but had never been purchased
+WHERE entity_id IN (
+290189,
+310066,
+317091,
+317154,
+317367,
+340797,
+340804,
+340814,
+340818,
+340822,
+340941,
+341147,
+351622,
+355572,
+355585,
+355682,
+392974,
+404700,
+404766,
+404796,
+404916,
+410730,
+411161)
 
 -- At this point I created a table on MySQL
 -- CREATE TABLE entity_ids_to_restore (entity_id integer)
@@ -25,12 +62,18 @@ SELECT * INTO catalog_product_entity_media_gallery_value_restore FROM OPENQUERY(
 SELECT * INTO catalog_product_entity_text_restore FROM OPENQUERY(DGDEV,'SELECT a.* FROM catalog_product_entity_text AS a INNER JOIN entity_ids_to_restore AS b ON a.entity_id = b.entity_id')
 
 -- product simple configurable link data 
-SELECT * INTO catalog_product_super_link_restore FROM OPENQUERY(DGDEV,'SELECT a.* FROM catalog_product_super_link AS a INNER JOIN entity_ids_to_restore AS b ON a.product_id = b.entity_id')
-SELECT * INTO catalog_product_relation_restore FROM OPENQUERY(DGDEV,'SELECT a.* FROM catalog_product_relation AS a INNER JOIN entity_ids_to_restore AS b ON a.child_id = b.entity_id')
+SELECT * INTO catalog_product_super_link_restore FROM OPENQUERY(DGDEV,'SELECT a.* FROM catalog_product_super_link AS a INNER JOIN entity_ids_to_restore AS b ON a.parent_id = b.entity_id')
+SELECT * INTO catalog_product_super_attribute_restore FROM OPENQUERY(DGDEV,'SELECT a.* FROM catalog_product_super_attribute AS a INNER JOIN entity_ids_to_restore AS b ON a.product_id = b.entity_id')
+SELECT * INTO catalog_product_super_attribute_label_restore FROM OPENQUERY(DGDEV,'SELECT c.* FROM catalog_product_super_attribute AS a INNER JOIN entity_ids_to_restore AS b ON a.product_id = b.entity_id INNER JOIN catalog_product_super_attribute_label AS c ON a.product_super_attribute_id = c.product_super_attribute_id')
+SELECT * INTO catalog_product_relation_restore FROM OPENQUERY(DGDEV,'SELECT a.* FROM catalog_product_relation AS a INNER JOIN entity_ids_to_restore AS b ON a.parent_id = b.entity_id')
 
 -- catalog inventory data
 SELECT * INTO cataloginventory_stock_item_restore FROM OPENQUERY(DGDEV,'SELECT a.* FROM cataloginventory_stock_item AS a INNER JOIN entity_ids_to_restore AS b ON a.product_id = b.entity_id')
 SELECT * INTO cataloginventory_stock_status_restore FROM OPENQUERY(DGDEV,'SELECT a.* FROM cataloginventory_stock_status AS a INNER JOIN entity_ids_to_restore AS b ON a.product_id = b.entity_id')
+
+SELECT * INTO catalog_product_website_restore FROM OPENQUERY(DGDEV,'SELECT a.* FROM catalog_product_website AS a INNER JOIN entity_ids_to_restore AS b ON a.product_id = b.entity_id')
+
+SELECT * INTO catalog_category_product_restore FROM OPENQUERY(DGDEV,'SELECT a.* FROM catalog_category_product AS a INNER JOIN entity_ids_to_restore AS b ON a.product_id = b.entity_id')
 
 -- Now let's insert the data we pulled from the Staging database back into the Production database
 -- (the LEFT JOIN prevents PK conflicts and allows us to restart where we left off if the query times out)
@@ -85,15 +128,37 @@ WHERE b.entity_id IS NULL
 
 INSERT INTO OPENQUERY(MAGENTO, 'SELECT * FROM catalog_product_super_link')
 SELECT a.* FROM catalog_product_super_link_restore AS a
+INNER JOIN (SELECT * FROM OPENQUERY(MAGENTO, 'SELECT entity_id FROM catalog_product_entity WHERE type_id = ''simple''')) AS c
+ON c.entity_id = a.product_id
 LEFT JOIN (SELECT * FROM OPENQUERY(MAGENTO, 'SELECT DISTINCT product_id FROM catalog_product_super_link')) AS b
 ON a.product_id = b.product_id 
 WHERE b.product_id IS NULL
 
+INSERT INTO OPENQUERY(MAGENTO, 'SELECT * FROM catalog_product_super_attribute')
+SELECT a.* FROM catalog_product_super_attribute_restore AS a
+LEFT JOIN (SELECT * FROM OPENQUERY(MAGENTO, 'SELECT DISTINCT product_id FROM catalog_product_super_attribute')) AS b
+ON a.product_id = b.product_id 
+WHERE b.product_id IS NULL
+
+INSERT INTO OPENQUERY(MAGENTO, 'SELECT * FROM catalog_product_super_attribute_label')
+SELECT a.* FROM catalog_product_super_attribute_label_restore AS a
+LEFT JOIN (SELECT * FROM OPENQUERY(MAGENTO, 'SELECT DISTINCT product_super_attribute_id FROM catalog_product_super_attribute_label')) AS b
+ON a.product_super_attribute_id = b.product_super_attribute_id 
+WHERE b.product_super_attribute_id IS NULL
+
 INSERT INTO OPENQUERY(MAGENTO, 'SELECT * FROM catalog_product_relation')
 SELECT a.* FROM catalog_product_relation_restore AS a
+INNER JOIN (SELECT * FROM OPENQUERY(MAGENTO, 'SELECT entity_id FROM catalog_product_entity WHERE type_id = ''simple''')) AS c
+ON c.entity_id = a.child_id
 LEFT JOIN (SELECT * FROM OPENQUERY(MAGENTO, 'SELECT DISTINCT child_id FROM catalog_product_relation')) AS b
 ON a.child_id = b.child_id 
 WHERE b.child_id IS NULL
+
+INSERT INTO OPENQUERY(MAGENTO, 'SELECT * FROM catalog_category_product')
+SELECT a.* FROM catalog_category_product_restore AS a
+LEFT JOIN (SELECT * FROM OPENQUERY(MAGENTO, 'SELECT DISTINCT product_id FROM catalog_category_product')) AS b
+ON a.product_id = b.product_id 
+WHERE b.product_id IS NULL
 
 INSERT INTO OPENQUERY(MAGENTO, 'SELECT * FROM cataloginventory_stock_item')
 SELECT a.* FROM cataloginventory_stock_item_restore AS a
@@ -104,6 +169,12 @@ WHERE b.product_id IS NULL
 INSERT INTO OPENQUERY(MAGENTO, 'SELECT * FROM cataloginventory_stock_status')
 SELECT a.* FROM cataloginventory_stock_status_restore AS a
 LEFT JOIN (SELECT * FROM OPENQUERY(MAGENTO, 'SELECT DISTINCT product_id FROM cataloginventory_stock_status')) AS b
+ON a.product_id = b.product_id 
+WHERE b.product_id IS NULL
+
+INSERT INTO OPENQUERY(MAGENTO, 'SELECT * FROM catalog_product_website')
+SELECT a.* FROM catalog_product_website_restore AS a
+LEFT JOIN (SELECT * FROM OPENQUERY(MAGENTO, 'SELECT DISTINCT product_id FROM catalog_product_website')) AS b
 ON a.product_id = b.product_id 
 WHERE b.product_id IS NULL
 

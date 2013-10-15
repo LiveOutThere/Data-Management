@@ -775,7 +775,9 @@
                                                 <Style />
                                               </TextRun>
                                             </TextRuns>
-                                            <Style />
+                                            <Style>
+                                              <TextAlign>Left</TextAlign>
+                                            </Style>
                                           </Paragraph>
                                         </Paragraphs>
                                         <rd:DefaultName>Textbox63</rd:DefaultName>
@@ -900,14 +902,14 @@
                                   </TablixCell>
                                   <TablixCell>
                                     <CellContents>
-                                      <Textbox Name="discount_invoiced">
+                                      <Textbox Name="qty_on_hand3">
                                         <CanGrow>true</CanGrow>
                                         <KeepTogether>true</KeepTogether>
                                         <Paragraphs>
                                           <Paragraph>
                                             <TextRuns>
                                               <TextRun>
-                                                <Value>=Sum(Fields!discount_invoiced.Value)</Value>
+                                                <Value>=Sum(Fields!qty_on_hand.Value)</Value>
                                                 <Style>
                                                   <Format>0;(0)</Format>
                                                 </Style>
@@ -916,7 +918,7 @@
                                             <Style />
                                           </Paragraph>
                                         </Paragraphs>
-                                        <rd:DefaultName>discount_invoiced</rd:DefaultName>
+                                        <rd:DefaultName>qty_on_hand3</rd:DefaultName>
                                         <Style>
                                           <Border>
                                             <Style>None</Style>
@@ -1459,7 +1461,7 @@
                                           <Paragraph>
                                             <TextRuns>
                                               <TextRun>
-                                                <Value>=Fields!name.Value</Value>
+                                                <Value>=Fields!name.Value &amp; " - " &amp; Fields!department.Value</Value>
                                                 <Style />
                                               </TextRun>
                                             </TextRuns>
@@ -1497,7 +1499,9 @@
                                                 <Style />
                                               </TextRun>
                                             </TextRuns>
-                                            <Style />
+                                            <Style>
+                                              <TextAlign>Left</TextAlign>
+                                            </Style>
                                           </Paragraph>
                                         </Paragraphs>
                                         <rd:DefaultName>Textbox65</rd:DefaultName>
@@ -2232,7 +2236,9 @@
                                                 </Style>
                                               </TextRun>
                                             </TextRuns>
-                                            <Style />
+                                            <Style>
+                                              <TextAlign>Left</TextAlign>
+                                            </Style>
                                           </Paragraph>
                                         </Paragraphs>
                                         <rd:DefaultName>entity_id</rd:DefaultName>
@@ -2977,7 +2983,9 @@
                                                 </Style>
                                               </TextRun>
                                             </TextRuns>
-                                            <Style />
+                                            <Style>
+                                              <TextAlign>Left</TextAlign>
+                                            </Style>
                                           </Paragraph>
                                         </Paragraphs>
                                         <rd:DefaultName>Textbox67</rd:DefaultName>
@@ -3676,7 +3684,7 @@
                                   <TablixMember>
                                     <Group Name="table1_name">
                                       <GroupExpressions>
-                                        <GroupExpression>=Fields!name.Value</GroupExpression>
+                                        <GroupExpression>=Fields!name.Value &amp; " - " &amp; Fields!department.value</GroupExpression>
                                       </GroupExpressions>
                                     </Group>
                                     <SortExpressions>
@@ -3693,6 +3701,14 @@
                                         <Group Name="table1_Details_Group">
                                           <DataElementName>Detail</DataElementName>
                                         </Group>
+                                        <SortExpressions>
+                                          <SortExpression>
+                                            <Value>=Fields!color.Value</Value>
+                                          </SortExpression>
+                                          <SortExpression>
+                                            <Value>=Fields!size.Value</Value>
+                                          </SortExpression>
+                                        </SortExpressions>
                                         <TablixMembers>
                                           <TablixMember />
                                         </TablixMembers>
@@ -4017,10 +4033,20 @@
   <ReportParameters>
     <ReportParameter Name="start_date">
       <DataType>DateTime</DataType>
+      <DefaultValue>
+        <Values>
+          <Value>2/1/2013 12:00:00 AM</Value>
+        </Values>
+      </DefaultValue>
       <Prompt>Start Date</Prompt>
     </ReportParameter>
     <ReportParameter Name="end_date">
       <DataType>DateTime</DataType>
+      <DefaultValue>
+        <Values>
+          <Value>=Now()</Value>
+        </Values>
+      </DefaultValue>
       <Prompt>End Date</Prompt>
     </ReportParameter>
   </ReportParameters>

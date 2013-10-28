@@ -21,39 +21,29 @@ BEGIN
 
 	CREATE TABLE #PO_DATA (style_color_size nvarchar(255), vendor_product_id nvarchar(255), config_sku nvarchar(255))
 	INSERT INTO #PO_DATA (style_color_size) (
-	SELECT '100532-D34-L' UNION ALL
-	SELECT '100532-D34-XL' UNION ALL
-	SELECT '100532-D34-XXL' UNION ALL
-	SELECT '100532-001-S' UNION ALL
-	SELECT '100532-001-L' UNION ALL
-	SELECT '100532-001-XL' UNION ALL
-	SELECT '100557-J65-30' UNION ALL
-	SELECT '100557-J65-32' UNION ALL
-	SELECT '100557-J65-34' UNION ALL
-	SELECT '100557-J65-36' UNION ALL
-	SELECT '100557-J65-38' UNION ALL
-	SELECT '100053-001-S' UNION ALL
-	SELECT '100053-001-M' UNION ALL
-	SELECT '100053-001-L' UNION ALL
-	SELECT '100053-001-XL' UNION ALL
-	SELECT '100778-001-XS' UNION ALL
-	SELECT '100778-001-S' UNION ALL
-	SELECT '100778-001-M' UNION ALL
-	SELECT '100778-001-L' UNION ALL
-	SELECT '100778-J79-S' UNION ALL
-	SELECT '100778-J79-M' UNION ALL
-	SELECT '100778-J79-L' UNION ALL
-	SELECT '100532-D34-M')
+	SELECT '036622-302-S/M' UNION ALL
+	SELECT '036622-302-M/L' UNION ALL
+	SELECT '036622-550-S/M' UNION ALL
+	SELECT '036622-550-M/L' UNION ALL
+	SELECT '036632-703-S/M' UNION ALL
+	SELECT '036632-703-M/L' UNION ALL
+	SELECT '036632-550-S/M' UNION ALL
+	SELECT '036632-550-M/L' UNION ALL
+	SELECT '036710-550-O/S' UNION ALL
+	SELECT '036710-627-O/S' UNION ALL
+	SELECT '036718-304-O/S' UNION ALL
+	SELECT '036718-550-O/S' UNION ALL
+	SELECT '036718-627-O/S')
 	
 
 	INSERT INTO #PO_DATA (vendor_product_id) (
-	SELECT '100532' UNION ALL
-	SELECT '100557' UNION ALL
-	SELECT '100053' UNION ALL
-	SELECT '100778')
+	SELECT '036622' UNION ALL
+	SELECT '036632' UNION ALL
+	SELECT '036710' UNION ALL
+	SELECT '036718')
 	
 	DECLARE @config_string varchar(MAX)
-	SET @config_string = '''''IB-100532'''',''''IB-100557'''',''''IB-100053'''',''''IB-100778'''''
+	SET @config_string = '''''OSP-036622'''',''''OSP-036632'''',''''OSP-036710'''',''''OSP-036718'''''
 	
 	--Here #view_PO_LoadFile gets created and then populated with the desired rows from your desired loadfile:
 	IF OBJECT_ID('tempdb..#view_PO_LoadFile') IS NOT NULL BEGIN
@@ -212,8 +202,9 @@ BEGIN
 		a.url_key = CASE WHEN a.type = 'simple' THEN NULL ELSE a.url_key END,
 		a.season_id = CASE WHEN @po_type = 'Inline' THEN @season_code + ' Inline' 
 						   WHEN @po_type = 'Closeout' THEN @season_code + ' Closeout' END,
-		a.simples_skus = CASE WHEN @po_type = 'Inline' THEN REPLACE(a.simples_skus,@season_code + 'A',@season_code + 'I') 
-							  WHEN @po_type = 'Closeout' THEN REPLACE(a.simples_skus,@season_code + 'A',@season_code + 'C') END,
+		a.simples_skus = CASE WHEN @po_type = 'Inline' AND a.type = 'configurable' THEN REPLACE(a.simples_skus,@season_code + 'A',@season_code + 'I') 
+							  WHEN @po_type = 'Closeout' AND a.type = 'configurable' THEN REPLACE(a.simples_skus,@season_code + 'A',@season_code + 'C') 
+							  WHEN a.type = 'simple' THEN NULL END,
 		a.description = CASE WHEN a.type = 'simple' THEN NULL ELSE a.description END,
 		a.features = CASE WHEN a.type = 'simple' THEN NULL ELSE a.features END
 	FROM tbl_Purchase_Order AS a
@@ -326,7 +317,7 @@ GO
 
 /* START: */
 
-EXEC Inline_Closeout_PO_Building 'IB-F13-1-ADDON', 'Inline', 'Icebreaker', 'IB', 'FW13', 23, 4
+EXEC Inline_Closeout_PO_Building 'OSP-F13-1', 'Inline', 'Osprey', 'OSP', 'FW13', 13, 4
 
 /*
 See below for rules regarding which new SKUs to associate depending on which existing simple products are already associated:

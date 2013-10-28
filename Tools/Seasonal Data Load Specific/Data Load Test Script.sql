@@ -45,6 +45,22 @@ ELSE BEGIN
 END
 SET @output = NULL
 
+-- Duplicate Configurables Test
+PRINT ''
+SELECT @output = COALESCE(@output + CHAR(13) + '		', '') + name FROM
+(SELECT name
+ FROM (SELECT name, COUNT(*) AS total FROM tbl_LoadFile_FW13_MAR WHERE type = 'configurable' GROUP BY name) AS a WHERE a.total > 1) AS x
+ 
+IF @output <> '' BEGIN
+	PRINT 'Failed Duplicate Configurables Test'
+	PRINT '	These configurable products are duplicates:'
+	PRINT '		' + @output
+	SET @output = ''
+END
+ELSE BEGIN
+	PRINT 'Passed Duplicate Configurables Test'
+END
+
 -- One-off Simples test (Single row for a color-way on UPC list)
 PRINT ''
 SELECT @output = COALESCE(@output + CHAR(13) + '		', '') + name FROM

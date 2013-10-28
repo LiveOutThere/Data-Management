@@ -379,8 +379,8 @@ class Linter
 							if (count(explode('-', $data[Linter::SKU])) != 2) 
 								$configurable_errors[] = 'The SKU is improperly formatted on row ' . ($row+1) . '. It should have two dashes but it looks like this: ' . $data[Linter::SKU];
 							
-							if (empty($data[Linter::CATEGORIES])) 
-								$configurable_errors[] = 'The categories value for row ' . ($row+1) . ' is NULL: "' . $data[Linter::CATEGORIES] . '"';
+							if (empty($data[Linter::CATEGORIES]) || $data[Linter::CATEGORIES] == 'Uncategorized') 
+								$configurable_errors[] = 'The categories value for row ' . ($row+1) . ' is either Uncategorized or NULL: "' . $data[Linter::CATEGORIES] . '"';
 							
 							//if (count(array_unique(explode(';;', $data[Linter::CATEGORIES]))) < 2)
 							//	$configurable_errors[] = 'Check the categories value for row ' . ($row+1) . '. It contains less than two categories: ' . $data[Linter::CATEGORIES];

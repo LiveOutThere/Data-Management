@@ -2,14 +2,12 @@
 <SharedDataSet xmlns:rd="http://schemas.microsoft.com/SQLServer/reporting/reportdesigner" xmlns="http://schemas.microsoft.com/sqlserver/reporting/2010/01/shareddatasetdefinition">
   <DataSet Name="">
     <Query>
-      <DataSourceReference>LOT_Inventory</DataSourceReference>
-      <CommandText>SELECT DISTINCT manufacturer FROM view_Join_S13_Loadfiles 
-UNION ALL SELECT NULL AS manufacturer
-ORDER BY manufacturer</CommandText>
+      <DataSourceReference>LOT_Reporting</DataSourceReference>
+      <CommandText>SELECT * FROM magento_manufacturer_list</CommandText>
     </Query>
     <Fields>
-      <Field Name="manufacturer">
-        <DataField>manufacturer</DataField>
+      <Field Name="value">
+        <DataField>value</DataField>
         <rd:TypeName>System.String</rd:TypeName>
       </Field>
     </Fields>

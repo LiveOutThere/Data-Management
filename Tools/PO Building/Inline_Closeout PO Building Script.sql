@@ -206,7 +206,8 @@ BEGIN
 							  WHEN @po_type = 'Closeout' AND a.type = 'configurable' THEN REPLACE(a.simples_skus,@season_code + 'A',@season_code + 'C') 
 							  WHEN a.type = 'simple' THEN NULL END,
 		a.description = CASE WHEN a.type = 'simple' THEN NULL ELSE a.description END,
-		a.features = CASE WHEN a.type = 'simple' THEN NULL ELSE a.features END
+		a.features = CASE WHEN a.type = 'simple' THEN NULL ELSE a.features END,
+		a.price = CASE WHEN a.price LIKE '%0.99%' THEN a.price - 1 ELSE a.price END
 	FROM tbl_Purchase_Order AS a
 	INNER JOIN tbl_Purchase_Order AS b
 	ON a.sku = b.sku

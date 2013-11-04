@@ -50,7 +50,7 @@ SET @output = NULL
 PRINT ''
 SELECT @output = COALESCE(@output + CHAR(13) + '		', '') + name FROM
 (SELECT name
- FROM (SELECT name, COUNT(*) AS total FROM tbl_LoadFile_FW13_MAR WHERE type = 'configurable' GROUP BY name) AS a WHERE a.total > 1) AS x
+ FROM (SELECT name + ' (' + department + ')' AS name, COUNT(*) AS total FROM tbl_LoadFile_FW13_MAR WHERE type = 'configurable' GROUP BY name + ' (' + department + ')') AS a WHERE a.total > 1) AS x
  
 IF @output <> '' BEGIN
 	PRINT 'Failed Duplicate Configurables Test'

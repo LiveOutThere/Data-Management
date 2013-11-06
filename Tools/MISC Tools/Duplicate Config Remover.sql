@@ -33,6 +33,10 @@ IF OBJECT_ID('tempdb..#new_simples') IS NOT NULL BEGIN
 	DROP TABLE #new_simples
 END	
 
+IF OBJECT_ID('tempdb..#middle_simples') IS NOT NULL BEGIN
+	DROP TABLE #middle_simples
+END	
+
 IF OBJECT_ID('tempdb..#old_simples') IS NOT NULL BEGIN
 	DROP TABLE #old_simples
 END	
@@ -62,7 +66,7 @@ INNER JOIN
 	INNER JOIN eav_attribute_option_value AS b
 	ON a.value = b.option_id AND b.store_id = 0 AND a.attribute_id = (SELECT attribute_id FROM eav_attribute WHERE entity_type_id = 4 AND attribute_code = ''department'')) AS c
 ON a.entity_id = c.entity_id   
-WHERE a.type_id = ''configurable'' AND a.created_at > (CURDATE() - 40)
+WHERE a.type_id = ''configurable''
 GROUP BY b.value, c.value
 HAVING COUNT(a.sku) = 2')
 
@@ -78,7 +82,7 @@ INNER JOIN
 	INNER JOIN eav_attribute_option_value AS b
 	ON a.value = b.option_id AND b.store_id = 0 AND a.attribute_id = (SELECT attribute_id FROM eav_attribute WHERE entity_type_id = 4 AND attribute_code = ''department'')) AS c
 ON a.entity_id = c.entity_id   
-WHERE a.type_id = ''configurable'' AND a.created_at > (CURDATE() - 40)')
+WHERE a.type_id = ''configurable''')
 
 -- Here I replicate catalog_product_super_link as a temp table for optimization purposes and in order to avoid querying the live DB
 SELECT * INTO #associated_products FROM OPENQUERY(MAGENTO,'SELECT * FROM catalog_product_super_link')
@@ -138,11 +142,11 @@ INSERT INTO #new_simples (name, sku, simples_skus)
 	INNER JOIN tbl_Related_Products AS b
 	ON a.name = b.name AND a.newest_created_at = b.created_at
 	
-/*	
+/*
 CREATE TABLE #middle_simples (name nvarchar(255), sku nvarchar(255), simples_skus nvarchar(MAX))
 
 INSERT INTO #middle_simples (name, sku, simples_skus)
-	SELECT DISTINCT (a.name + ' (' + a.department + ')') AS name, b.sku, dbo.getAssociatedProducts(b.entity_id)
+	SELECT DISTINCT a.name, b.sku, dbo.getAssociatedProducts(b.entity_id)
 	FROM #middle_configs AS a
 	INNER JOIN tbl_Related_Products AS b
 	ON a.name = b.name AND a.middle_created_at = b.created_at */
@@ -164,7 +168,7 @@ INSERT INTO #combined_simples (name, sku, simples_skus)
 	FROM #new_simples
 	
 /* Now perform a correlated update to concatenate the simples_skus value for both the 
-OLDER & NEWER configurable products into the simples_skus value for the NEWER configurable sku. During the concatenation,
+OLDER & MIDDLE & NEWER configurable products into the simples_skus value for the NEWER configurable sku. During the concatenation,
 perform some simple manipulations in order to prepare the simples_skus string value for use in a dynamic SQL statement in the next step */
 UPDATE a SET
 	a.simples_skus = '''' + REPLACE(a.simples_skus + ',' + b.simples_skus/* + ',' + c.simples_skus*/,',',''''',''''') + ''''
@@ -185,18 +189,23 @@ SELECT DISTINCT name, MIN(sku) AS sku
 FROM #combined_simples
 GROUP BY name
 HAVING COUNT(name) > 1) AS x
-ORDER BY x.name, x.sku
+ORDER BY LEFT(x.sku,3), x.name
+
+IF @@ROWCOUNT <> 0 BEGIN
+	SELECT 'There are duplicates in the database that must be resolved before you can continue!!!' AS ERROR
+	RETURN 
+END
 
 /* Create temp table to imitate catalog_product_super_link with SKUs, later enabling logical selection 
 of associated simples to assign based on stock status & season. */
-CREATE TABLE #combined_simples_sku (name nvarchar(255), child_sku nvarchar(255))
+CREATE TABLE #combined_simples_sku (name nvarchar(255), child_sku nvarchar(255), qty float, style nvarchar(255), size nvarchar(255), color_code nvarchar(255), season nvarchar(255))
 
 /* Using a CURSOR, iterate through the list of NEWER configurable skus, and replace the entity_id values under the 
 simples_skus column with the corresponding sku values from Magento in order to allow import via MAGMI. Also, populate #combined_simples_sku. */
 DECLARE @name nvarchar(255), @simples_skus nvarchar(MAX), @sql nvarchar(MAX)
 
 DECLARE update_simples_skus CURSOR FOR
-SELECT DISTINCT name, simples_skus FROM #combined_simples
+SELECT DISTINCT REPLACE(name,'''','') AS name, simples_skus FROM #combined_simples
  
 OPEN update_simples_skus
 
@@ -212,12 +221,12 @@ BEGIN
 			FROM catalog_product_entity 
 			WHERE entity_id IN(''' + @simples_skus + ''')) AS x
 			''))
-	WHERE name = ''' + @name + '''
+	WHERE REPLACE(name,'''''''','''') = ''' + @name + '''
 	'
 	EXEC (@sql)
 	
 	INSERT INTO #combined_simples_sku (name, child_sku)
-	SELECT @name AS name, s AS child_sku FROM dbo.Split(',',(SELECT simples_skus FROM #combined_simples WHERE name = @name))
+	SELECT @name AS name, s AS child_sku FROM dbo.Split(',',(SELECT simples_skus FROM #combined_simples WHERE REPLACE(name,'''','') = @name))
 	
 	FETCH NEXT FROM update_simples_skus INTO @name, @simples_skus
 END
@@ -225,12 +234,6 @@ END
 CLOSE update_simples_skus
 DEALLOCATE update_simples_skus
 GO
-
-ALTER TABLE #combined_simples_sku ADD qty float 
-ALTER TABLE #combined_simples_sku ADD style nvarchar(255) 
-ALTER TABLE #combined_simples_sku ADD size nvarchar(255)
-ALTER TABLE #combined_simples_sku ADD color_code nvarchar(255)
-ALTER TABLE #combined_simples_sku ADD season nvarchar(255)
 
 UPDATE a SET
 	a.qty = b.qty,
@@ -261,10 +264,11 @@ ON a.child_sku = b.sku
 DELETE FROM #combined_simples_sku WHERE qty IS NULL
 
 --Begin final cursor loop to assign each NEWER configurable a filtered simples_skus value.
+SET NOCOUNT ON
 DECLARE @name nvarchar(255), @output varchar(MAX)
 
 DECLARE filter_simples_skus CURSOR FOR
-SELECT DISTINCT TOP 5 name FROM #combined_simples WHERE name IS NOT NULL
+SELECT DISTINCT REPLACE(name,'''','') FROM #combined_simples
  
 OPEN filter_simples_skus
 
@@ -280,50 +284,88 @@ BEGIN
 		DROP TABLE #simple_skus
 	END
 	
+	SET @output = ''
+	
 	CREATE TABLE #simple_skus (sku varchar(255), size varchar(255), color_code varchar(255), style varchar(255))
 
 	SELECT child_sku AS sku, size, color_code, season, style, qty INTO #catalog FROM #combined_simples_sku WHERE name = @name
-
+	
 	-- There is no quantity-on-hand for inline or closeout products
-	IF (SELECT SUM(qty) FROM #catalog WHERE season IN ('FW13 Inline', 'SS13 Inline', 'FW13 Closeout', 'SS13 Closeout')) = 0 BEGIN
+	IF ISNULL((SELECT SUM(qty) FROM #catalog WHERE season IN('FW13 Inline', 'SS13 Inline', 'FW12 Inline', 'FW13 Closeout', 'SS13 Closeout')), 0) = 0 BEGIN
 		INSERT INTO #simple_skus (sku, size, color_code, style)
-		SELECT sku, size, color_code, style FROM #catalog WHERE season IN ('FW13 Closeout') -- all ASAPs
+		SELECT sku, size, color_code, style FROM #catalog WHERE season = 'FW13 ASAP' -- all ASAPs
 	END
 	ELSE BEGIN
 		INSERT INTO #simple_skus (sku, size, color_code, style)
-		SELECT sku, size, color_code, style FROM #catalog WHERE season IN ('SS13 Inline') AND qty > 0 -- no ASAPs
-
+		SELECT sku, size, color_code, style FROM #catalog WHERE season = 'FW12 Inline' AND qty > 0 -- no ASAPs
+		
+		-- Now let's add newer Spring '13 inline skus to the list where there is quantity-on-hand and there aren't collisions
+		IF @@ROWCOUNT > 0 BEGIN
+			INSERT INTO #simple_skus (sku, size, color_code, style)
+			SELECT a.sku, a.size, a.color_code, a.style FROM #catalog AS a
+			LEFT JOIN #simple_skus AS b ON a.size = b.size AND a.color_code = b.color_code AND a.style = b.style
+			WHERE season = 'SS13 Inline' AND qty > 0 AND b.sku IS NULL
+		END
+		ELSE BEGIN
+			INSERT INTO #simple_skus (sku, size, color_code, style)
+			SELECT sku, size, color_code, style FROM #catalog WHERE season = 'SS13 Inline' AND qty > 0
+		END
+		
 		-- Now let's add newer Fall '13 inline skus to the list where there is quantity-on-hand and there aren't collisions
-		INSERT INTO #simple_skus (sku, size, color_code, style)
-		SELECT a.sku, a.size, a.color_code, a.style FROM #catalog AS a
-		LEFT JOIN #simple_skus AS b ON a.size = b.size AND a.color_code = b.color_code AND a.style = b.style
-		WHERE season = 'FW13 Inline' AND qty > 0 AND b.sku IS NULL
+		IF @@ROWCOUNT > 0 BEGIN
+			INSERT INTO #simple_skus (sku, size, color_code, style)
+			SELECT a.sku, a.size, a.color_code, a.style FROM #catalog AS a
+			LEFT JOIN #simple_skus AS b ON a.size = b.size AND a.color_code = b.color_code AND a.style = b.style
+			WHERE season = 'FW13 Inline' AND qty > 0 AND b.sku IS NULL
+		END
+		ELSE BEGIN
+			INSERT INTO #simple_skus (sku, size, color_code, style)
+			SELECT sku, size, color_code, style FROM #catalog WHERE season = 'FW13 Inline' AND qty > 0
+		END
 
 		-- Now let's add old Spring '13 closeout skus to the list where there is quantity-on-hand and there aren't collisions
-		INSERT INTO #simple_skus (sku, size, color_code, style)
-		SELECT a.sku, a.size, a.color_code, a.style FROM #catalog AS a
-		LEFT JOIN #simple_skus AS b ON a.size = b.size AND a.color_code = b.color_code AND a.style = b.style
-		WHERE season = 'SS13 Closeout' AND qty > 0 AND b.sku IS NULL
+		IF @@ROWCOUNT > 0 BEGIN
+			INSERT INTO #simple_skus (sku, size, color_code, style)
+			SELECT a.sku, a.size, a.color_code, a.style FROM #catalog AS a
+			LEFT JOIN #simple_skus AS b ON a.size = b.size AND a.color_code = b.color_code AND a.style = b.style
+			WHERE season = 'SS13 Closeout' AND qty > 0 AND b.sku IS NULL
+		END
+		ELSE BEGIN
+			INSERT INTO #simple_skus (sku, size, color_code, style)
+			SELECT sku, size, color_code, style FROM #catalog WHERE season = 'SS13 Closeout' AND qty > 0
+		END
 		
 		-- Now let's add newer Fall '13 closeout skus to the list where is quantity-on-hand and there aren't collisions
-		INSERT INTO #simple_skus (sku, size, color_code, style)
-		SELECT a.sku, a.size, a.color_code, a.style FROM #catalog AS a
-		LEFT JOIN #simple_skus AS b ON a.size = b.size AND a.color_code = b.color_code AND a.style = b.style
-		WHERE season = 'FW13 Closeout' AND b.sku IS NULL
+		IF @@ROWCOUNT > 0 BEGIN
+			INSERT INTO #simple_skus (sku, size, color_code, style)
+			SELECT a.sku, a.size, a.color_code, a.style FROM #catalog AS a
+			LEFT JOIN #simple_skus AS b ON a.size = b.size AND a.color_code = b.color_code AND a.style = b.style
+			WHERE season = 'FW13 Closeout' AND b.sku IS NULL
+		END
+		ELSE BEGIN
+			INSERT INTO #simple_skus (sku, size, color_code, style)
+			SELECT sku, size, color_code, style FROM #catalog WHERE season = 'FW13 Closeout' AND qty > 0
+		END
 		
 		-- Now let's add in-stock ASAPs to the list
-		INSERT INTO #simple_skus (sku, size, color_code, style)
-		SELECT a.sku, a.size, a.color_code, a.style FROM #catalog AS a
-		LEFT JOIN #simple_skus AS b ON a.size = b.size AND a.color_code = b.color_code AND a.style = b.style
-		WHERE season LIKE '%ASAP%' AND qty > 0 AND b.sku IS NULL
+		IF @@ROWCOUNT > 0 BEGIN
+			INSERT INTO #simple_skus (sku, size, color_code, style)
+			SELECT a.sku, a.size, a.color_code, a.style FROM #catalog AS a
+			LEFT JOIN #simple_skus AS b ON a.size = b.size AND a.color_code = b.color_code AND a.style = b.style
+			WHERE season LIKE '%ASAP%' AND qty > 0 AND b.sku IS NULL
+		END
+		ELSE BEGIN
+			INSERT INTO #simple_skus (sku, size, color_code, style)
+			SELECT sku, size, color_code, style FROM #catalog WHERE season LIKE '%ASAP%' AND qty > 0
+		END
 	END	
 
-	SET @output = ''
 	(SELECT @output = COALESCE(@output + ',', '') + sku FROM
-	(SELECT sku FROM #simple_skus) AS x)
+	(SELECT sku FROM #simple_skus WHERE sku <> '') AS x)
 	
+	--PRINT @name + ' ' + @output
+	--SELECT * FROM #catalog
 	UPDATE #combined_simples SET simples_skus = @output WHERE name = @name
-	PRINT 'UPDATE #combined_simples SET simples_skus = ''' + @output + ''' WHERE name = ''' + @name + ''''
 	
 	FETCH NEXT FROM filter_simples_skus INTO @name
 END
@@ -331,9 +373,6 @@ END
 CLOSE filter_simples_skus
 DEALLOCATE filter_simples_skus
 GO
-
-SELECT * FROM #combined_simples
-SELECT * FROM #combined_simples_sku
 
 /* Perform two simple SELECT statements, preparing the final data for the following actions:
 	1. Update the simples_skus attribute for the NEWER configurable to associated it with ALL of the simple products from BOTH configurables 
@@ -344,6 +383,9 @@ FROM #combined_simples
 
 SELECT '1' AS 'magmi:delete', sku
 FROM #old_simples
+UNION ALL
+--SELECT '1' AS 'magmi:delete', sku
+--FROM #middle_simples
 
 /*
 

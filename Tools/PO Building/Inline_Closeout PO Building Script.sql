@@ -21,29 +21,25 @@ BEGIN
 
 	CREATE TABLE #PO_DATA (style_color_size nvarchar(255), vendor_product_id nvarchar(255), config_sku nvarchar(255))
 	INSERT INTO #PO_DATA (style_color_size) (
-	SELECT '036622-302-S/M' UNION ALL
-	SELECT '036622-302-M/L' UNION ALL
-	SELECT '036622-550-S/M' UNION ALL
-	SELECT '036622-550-M/L' UNION ALL
-	SELECT '036632-703-S/M' UNION ALL
-	SELECT '036632-703-M/L' UNION ALL
-	SELECT '036632-550-S/M' UNION ALL
-	SELECT '036632-550-M/L' UNION ALL
-	SELECT '036710-550-O/S' UNION ALL
-	SELECT '036710-627-O/S' UNION ALL
-	SELECT '036718-304-O/S' UNION ALL
-	SELECT '036718-550-O/S' UNION ALL
-	SELECT '036718-627-O/S')
+	SELECT 'A7ZG-B5K-XL' UNION ALL
+	SELECT 'A7ZG-B5K-M' UNION ALL
+	SELECT 'A7ZJ-A4M-S' UNION ALL
+	SELECT 'A7ZJ-A4M-XL' UNION ALL
+	SELECT 'A7ZJ-A4M-M' UNION ALL
+	SELECT 'A7ZJ-A4M-L' UNION ALL
+	SELECT 'A7ZN-A5L-M' UNION ALL
+	SELECT 'A7ZN-A5L-XS' UNION ALL
+	SELECT 'A7ZN-A5L-S' UNION ALL
+	SELECT 'A7ZN-A5L-L')
 	
 
 	INSERT INTO #PO_DATA (vendor_product_id) (
-	SELECT '036622' UNION ALL
-	SELECT '036632' UNION ALL
-	SELECT '036710' UNION ALL
-	SELECT '036718')
+	SELECT 'A7ZG' UNION ALL
+	SELECT 'A7ZJ' UNION ALL
+	SELECT 'A7ZN')
 	
 	DECLARE @config_string varchar(MAX)
-	SET @config_string = '''''OSP-036622'''',''''OSP-036632'''',''''OSP-036710'''',''''OSP-036718'''''
+	SET @config_string = '''''TNF-A7ZG'''',''''TNF-A7ZJ'''',''''TNF-A7ZN'''''
 	
 	--Here #view_PO_LoadFile gets created and then populated with the desired rows from your desired loadfile:
 	IF OBJECT_ID('tempdb..#view_PO_LoadFile') IS NOT NULL BEGIN
@@ -207,7 +203,7 @@ BEGIN
 							  WHEN a.type = 'simple' THEN NULL END,
 		a.description = CASE WHEN a.type = 'simple' THEN NULL ELSE a.description END,
 		a.features = CASE WHEN a.type = 'simple' THEN NULL ELSE a.features END,
-		a.price = CASE WHEN a.price LIKE '%0.99%' THEN a.price - 1 ELSE a.price END
+		a.price = CASE WHEN a.price LIKE '%0.99%' THEN CAST(a.price AS float) - 1 ELSE a.price END
 	FROM tbl_Purchase_Order AS a
 	INNER JOIN tbl_Purchase_Order AS b
 	ON a.sku = b.sku
@@ -318,7 +314,7 @@ GO
 
 /* START: */
 
-EXEC Inline_Closeout_PO_Building 'OSP-F13-1', 'Inline', 'Osprey', 'OSP', 'FW13', 13, 4
+EXEC Inline_Closeout_PO_Building 'TNF-THERMOBALL', 'Inline', 'The North Face', 'TNF', 'FW13', 10, 3
 
 /*
 See below for rules regarding which new SKUs to associate depending on which existing simple products are already associated:

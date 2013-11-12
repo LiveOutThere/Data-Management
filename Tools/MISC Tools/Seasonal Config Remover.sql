@@ -8,6 +8,7 @@ FROM catalog_product_entity
 WHERE type_id = ''configurable'' AND (LENGTH(sku) - LENGTH(REPLACE(sku,''-'',''''))) > 1 AND LEFT(sku,4) <> ''MER-''
 ')
 
+SET NOCOUNT ON
 DECLARE @old_sku nvarchar(255), @new_sku nvarchar(255)
 
 DECLARE sku_fix_sql CURSOR FOR
@@ -30,6 +31,7 @@ END
  
 CLOSE sku_fix_sql
 DEALLOCATE sku_fix_sql
+SET NOCOUNT OFF
 GO
 
 SELECT new_sku, '' AS season_id FROM #sku_fix

@@ -68,7 +68,7 @@ INNER JOIN
 ON a.entity_id = c.entity_id   
 WHERE a.type_id = ''configurable''
 GROUP BY b.value, c.value
-HAVING COUNT(a.sku) = 2')
+HAVING COUNT(a.sku) = 3')
 
 /* This SELECT returns information about each configurable product from Magento regardless of whether it has a duplicate Name + Department combination */
 SELECT * INTO #configs_reference FROM OPENQUERY(MAGENTO,'
@@ -106,7 +106,7 @@ SELECT oldest_configs.* INTO #oldest_configs FROM
 	INNER JOIN #associated_products AS c
 	ON a.entity_id = c.parent_id
 	GROUP BY a.name, a.department) AS oldest_configs
-/*	
+	
 /* This select extracts all of the rows from the temp table created in the previous select for the MIDDLE of each 
 set of duplicate configurable products */ 
 SELECT middle_configs.* INTO #middle_configs FROM 
@@ -119,7 +119,7 @@ SELECT middle_configs.* INTO #middle_configs FROM
 	INNER JOIN (SELECT name, MAX(created_at) AS max_date, MIN(created_at) AS min_date FROM #configs_reference GROUP BY name) AS d
 	ON a.name = d.name
 	WHERE a.created_at <> d.max_date AND a.created_at <> d.min_date
-	) AS middle_configs */
+	) AS middle_configs 
 
 /* This select extracts all of the rows from the temp table created in the previous select for the NEWER of each 
 set of duplicate configurable products */
@@ -142,14 +142,14 @@ INSERT INTO #new_simples (name, sku, simples_skus)
 	INNER JOIN tbl_Related_Products AS b
 	ON a.name = b.name AND a.newest_created_at = b.created_at
 	
-/*
+
 CREATE TABLE #middle_simples (name nvarchar(255), sku nvarchar(255), simples_skus nvarchar(MAX))
 
 INSERT INTO #middle_simples (name, sku, simples_skus)
 	SELECT DISTINCT a.name, b.sku, dbo.getAssociatedProducts(b.entity_id)
 	FROM #middle_configs AS a
 	INNER JOIN tbl_Related_Products AS b
-	ON a.name = b.name AND a.middle_created_at = b.created_at */
+	ON a.name = b.name AND a.middle_created_at = b.created_at
 	
 CREATE TABLE #old_simples (name nvarchar(255), sku nvarchar(255), simples_skus nvarchar(MAX))
 
@@ -171,29 +171,37 @@ INSERT INTO #combined_simples (name, sku, simples_skus)
 OLDER & MIDDLE & NEWER configurable products into the simples_skus value for the NEWER configurable sku. During the concatenation,
 perform some simple manipulations in order to prepare the simples_skus string value for use in a dynamic SQL statement in the next step */
 UPDATE a SET
-	a.simples_skus = '''' + REPLACE(a.simples_skus + ',' + b.simples_skus/* + ',' + c.simples_skus*/,',',''''',''''') + ''''
+	a.simples_skus = '''' + REPLACE(a.simples_skus + ',' + b.simples_skus + ',' + c.simples_skus,',',''''',''''') + ''''
 FROM #combined_simples AS a
 INNER JOIN #old_simples AS b
 ON a.name = b.name
---INNER JOIN #middle_simples AS c
---ON a.name = c.name
+INNER JOIN #middle_simples AS c
+ON a.name = c.name
 
 --Identify duplicate records within database to be fixed.
-SELECT x.* FROM
-(SELECT DISTINCT name, MAX(sku) AS sku
-FROM #combined_simples
-GROUP BY name
-HAVING COUNT(name) > 1
-UNION ALL
-SELECT DISTINCT name, MIN(sku) AS sku
-FROM #combined_simples
-GROUP BY name
-HAVING COUNT(name) > 1) AS x
-ORDER BY LEFT(x.sku,3), x.name
-
-IF @@ROWCOUNT <> 0 BEGIN
+IF(SELECT TOP 1 name FROM
+	(SELECT x.* FROM
+		(SELECT DISTINCT name, MAX(sku) AS sku
+		FROM #combined_simples
+		GROUP BY name
+		HAVING COUNT(name) > 1
+		UNION ALL
+		SELECT DISTINCT name, MIN(sku) AS sku
+		FROM #combined_simples
+		GROUP BY name
+		HAVING COUNT(name) > 1) AS x) AS duplicates) IS NOT NULL BEGIN
 	SELECT 'There are duplicates in the database that must be resolved before you can continue!!!' AS ERROR
-	RETURN 
+	SELECT x.* FROM
+		(SELECT DISTINCT name, MAX(sku) AS sku
+		FROM #combined_simples
+		GROUP BY name
+		HAVING COUNT(name) > 1
+		UNION ALL
+		SELECT DISTINCT name, MIN(sku) AS sku
+		FROM #combined_simples
+		GROUP BY name
+		HAVING COUNT(name) > 1) AS x
+	ORDER BY LEFT(x.sku,3), x.name
 END
 
 /* Create temp table to imitate catalog_product_super_link with SKUs, later enabling logical selection 
@@ -222,11 +230,14 @@ BEGIN
 			WHERE entity_id IN(''' + @simples_skus + ''')) AS x
 			''))
 	WHERE REPLACE(name,'''''''','''') = ''' + @name + '''
+	OPTION (MAXRECURSION 0)
 	'
 	EXEC (@sql)
 	
 	INSERT INTO #combined_simples_sku (name, child_sku)
-	SELECT @name AS name, s AS child_sku FROM dbo.Split(',',(SELECT simples_skus FROM #combined_simples WHERE REPLACE(name,'''','') = @name))
+	SELECT @name AS name, s AS child_sku 
+	FROM dbo.Split(',',(SELECT simples_skus FROM #combined_simples WHERE REPLACE(name,'''','') = @name))
+	OPTION (MAXRECURSION 0)
 	
 	FETCH NEXT FROM update_simples_skus INTO @name, @simples_skus
 END
@@ -372,7 +383,16 @@ END
  
 CLOSE filter_simples_skus
 DEALLOCATE filter_simples_skus
+SET NOCOUNT OFF
 GO
+
+/* Check for empty simples_skus values. This only occurs if BOTH duplicate configurables are only associated 
+to either Closeout or Inline, and ALL of the simple products for BOTH configurables are OOS. If this occurs, remove
+any and all rows with empty simples_skus and manually associate the NEW configurable with it's FW13A simples. */
+IF (SELECT TOP 1 name FROM #combined_simples WHERE simples_skus = '') IS NOT NULL BEGIN
+	SELECT * FROM #combined_simples WHERE simples_skus = ''
+	RETURN
+END
 
 /* Perform two simple SELECT statements, preparing the final data for the following actions:
 	1. Update the simples_skus attribute for the NEWER configurable to associated it with ALL of the simple products from BOTH configurables 
@@ -384,8 +404,10 @@ FROM #combined_simples
 SELECT '1' AS 'magmi:delete', sku
 FROM #old_simples
 UNION ALL
---SELECT '1' AS 'magmi:delete', sku
---FROM #middle_simples
+SELECT '1' AS 'magmi:delete', sku
+FROM #middle_simples
+
+
 
 /*
 
@@ -396,4 +418,23 @@ RULES:
 3. In the case where there are Inline & Closeout children with the same Color/Size, Inline simples take precedence. 
 4. In the case where there is a seasonal conflict, always pick the older season (unless the older simple is Closeout and the newer is Inline).
 
+*/
+
+/* MYSQL QUERIES FOR TESTING:
+
+SELECT COUNT(x.child) AS orphans
+FROM (
+SELECT NULL AS parent, a.sku AS child, SUM(c.qty) AS qty
+FROM catalog_product_entity AS a
+LEFT JOIN catalog_product_super_link AS b ON a.entity_id = b.product_id
+LEFT JOIN cataloginventory_stock_item AS c ON a.entity_id = c.product_id
+WHERE (c.qty - c.stock_reserved_qty) > 0 AND b.parent_id IS NULL AND a.type_id = 'simple' AND a.sku NOT LIKE '%FREE%'
+GROUP BY a.sku) AS x;
+
+SELECT NULL AS parent, a.sku AS child, SUM(c.qty) AS qty
+FROM catalog_product_entity AS a
+LEFT JOIN catalog_product_super_link AS b ON a.entity_id = b.product_id
+LEFT JOIN cataloginventory_stock_item AS c ON a.entity_id = c.product_id
+WHERE (c.qty - c.stock_reserved_qty) > 0 AND b.parent_id IS NULL AND a.type_id = 'simple' AND a.sku NOT LIKE '%FREE%'
+GROUP BY a.sku;
 */

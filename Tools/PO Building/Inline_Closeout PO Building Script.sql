@@ -6,6 +6,7 @@ ALTER PROCEDURE Inline_Closeout_PO_Building
 	@po_type nvarchar(30), 
 	@brand nvarchar(30),
 	@brand_code nvarchar(30),
+	@season_code nvarchar(30),
 	@simple_count float,
 	@config_count float
 AS
@@ -20,134 +21,25 @@ BEGIN
 
 	CREATE TABLE #PO_DATA (style_color_size nvarchar(255), vendor_product_id nvarchar(255), config_sku nvarchar(255))
 	INSERT INTO #PO_DATA (style_color_size) (
-	SELECT 'A0NK-D0R-M' UNION ALL
-	SELECT 'A0NK-D0R-L' UNION ALL
-	SELECT 'A0NK-D0R-XL' UNION ALL
-	SELECT 'A0NK-JK3-S' UNION ALL
-	SELECT 'A0NK-JK3-M' UNION ALL
-	SELECT 'A0NK-JK3-L' UNION ALL
-	SELECT 'A0NK-JK3-XL' UNION ALL
-	SELECT 'A213-128-O/S' UNION ALL
-	SELECT 'A213-ET8-O/S' UNION ALL
-	SELECT 'A213-H8H-O/S' UNION ALL
-	SELECT 'A213-KX7-O/S' UNION ALL
-	SELECT 'A51S-44A-XS' UNION ALL
-	SELECT 'A51S-44A-S' UNION ALL
-	SELECT 'A51S-44A-M' UNION ALL
-	SELECT 'A51S-44A-L' UNION ALL
-	SELECT 'A51S-44A-XL' UNION ALL
-	SELECT 'A51S-JK3-XS' UNION ALL
-	SELECT 'A51S-JK3-S' UNION ALL
-	SELECT 'A51S-JK3-M' UNION ALL
-	SELECT 'A51S-JK3-L' UNION ALL
-	SELECT 'A51S-JK3-XL' UNION ALL
-	SELECT 'A6YC-D3R-XS' UNION ALL
-	SELECT 'A6YC-D3R-S' UNION ALL
-	SELECT 'A6YC-D3R-M' UNION ALL
-	SELECT 'A6YC-D3R-L' UNION ALL
-	SELECT 'A6YC-D3R-XL' UNION ALL
-	SELECT 'A6YC-JK3-XS' UNION ALL
-	SELECT 'A6YC-JK3-S' UNION ALL
-	SELECT 'A6YC-JK3-M' UNION ALL
-	SELECT 'A6YC-JK3-L' UNION ALL
-	SELECT 'A6YC-JK3-XL' UNION ALL
-	SELECT 'A7MP-D3R-XS-REG' UNION ALL
-	SELECT 'A7MP-D3R-S-REG' UNION ALL
-	SELECT 'A7MP-D3R-M-REG' UNION ALL
-	SELECT 'A7MP-D3R-L-REG' UNION ALL
-	SELECT 'A7MP-D3R-XL-REG' UNION ALL
-	SELECT 'A7SA-JK3-S' UNION ALL
-	SELECT 'A7SA-JK3-M' UNION ALL
-	SELECT 'A7SA-JK3-L' UNION ALL
-	SELECT 'A7SA-JK3-XL' UNION ALL
-	SELECT 'A8LQ-JK3-XS-REG' UNION ALL
-	SELECT 'A8LQ-JK3-S-REG' UNION ALL
-	SELECT 'A8LQ-JK3-M-REG' UNION ALL
-	SELECT 'A8LQ-JK3-L-REG' UNION ALL
-	SELECT 'A8LQ-JK3-XL-REG' UNION ALL
-	SELECT 'A8WE-044-XS' UNION ALL
-	SELECT 'A8WE-044-S' UNION ALL
-	SELECT 'A8WE-044-M' UNION ALL
-	SELECT 'A8WE-044-L' UNION ALL
-	SELECT 'A8WE-044-XL' UNION ALL
-	SELECT 'A8WE-682-XS' UNION ALL
-	SELECT 'A8WE-682-S' UNION ALL
-	SELECT 'A8WE-682-M' UNION ALL
-	SELECT 'A8WE-682-L' UNION ALL
-	SELECT 'A8WE-682-XL' UNION ALL
-	SELECT 'A8WE-JK3-XS' UNION ALL
-	SELECT 'A8WE-JK3-S' UNION ALL
-	SELECT 'A8WE-JK3-M' UNION ALL
-	SELECT 'A8WE-JK3-L' UNION ALL
-	SELECT 'A8WE-JK3-XL' UNION ALL
-	SELECT 'A8WW-E8T-S' UNION ALL
-	SELECT 'A8WW-E8T-M' UNION ALL
-	SELECT 'A8WW-E8T-L' UNION ALL
-	SELECT 'A8WW-E8T-XL' UNION ALL
-	SELECT 'A8WW-KX9-S' UNION ALL
-	SELECT 'A8WW-KX9-M' UNION ALL
-	SELECT 'A8WW-KX9-L' UNION ALL
-	SELECT 'A8WW-KX9-XL' UNION ALL
-	SELECT 'A8XC-JK3-S' UNION ALL
-	SELECT 'A8XC-JK3-M' UNION ALL
-	SELECT 'A8XC-JK3-L' UNION ALL
-	SELECT 'A8XC-JK3-XL' UNION ALL
-	SELECT 'A8XZ-62X-S' UNION ALL
-	SELECT 'A8XZ-62X-M' UNION ALL
-	SELECT 'A8XZ-62X-L' UNION ALL
-	SELECT 'A8XZ-62X-XL' UNION ALL
-	SELECT 'A8XZ-62X-XXL' UNION ALL
-	SELECT 'A8XZ-JK3-S' UNION ALL
-	SELECT 'A8XZ-JK3-M' UNION ALL
-	SELECT 'A8XZ-JK3-L' UNION ALL
-	SELECT 'A8XZ-JK3-XL' UNION ALL
-	SELECT 'A8XZ-JK3-XXL' UNION ALL
-	SELECT 'A9FA-D1T-O/S' UNION ALL
-	SELECT 'A9FA-D3R-O/S' UNION ALL
-	SELECT 'A9FA-FN4-O/S' UNION ALL
-	SELECT 'AJGW-D2R-M' UNION ALL
-	SELECT 'AJGW-D2R-L' UNION ALL
-	SELECT 'AJGW-D2R-XL' UNION ALL
-	SELECT 'AMVY-A8U-S' UNION ALL
-	SELECT 'AMVY-A8U-M' UNION ALL
-	SELECT 'AMVY-A8U-L' UNION ALL
-	SELECT 'AMVY-A8U-XL' UNION ALL
-	SELECT 'AMVY-A8U-XXL' UNION ALL
-	SELECT 'AMVY-H6A-S' UNION ALL
-	SELECT 'AMVY-H6A-M' UNION ALL
-	SELECT 'AMVY-H6A-L' UNION ALL
-	SELECT 'AMVY-H6A-XL' UNION ALL
-	SELECT 'AMVY-H6A-XXL' UNION ALL
-	SELECT 'AUEY-E0R-S' UNION ALL
-	SELECT 'AUEY-E0R-M' UNION ALL
-	SELECT 'AUEY-E0R-L' UNION ALL
-	SELECT 'AUEY-E0R-XL' UNION ALL
-	SELECT 'AUEY-E0R-XXL' UNION ALL
-	SELECT 'AUEY-KX7-S' UNION ALL
-	SELECT 'AUEY-KX7-M' UNION ALL
-	SELECT 'AUEY-KX7-L' UNION ALL
-	SELECT 'AUEY-KX7-XL' UNION ALL
-	SELECT 'AUEY-KX7-XXL')
+	SELECT 'A7ZG-B5K-XL' UNION ALL
+	SELECT 'A7ZG-B5K-M' UNION ALL
+	SELECT 'A7ZJ-A4M-S' UNION ALL
+	SELECT 'A7ZJ-A4M-XL' UNION ALL
+	SELECT 'A7ZJ-A4M-M' UNION ALL
+	SELECT 'A7ZJ-A4M-L' UNION ALL
+	SELECT 'A7ZN-A5L-M' UNION ALL
+	SELECT 'A7ZN-A5L-XS' UNION ALL
+	SELECT 'A7ZN-A5L-S' UNION ALL
+	SELECT 'A7ZN-A5L-L')
+	
 
 	INSERT INTO #PO_DATA (vendor_product_id) (
-	SELECT 'A0NK' UNION ALL
-	SELECT 'A213' UNION ALL
-	SELECT 'A51S' UNION ALL
-	SELECT 'A6YC' UNION ALL
-	SELECT 'A7MP' UNION ALL
-	SELECT 'A7SA' UNION ALL
-	SELECT 'A8LQ' UNION ALL
-	SELECT 'A8WE' UNION ALL
-	SELECT 'A8WW' UNION ALL
-	SELECT 'A8XC' UNION ALL
-	SELECT 'A8XZ' UNION ALL
-	SELECT 'A9FA' UNION ALL
-	SELECT 'AJGW' UNION ALL
-	SELECT 'AMVY' UNION ALL
-	SELECT 'AUEY')
+	SELECT 'A7ZG' UNION ALL
+	SELECT 'A7ZJ' UNION ALL
+	SELECT 'A7ZN')
 	
 	DECLARE @config_string varchar(MAX)
-	SET @config_string = '''''TNF-A0NK'''',''''TNF-A213'''',''''TNF-A51S'''',''''TNF-A6YC'''',''''TNF-A7MP'''',''''TNF-A7SA'''',''''TNF-A8LQ'''',''''TNF-A8WE'''',''''TNF-A8WW'''',''''TNF-A8XC'''',''''TNF-A8XZ'''',''''TNF-A9FA'''',''''TNF-AJGW'''',''''TNF-AMVY'''',''''TNF-AUEY'''''
+	SET @config_string = '''''TNF-A7ZG'''',''''TNF-A7ZJ'''',''''TNF-A7ZN'''''
 	
 	--Here #view_PO_LoadFile gets created and then populated with the desired rows from your desired loadfile:
 	IF OBJECT_ID('tempdb..#view_PO_LoadFile') IS NOT NULL BEGIN
@@ -160,7 +52,7 @@ BEGIN
 	SET @sql = '
 	INSERT INTO #view_PO_LoadFile
 	SELECT a.*
-	FROM LOT_Inventory.dbo.tbl_LoadFile_FW13_' + @brand_code + ' AS a
+	FROM LOT_Inventory.dbo.tbl_LoadFile_' + @season_code + '_' + @brand_code + ' AS a
 	INNER JOIN #PO_DATA AS b
 	ON (a.vendor_product_id + ''-'' + a.vendor_color_code + ''-'' + a.vendor_size_code) COLLATE Latin1_General_CI_AS = b.style_color_size COLLATE Latin1_General_CI_AS
 	WHERE a.type = ''simple''
@@ -168,12 +60,17 @@ BEGIN
 	UNION ALL
 	
 	SELECT a.*
-	FROM LOT_Inventory.dbo.tbl_LoadFile_FW13_' + @brand_code + ' AS a
+	FROM LOT_Inventory.dbo.tbl_LoadFile_' + @season_code + '_' + @brand_code + ' AS a
 	INNER JOIN #PO_DATA AS b
 	ON a.vendor_product_id COLLATE Latin1_General_CI_AS = b.vendor_product_id COLLATE Latin1_General_CI_AS
 	WHERE a.type = ''configurable''
 	ORDER BY a.type DESC,a.department,a.vendor_product_id,a.vendor_color_code,a.vendor_size_code'
 	EXEC (@sql)
+	
+	IF @@ROWCOUNT = 0 BEGIN
+		SELECT 'Nothing from #PO_DATA is matching LOT_Inventory.dbo.tbl_LoadFile_' + @season_code + '_' + CAST(@brand_code AS varchar(155)) + '!!!' AS ERROR
+		RETURN 
+	END
 	
 	--Determine whether the PO procedure is building a complete PO, otherwise end the procudure and troubleshoot:
 	IF OBJECT_ID('tempdb..#missing_rows') IS NOT NULL BEGIN
@@ -181,12 +78,14 @@ BEGIN
 	END	
 	
 	CREATE TABLE #missing_rows (sku nvarchar(255), style nvarchar(255))
+	
 	INSERT INTO #missing_rows (sku)	
 	SELECT a.style_color_size
 	FROM #PO_DATA AS a
 	FULL JOIN #view_PO_LoadFile AS b
 	ON a.style_color_size = b.vendor_product_id + '-' + b.vendor_color_code + '-' + b.vendor_size_code
 	WHERE a.style_color_size IS NOT NULL AND b.sku IS NULL
+	
 	INSERT INTO #missing_rows (style)
 	SELECT a.vendor_product_id
 	FROM #PO_DATA AS a
@@ -223,47 +122,6 @@ BEGIN
 	--Insert the contents of #view_PO_LoadFile into tbl_Purchase_Order, as well as a PO_NUM value:
 	INSERT INTO tbl_Purchase_Order SELECT *, @po_num AS PO_NUM FROM #view_PO_LoadFile
 
-	--Create the #missing_data table and insert rows for any and all issues:
-	IF OBJECT_ID('tempdb..#missing_data') IS NOT NULL BEGIN
-		DROP TABLE #missing_data
-	END	
-
-	CREATE TABLE #missing_data (id int IDENTITY(1,1), issue nvarchar(255),name nvarchar(MAX),vendor_product_id nvarchar(100),choose_color nvarchar(MAX),vendor_color_code nvarchar(MAX))
-	INSERT INTO #missing_data
-	SELECT DISTINCT 'Missing Image', name, vendor_product_id, choose_color, vendor_color_code
-	FROM tbl_Purchase_Order
-	WHERE PO_NUM = @po_num AND type = 'simple' AND image IS NULL
-	UNION ALL
-	SELECT DISTINCT 'Missing Description', name, vendor_product_id, '', ''
-	FROM tbl_Purchase_Order
-	WHERE PO_NUM = @po_num AND type = 'configurable' AND description IS NULL
-	UNION ALL
-	SELECT DISTINCT 'Missing Features', name, vendor_product_id, '', ''
-	FROM tbl_Purchase_Order
-	WHERE PO_NUM = @po_num AND type = 'configurable' AND features IS NULL
-	
-	UPDATE #missing_data SET issue = 'Missing Description & Features' WHERE name IN(
-		SELECT DISTINCT name
-		FROM #missing_data
-		GROUP BY name
-		HAVING COUNT(*) > 1 AND MAX(issue) <> 'Missing Image')
-	
-	DELETE FROM #missing_data WHERE id IN(
-		SELECT MAX(id)
-		FROM #missing_data
-		GROUP BY name
-		HAVING MAX(issue) = 'Missing Description & Features')
-	
-	/* BEGIN DATA MANIPULATION */
-	
-	--Update the categories values for configurables without categories:
-	UPDATE a SET
-		a.categories = b.categories
-	FROM tbl_Purchase_Order AS a
-	INNER JOIN LOT_Inventory.dbo.tbl_Magento_Categories AS b
-	ON a.sku COLLATE SQL_Latin1_General_CP1_CI_AS = b.sku COLLATE SQL_Latin1_General_CP1_CI_AS
-	WHERE a.PO_NUM = @po_num AND a.type = 'configurable'
-	
 	--Pull the SEO optimized product descriptions from the MYSQL database and assign them to the configurables from the loadfile:
 	SET @sql = '
 	UPDATE a SET
@@ -278,7 +136,48 @@ BEGIN
 	ON a.sku = b.sku
 	WHERE a.PO_NUM = ' + '''' + @po_num + '''' + ''
 	EXEC (@sql)
+
+	--Create the #missing_data table and insert rows for any and all issues:
+	IF OBJECT_ID('tempdb..#missing_data') IS NOT NULL BEGIN
+		DROP TABLE #missing_data
+	END	
+
+	CREATE TABLE #missing_data (id int IDENTITY(1,1), issue nvarchar(255),name nvarchar(MAX),vendor_product_id nvarchar(100),choose_color nvarchar(MAX),vendor_color_code nvarchar(MAX))
+	INSERT INTO #missing_data
+	SELECT DISTINCT 'Missing Image', name, vendor_product_id, choose_color, vendor_color_code
+	FROM tbl_Purchase_Order
+	WHERE PO_NUM = @po_num AND type = 'simple' AND image IS NULL
+	UNION ALL
+	SELECT DISTINCT 'Missing Description', name, vendor_product_id, '', ''
+	FROM tbl_Purchase_Order
+	WHERE PO_NUM = @po_num AND (type = 'configurable' AND description IS NULL OR type = 'configurable' AND description = '')
+	UNION ALL
+	SELECT DISTINCT 'Missing Features', name, vendor_product_id, '', ''
+	FROM tbl_Purchase_Order
+	WHERE PO_NUM = @po_num AND (type = 'configurable' AND features IS NULL OR type = 'configurable' AND features = '')
 	
+	UPDATE #missing_data SET issue = 'Missing Description & Features' WHERE name IN(
+		SELECT DISTINCT name
+		FROM #missing_data
+		GROUP BY name,vendor_product_id
+		HAVING COUNT(*) > 1 AND MAX(issue) <> 'Missing Image')
+	
+	DELETE FROM #missing_data WHERE id IN(
+		SELECT MAX(id)
+		FROM #missing_data
+		GROUP BY name,vendor_product_id
+		HAVING MAX(issue) = 'Missing Description & Features')
+	
+	/* BEGIN DATA MANIPULATION */
+	
+	--Update the categories values for configurables without categories:
+	UPDATE a SET
+		a.categories = b.categories
+	FROM tbl_Purchase_Order AS a
+	INNER JOIN LOT_Inventory.dbo.tbl_Magento_Categories AS b
+	ON a.sku COLLATE SQL_Latin1_General_CP1_CI_AS = b.sku COLLATE SQL_Latin1_General_CP1_CI_AS
+	WHERE a.PO_NUM = @po_num AND a.type = 'configurable'
+		
 	--Purchase Order Type-Specific correlated update:	
 	UPDATE a SET
 		a.never_backorder = '1',
@@ -294,16 +193,17 @@ BEGIN
 		a.image = CASE WHEN a.image IS NOT NULL THEN a.image ELSE a.vendor_product_id + '_' + a.vendor_color_code + '.jpg' END,
 		a.small_image = CASE WHEN a.image IS NOT NULL THEN a.image ELSE a.vendor_product_id + '_' + a.vendor_color_code + '.jpg' END,
 		a.thumbnail = CASE WHEN a.image IS NOT NULL THEN a.image ELSE a.vendor_product_id + '_' + a.vendor_color_code + '.jpg' END,
-		a.sku = CASE WHEN @po_type = 'Inline' THEN REPLACE(a.sku,'FW13A','FW13I') 
-					 WHEN @po_type = 'Closeout' THEN REPLACE(a.sku,'FW13A','FW13C') END,
-		a.url_key = CASE WHEN @po_type = 'Inline' THEN REPLACE(a.url_key,'fw13a','fw13i') 
-						 WHEN @po_type = 'Closeout' THEN REPLACE(a.url_key,'fw13a','fw13c') END,
-		a.season_id = CASE WHEN @po_type = 'Inline' THEN 'FW13 Inline' 
-						   WHEN @po_type = 'Closeout' THEN 'FW13 Closeout' END,
-		a.simples_skus = CASE WHEN @po_type = 'Inline' THEN REPLACE(a.simples_skus,'FW13A','FW13I') 
-							  WHEN @po_type = 'Closeout' THEN REPLACE(a.simples_skus,'FW13A','FW13C') END,
+		a.sku = CASE WHEN @po_type = 'Inline' THEN REPLACE(a.sku,@season_code + 'A',@season_code + 'I') 
+					 WHEN @po_type = 'Closeout' THEN REPLACE(a.sku,@season_code + 'A',@season_code + 'C') END,
+		a.url_key = CASE WHEN a.type = 'simple' THEN NULL ELSE a.url_key END,
+		a.season_id = CASE WHEN @po_type = 'Inline' THEN @season_code + ' Inline' 
+						   WHEN @po_type = 'Closeout' THEN @season_code + ' Closeout' END,
+		a.simples_skus = CASE WHEN @po_type = 'Inline' AND a.type = 'configurable' THEN REPLACE(a.simples_skus,@season_code + 'A',@season_code + 'I') 
+							  WHEN @po_type = 'Closeout' AND a.type = 'configurable' THEN REPLACE(a.simples_skus,@season_code + 'A',@season_code + 'C') 
+							  WHEN a.type = 'simple' THEN NULL END,
 		a.description = CASE WHEN a.type = 'simple' THEN NULL ELSE a.description END,
-		a.features = CASE WHEN a.type = 'simple' THEN NULL ELSE a.features END
+		a.features = CASE WHEN a.type = 'simple' THEN NULL ELSE a.features END,
+		a.price = CASE WHEN a.price LIKE '%0.99%' THEN CAST(a.price AS float) - 1 ELSE a.price END
 	FROM tbl_Purchase_Order AS a
 	INNER JOIN tbl_Purchase_Order AS b
 	ON a.sku = b.sku
@@ -326,7 +226,7 @@ BEGIN
 	SET @sql = '
 	INSERT INTO #po_style_color_size (style, color_code, size_code)
 	(SELECT DISTINCT a.vendor_product_id, a.vendor_color_code, a.vendor_size_code
-	FROM LOT_Inventory.dbo.tbl_LoadFile_FW13_' + @brand_code + ' AS a
+	FROM LOT_Inventory.dbo.tbl_LoadFile_' + @season_code + '_' + @brand_code + ' AS a
 	INNER JOIN #PO_DATA AS b
 	ON (a.vendor_product_id + ''-'' + a.vendor_color_code + ''-'' + a.vendor_size_code) COLLATE Latin1_General_CI_AS = REPLACE(b.style_color_size,'''''''','''') COLLATE Latin1_General_CI_AS
 	WHERE a.type = ''simple'')'
@@ -357,8 +257,7 @@ BEGIN
 	INNER JOIN cataloginventory_stock_item AS stock
 	ON z.entity_id = stock.product_id AND stock.stock_id = 1'')) AS b
 	ON a.style = b.style AND a.color_code = b.color_code AND a.size_code = b.size_code
-	WHERE (b.qty - b.qty_reserved) > 0'
-	PRINT @sql
+	'
 	EXEC(@sql)
 	
 	--Create #view_Export_PO and insert into it a header row, as well as the contents of tbl_Purchase_Order (for the PO in question):
@@ -380,7 +279,7 @@ BEGIN
 	SELECT  '"' + RTRIM(LTRIM(REPLACE(store,'"','""'))) + '"','"' + RTRIM(LTRIM(REPLACE(websites,'"','""'))) + '"','"' + RTRIM(LTRIM(REPLACE(type,'"','""'))) + '"','"' + RTRIM(LTRIM(REPLACE(sku,'"','""'))) + '"','"' + RTRIM(LTRIM(REPLACE(name,'"','""'))) + '"','"' + RTRIM(LTRIM(REPLACE(categories,'"','""'))) + '"','"default"','"' + RTRIM(LTRIM(REPLACE(configurable_attributes,'"','""'))) + '"',
 			'"' + RTRIM(LTRIM(REPLACE(has_options,'"','""'))) + '"','"' + RTRIM(LTRIM(REPLACE(price,'"','""'))) + '"','"' + RTRIM(LTRIM(REPLACE(cost,'"','""'))) + '"','"' + RTRIM(LTRIM(REPLACE(super_attribute_pricing,'"','""'))) + '"','"' + RTRIM(LTRIM(REPLACE(status,'"','""'))) + '"','"' + RTRIM(LTRIM(REPLACE(tax_class_id,'"','""'))) + '"','"' + RTRIM(LTRIM(REPLACE(department,'"','""'))) + '"','"' + RTRIM(LTRIM(REPLACE(visibility,'"','""'))) + '"','"' + RTRIM(LTRIM(REPLACE(image,'"','""'))) + '"','"' + RTRIM(LTRIM(REPLACE(image_label,'"','""'))) + '"',
 			'"' + RTRIM(LTRIM(REPLACE(small_image,'"','""'))) + '"','"' + RTRIM(LTRIM(REPLACE(thumbnail,'"','""'))) + '"','"' + RTRIM(LTRIM(REPLACE(choose_color,'"','""'))) + '"','"' + RTRIM(LTRIM(REPLACE(choose_size,'"','""'))) + '"','"' + RTRIM(LTRIM(REPLACE(vendor_product_id,'"','""'))) + '"',
-			'"' + RTRIM(LTRIM(REPLACE(vendor_color_code,'"','""'))) + '"','"' + RTRIM(LTRIM(REPLACE(vendor_size_code,'"','""'))) + '"','"FW13 Inline"','"' + RTRIM(LTRIM(REPLACE(description,'"','""'))) + '"','"' + RTRIM(LTRIM(REPLACE(features,'"','""'))) + '"','"' + RTRIM(LTRIM(REPLACE(fabric,'"','""'))) + '"',
+			'"' + RTRIM(LTRIM(REPLACE(vendor_color_code,'"','""'))) + '"','"' + RTRIM(LTRIM(REPLACE(vendor_size_code,'"','""'))) + '"','"' + @season_code + ' Inline"','"' + RTRIM(LTRIM(REPLACE(description,'"','""'))) + '"','"' + RTRIM(LTRIM(REPLACE(features,'"','""'))) + '"','"' + RTRIM(LTRIM(REPLACE(fabric,'"','""'))) + '"',
 			'"' + RTRIM(LTRIM(REPLACE(care_instructions,'"','""'))) + '"','"' + RTRIM(LTRIM(REPLACE(fit,'"','""'))) + '"','"' + RTRIM(LTRIM(REPLACE(volume,'"','""'))) + '"','"' + RTRIM(LTRIM(REPLACE(manufacturer,'"','""'))) + '"','"' + RTRIM(LTRIM(REPLACE(qty,'"','""'))) + '"', '"' + RTRIM(LTRIM(REPLACE(is_in_stock,'"','""'))) + '"', '"' + RTRIM(LTRIM(REPLACE(simples_skus,'"','""'))) + '"','"' + RTRIM(LTRIM(REPLACE(url_key,'"','""'))) + '"','"' + RTRIM(LTRIM(REPLACE(meta_title,'"','""'))) + '"',
 			'"' + RTRIM(LTRIM(REPLACE(merchandise_priority,'"','""'))) + '"','"' + RTRIM(LTRIM(REPLACE(never_backorder,'"','""'))) + '"','"' + RTRIM(LTRIM(REPLACE(backorders,'"','""'))) + '"','"' + RTRIM(LTRIM(REPLACE(manage_stock,'"','""'))) + '"','"' + RTRIM(LTRIM(REPLACE(use_config_backorders,'"','""'))) + '"','"' + RTRIM(LTRIM(REPLACE(use_config_manage_stock,'"','""'))) + '"','"' + RTRIM(LTRIM(REPLACE(vendor_sku,'"','""'))) + '"'
 	FROM tbl_Purchase_Order
@@ -415,7 +314,7 @@ GO
 
 /* START: */
 
-EXEC Inline_Closeout_PO_Building 'TNF-F13-ADDON', 'Inline', 'The North Face', 'TNF', 108, 15
+EXEC Inline_Closeout_PO_Building 'TNF-THERMOBALL', 'Inline', 'The North Face', 'TNF', 'FW13', 10, 3
 
 /*
 See below for rules regarding which new SKUs to associate depending on which existing simple products are already associated:

@@ -1,6 +1,32 @@
 DECLARE @output varchar(MAX), @count nvarchar(MAX)
 
-PRINT 'MAR'
+PRINT 'TNF'
+
+-- Multiple Price/Cost test
+PRINT ''
+SELECT @output = COALESCE(@output + CHAR(13) + '		', '') + x.error FROM
+(SELECT DISTINCT name + ' (' + MAX(vendor_product_id) + ')' AS error
+ FROM tbl_LoadFile_FW13_TNF
+ WHERE type = 'configurable'
+ GROUP BY name, price, cost
+ HAVING (COUNT(price) + COUNT(cost)) > 2) AS x
+
+SET @count = (SELECT SUM(x.total) FROM
+			  (SELECT name, CASE WHEN (COUNT(price) + COUNT(cost)) > 2 THEN 1 ELSE 0 END AS total
+			  FROM tbl_LoadFile_FW13_TNF 
+			  WHERE type = 'configurable'
+			  GROUP BY name, price, cost) AS x)
+
+IF @count <> 0 BEGIN
+	PRINT 'Failed Multiple Price/Cost test'
+	PRINT '	There are ' + @count + ' styles with more than one price or more than one cost:'
+	PRINT '		' + @output
+	SET @output = ''
+END
+ELSE BEGIN
+	PRINT 'Passed Multiple Price/Cost test'
+END
+SET @output = NULL
 
 -- Price/Cost test
 PRINT ''
@@ -20,30 +46,21 @@ ELSE BEGIN
 END
 SET @output = NULL
 
--- Multiple Price/Cost test
+-- Duplicate Configurables Test
 PRINT ''
-SELECT @output = COALESCE(@output + CHAR(13) + '		', '') + x.error FROM
-(SELECT DISTINCT name + ' (' + vendor_product_id + ')' AS error
- FROM tbl_LoadFile_FW13_MAR 
- WHERE type = 'configurable'
- GROUP BY vendor_product_id, price, cost
- HAVING SUM(COUNT(price) + COUNT(cost)) > 2) AS x
-
-SET @count = (SELECT CASE WHEN SUM(COUNT(price) + COUNT(cost)) > 2 THEN 1 ELSE 0 END
-			  FROM tbl_LoadFile_FW13_MAR 
-			  WHERE type = 'configurable'
-			  GROUP BY vendor_product_id, price, cost)
-
-IF @count <> 0 BEGIN
-	PRINT 'Failed Multiple Price/Cost test'
-	PRINT '	There are ' + @count + ' styles with more than one price or more than one cost:'
+SELECT @output = COALESCE(@output + CHAR(13) + '		', '') + name FROM
+(SELECT name
+ FROM (SELECT name + ' (' + department + ')' AS name, COUNT(*) AS total FROM tbl_LoadFile_FW13_MAR WHERE type = 'configurable' GROUP BY name + ' (' + department + ')') AS a WHERE a.total > 1) AS x
+ 
+IF @output <> '' BEGIN
+	PRINT 'Failed Duplicate Configurables Test'
+	PRINT '	These configurable products are duplicates:'
 	PRINT '		' + @output
 	SET @output = ''
 END
 ELSE BEGIN
-	PRINT 'Passed Multiple Price/Cost test'
+	PRINT 'Passed Duplicate Configurables Test'
 END
-SET @output = NULL
 
 -- One-off Simples test (Single row for a color-way on UPC list)
 PRINT ''

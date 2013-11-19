@@ -1,4 +1,4 @@
---DROP TABLE catalog_product_entity
+DROP TABLE catalog_product_entity
 
 DROP TABLE catalog_product_entity_varchar_restore
 DROP TABLE catalog_product_entity_datetime_restore
@@ -17,33 +17,11 @@ DROP TABLE catalog_category_product_restore
 DROP TABLE catalog_product_super_attribute_restore
 DROP TABLE catalog_product_super_attribute_label_restore
 
---SELECT * INTO catalog_product_entity FROM OPENQUERY(DGDEV,'SELECT * FROM catalog_product_entity')
+SELECT * INTO catalog_product_entity FROM OPENQUERY(DGDEV,'SELECT * FROM catalog_product_entity')
 
 SELECT a.* INTO catalog_product_entity_restore FROM catalog_product_entity AS a
 WHERE entity_id IN (
-290189,
-310066,
-317091,
-317154,
-317367,
-340797,
-340804,
-340814,
-340818,
-340822,
-340941,
-341147,
-351622,
-355572,
-355585,
-355682,
-392974,
-404700,
-404766,
-404796,
-404916,
-410730,
-411161)
+347640)
 
 -- At this point I created a table on MySQL
 -- CREATE TABLE entity_ids_to_restore (entity_id integer)

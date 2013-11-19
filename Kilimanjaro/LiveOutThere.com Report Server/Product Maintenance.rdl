@@ -191,7 +191,7 @@
                                           <Paragraph>
                                             <TextRuns>
                                               <TextRun>
-                                                <Value>=Fields!brand.Value &amp; " " &amp; Fields!name.value</Value>
+                                                <Value>=Fields!brand.Value &amp; " " &amp; Fields!name.value &amp; Fields!comment.Value</Value>
                                                 <Style />
                                               </TextRun>
                                             </TextRuns>
@@ -236,7 +236,6 @@
                                           <PaddingBottom>2pt</PaddingBottom>
                                         </Style>
                                       </Textbox>
-                                      <rd:Selected>true</rd:Selected>
                                     </CellContents>
                                   </TablixCell>
                                   <TablixCell>
@@ -459,6 +458,10 @@
         </Field>
         <Field Name="brand">
           <DataField>brand</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="comment">
+          <DataField>comment</DataField>
           <rd:TypeName>System.String</rd:TypeName>
         </Field>
       </Fields>

@@ -109,6 +109,9 @@
                                         <CellContents>
                                           <Textbox Name="Textbox6">
                                             <CanGrow>true</CanGrow>
+                                            <UserSort>
+                                              <SortExpression>=Fields!indicator_value.Value</SortExpression>
+                                            </UserSort>
                                             <KeepTogether>true</KeepTogether>
                                             <Paragraphs>
                                               <Paragraph>
@@ -125,6 +128,9 @@
                                             </Paragraphs>
                                             <rd:DefaultName>Textbox6</rd:DefaultName>
                                             <Style>
+                                              <Border>
+                                                <Style>None</Style>
+                                              </Border>
                                               <PaddingLeft>2pt</PaddingLeft>
                                               <PaddingRight>2pt</PaddingRight>
                                               <PaddingTop>2pt</PaddingTop>

@@ -137,13 +137,16 @@ BEGIN
 	--Pull the SEO optimized product descriptions from the MYSQL database and assign them to the configurables from the loadfile:
 	SET @sql = '
 	UPDATE a SET
-		a.description = b.description
+		a.description = b.description,
+		a.features = b.features
 	FROM tbl_Purchase_Order AS a
-	INNER JOIN (SELECT sku, description FROM OPENQUERY(MAGENTO,''
-		SELECT a.sku, b.value AS description
+	INNER JOIN (SELECT sku, description, features FROM OPENQUERY(MAGENTO,''
+		SELECT a.sku, b.value AS description, c.value AS features
 		FROM catalog_product_entity AS a
-		INNER JOIN catalog_product_entity_text AS b
+		LEFT JOIN catalog_product_entity_text AS b
 		ON a.entity_id = b.entity_id AND b.attribute_id = (SELECT attribute_id FROM eav_attribute WHERE entity_type_id = 4 AND attribute_code = ''''description'''')
+		LEFT JOIN catalog_product_entity_text AS c
+		ON a.entity_id = c.entity_id AND c.attribute_id = (SELECT attribute_id FROM eav_attribute WHERE entity_type_id = 4 AND attribute_code = ''''features'''')
 		WHERE a.sku IN(' + @config_string + ')'')) AS b
 	ON a.sku = b.sku
 	WHERE a.PO_NUM = ' + '''' + @po_num + '''' + ''
@@ -213,8 +216,6 @@ BEGIN
 		a.simples_skus = CASE WHEN @po_type = 'Inline' AND a.type = 'configurable' THEN REPLACE(a.simples_skus,@season_code + 'A',@season_code + 'I') 
 							  WHEN @po_type = 'Closeout' AND a.type = 'configurable' THEN REPLACE(a.simples_skus,@season_code + 'A',@season_code + 'C') 
 							  WHEN a.type = 'simple' THEN NULL END,
-		a.description = CASE WHEN a.type = 'simple' THEN NULL ELSE a.description END,
-		a.features = CASE WHEN a.type = 'simple' THEN NULL ELSE a.features END,
 		a.price = CASE WHEN a.price LIKE '%0.99%' THEN CAST(a.price AS float) - 1 ELSE a.price END
 	FROM tbl_Purchase_Order AS a
 	INNER JOIN tbl_Purchase_Order AS b

@@ -99,50 +99,34 @@ INSERT INTO tbl_LoadFile_SS14_ARC (
 		,vendor_product_id
 		,vendor_color_code
 		,vendor_size_code
-		,url_key
 		,weight)
 
 SELECT DISTINCT
 	'simple' AS type
-	,'SS14A-ARC-' + CAST(model AS nvarchar(255)) + '-' + UPPER(REPLACE(color,' ','')) + '-' + dbo.getARCSize(size) AS sku
-	,dbo.getARCName(description) AS name
+	,'SS14A-ARC-' + CAST(Model AS nvarchar(255)) + '-' + UPPER(REPLACE(Color,' ','')) + '-' + dbo.getARCSize(Size) AS sku
+	,dbo.getARCName(Description) AS name
 	,0 AS has_options
-	,CAST(suggested_retail AS float) - 0.01 AS price
-	,wholesale AS cost
-	,dbo.getARCDepartment(description) AS department
+	,CAST([Suggested Retail] AS float) - 0.01 AS price
+	,Wholesale AS cost
+	,dbo.getARCDepartment(Description) AS department
 	,NULL AS image
-	,color AS image_label
-	,color AS choose_color
-	,dbo.getARCSize(size) AS choose_size
-	,CAST(CAST(upc AS float) AS bigint) AS vendor_sku
-	,CAST(model AS nvarchar(255)) AS vendor_product_id
-	,UPPER(REPLACE(color,' ','')) AS vendor_color_code
-	,dbo.getARCSize(size) AS vendor_size_code
-	,dbo.getUrlKey(dbo.getARCName(description),'Arc''teryx',color + '-' + dbo.getARCSize(size),dbo.getARCDepartment(description)) + '-SS14a' AS url_key
-	,[weight] AS weight
+	,Color AS image_label
+	,Color AS choose_color
+	,dbo.getARCSize(Size) AS choose_size
+	,CAST(CAST(UPC AS float) AS bigint) AS vendor_sku
+	,CAST(Model AS nvarchar(255)) AS vendor_product_id
+	,UPPER(REPLACE(Color,' ','')) AS vendor_color_code
+	,dbo.getARCSize(Size) AS vendor_size_code
+	,[Weight] AS weight
 FROM tbl_RawData_SS14_ARC_UPC_Price
 GO
-
-UPDATE a
-	SET a.image = b.image
-FROM tbl_LoadFile_SS14_ARC AS a
-INNER JOIN tbl_LoadFile_F12_ARC AS b
-ON b.vendor_sku = a.vendor_sku 
-WHERE a.type = 'simple'
-
-UPDATE a
-	SET a.image = b.image
-FROM tbl_LoadFile_SS14_ARC AS a
-INNER JOIN tbl_LoadFile_SS13_ARC AS b
-ON b.vendor_sku = a.vendor_sku 
-WHERE a.type = 'simple' AND a.image IS NULL
 
 UPDATE a
 	SET a.image = b.Filename
 FROM tbl_LoadFile_SS14_ARC AS a
 INNER JOIN tbl_RawData_SS14_Image_Filenames AS b
 ON b.Filename LIKE '%' + REPLACE(REPLACE(REPLACE(a.name,' ','-'),'/','-'),'&','-') + '-' + REPLACE(REPLACE(a.choose_color,' ','-'),'/','-') + '.png' 
-WHERE b.Brand = 'ARC' AND a.type = 'simple' AND a.image IS NULL
+WHERE b.Brand = 'ARC' AND a.type = 'simple'
 
 UPDATE a
 	SET a.image = b.Filename
@@ -151,7 +135,19 @@ INNER JOIN tbl_RawData_SS14_Image_Filenames AS b
 ON b.Filename LIKE '%' + REPLACE(REPLACE(REPLACE(a.name,' ','-'),'/','-'),'&','-') + '-W-' + REPLACE(REPLACE(a.choose_color,' ','-'),'/','-') + '.png' 
 WHERE b.Brand = 'ARC' AND a.type = 'simple' AND a.image IS NULL AND department = 'Women'
 
-UPDATE tbl_LoadFile_SS14_ARC SET image = 'S13-Rho-LTW-Beanie-Tungsten.jpg' WHERE type = 'simple' AND name = 'Rho LTW Beanie' AND choose_color = 'Tungsten'
+UPDATE a
+	SET a.image = b.image
+FROM tbl_LoadFile_SS14_ARC AS a
+INNER JOIN tbl_LoadFile_FW13_ARC AS b
+ON b.vendor_sku = a.vendor_sku 
+WHERE a.type = 'simple' AND a.image IS NULL
+
+UPDATE a
+	SET a.image = b.image
+FROM tbl_LoadFile_SS14_ARC AS a
+INNER JOIN tbl_LoadFile_SS13_ARC AS b
+ON b.vendor_sku = a.vendor_sku 
+WHERE a.type = 'simple' AND a.image IS NULL
 	
 INSERT INTO tbl_LoadFile_SS14_ARC (
 	type
@@ -227,8 +223,6 @@ CLOSE alike_styles
 DEALLOCATE alike_styles
 GO
 
-GO	
-UPDATE tbl_LoadFile_SS14_ARC SET categories = dbo.getCategory(categories,'Arc''teryx',department) WHERE type = 'configurable'
 UPDATE tbl_LoadFile_SS14_ARC SET categories = NULL WHERE type = 'simple'
 UPDATE tbl_LoadFile_SS14_ARC SET status = 'Disabled' WHERE image IS NULL AND type = 'simple'
 UPDATE tbl_LoadFile_SS14_ARC SET thumbnail = image, small_image = image WHERE type = 'simple'
@@ -297,7 +291,8 @@ FROM dbo.tbl_LoadFile_SS14_ARC AS a
 GO
 
 DECLARE @sql varchar(1024)
-SELECT @sql = 'bcp "SELECT * FROM LOT_Inventory.dbo.view_LoadFile_SS14_ARC" queryout "C:\Data\Shared\SS14MHW.csv" -w -t , -T -S ' + @@servername
+SELECT @sql = 'bcp "SELECT * FROM LOT_Inventory.dbo.view_LoadFile_SS14_ARC" queryout "C:\Data\Shared\SS14ARC.csv" -w -t , -T -S ' + @@servername
 EXEC master..xp_cmdshell @sql
+GO
 
 DROP VIEW view_LoadFile_SS14_ARC

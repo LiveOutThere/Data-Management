@@ -12,7 +12,12 @@
     <DataSet Name="Global">
       <Query>
         <DataSourceName>LOT_Reporting</DataSourceName>
-        <CommandText>EXEC dbo.report_CMS_Page_Efficacy 'Global'</CommandText>
+        <QueryParameters>
+          <QueryParameter Name="@Title">
+            <Value>=Parameters!Title.Value</Value>
+          </QueryParameter>
+        </QueryParameters>
+        <CommandText>EXEC dbo.report_CMS_Page_Efficacy 'global', @Title</CommandText>
         <rd:UseGenericDesigner>true</rd:UseGenericDesigner>
       </Query>
       <Fields>
@@ -41,7 +46,12 @@
     <DataSet Name="Brand">
       <Query>
         <DataSourceName>LOT_Reporting</DataSourceName>
-        <CommandText>EXEC dbo.report_CMS_Page_Efficacy 'Brand'</CommandText>
+        <QueryParameters>
+          <QueryParameter Name="@Title">
+            <Value>=Parameters!Title.Value</Value>
+          </QueryParameter>
+        </QueryParameters>
+        <CommandText>EXEC dbo.report_CMS_Page_Efficacy 'brand', @Title</CommandText>
       </Query>
       <Fields>
         <Field Name="title">
@@ -50,19 +60,31 @@
         </Field>
         <Field Name="page_id">
           <DataField>page_id</DataField>
-          <rd:TypeName>System.Double</rd:TypeName>
+          <rd:TypeName>System.Int32</rd:TypeName>
         </Field>
         <Field Name="cms_sell_through">
           <DataField>cms_sell_through</DataField>
-          <rd:TypeName>System.Double</rd:TypeName>
+          <rd:TypeName>System.Decimal</rd:TypeName>
         </Field>
         <Field Name="control_sell_through">
           <DataField>control_sell_through</DataField>
-          <rd:TypeName>System.Double</rd:TypeName>
+          <rd:TypeName>System.Decimal</rd:TypeName>
         </Field>
         <Field Name="week">
           <DataField>week</DataField>
-          <rd:TypeName>System.Double</rd:TypeName>
+          <rd:TypeName>System.Int32</rd:TypeName>
+        </Field>
+      </Fields>
+    </DataSet>
+    <DataSet Name="Pages">
+      <Query>
+        <DataSourceName>LOT_Reporting</DataSourceName>
+        <CommandText>SELECT * FROM dbo.view_CMS_Pages</CommandText>
+      </Query>
+      <Fields>
+        <Field Name="title">
+          <DataField>title</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
         </Field>
       </Fields>
     </DataSet>
@@ -279,7 +301,7 @@
                     <ChartAxisTitle>
                       <Caption># Weeks after CMS Page Publication</Caption>
                       <Style>
-                        <FontSize>16pt</FontSize>
+                        <FontSize>14pt</FontSize>
                       </Style>
                     </ChartAxisTitle>
                     <ChartMajorGridLines>
@@ -613,7 +635,7 @@
                     <ChartAxisTitle>
                       <Caption># Weeks after CMS Page Publication</Caption>
                       <Style>
-                        <FontSize>16pt</FontSize>
+                        <FontSize>14pt</FontSize>
                       </Style>
                     </ChartAxisTitle>
                     <ChartMajorGridLines>
@@ -891,7 +913,7 @@
               <Paragraph>
                 <TextRuns>
                   <TextRun>
-                    <Value>=First(Fields!title.Value, "Global")</Value>
+                    <Value>=Parameters!Title.Value</Value>
                     <Style />
                   </TextRun>
                 </TextRuns>
@@ -926,6 +948,19 @@
       </Page>
     </ReportSection>
   </ReportSections>
+  <ReportParameters>
+    <ReportParameter Name="Title">
+      <DataType>String</DataType>
+      <Prompt>Title:</Prompt>
+      <ValidValues>
+        <DataSetReference>
+          <DataSetName>Pages</DataSetName>
+          <ValueField>title</ValueField>
+          <LabelField>title</LabelField>
+        </DataSetReference>
+      </ValidValues>
+    </ReportParameter>
+  </ReportParameters>
   <Language>en-US</Language>
   <ConsumeContainerWhitespace>true</ConsumeContainerWhitespace>
   <rd:ReportUnitType>Inch</rd:ReportUnitType>

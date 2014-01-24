@@ -174,7 +174,7 @@ INSERT INTO tbl_LoadFile_SS14_MON (
 
 SELECT DISTINCT
 	'configurable' AS type
-	,'COL-' + vendor_product_id AS sku
+	,'MON-' + vendor_product_id AS sku
 	,name AS name
 	,'Uncategorized' AS categories
 	,'choose_color,choose_size' AS configurable_attributes
@@ -184,8 +184,8 @@ SELECT DISTINCT
 	,department AS department
 	,'Catalog, Search' AS visibility
 	,vendor_product_id AS vendor_product_id
-	,dbo.getUrlKey(name,'Columbia','',department) AS url_key
-	,'Columbia ' + REPLACE(REPLACE(department + '''s ','Men|Women''s ',''),'Boy|Girl''s ','') + name AS meta_title
+	,dbo.getUrlKey(name,'Montrail','',department) AS url_key
+	,'Montrail ' + REPLACE(REPLACE(department + '''s ','Men|Women''s ',''),'Boy|Girl''s ','') + name AS meta_title
 	,'F' AS merchandise_priority
 	,0 AS manage_stock
 	,0 AS use_config_manage_stock

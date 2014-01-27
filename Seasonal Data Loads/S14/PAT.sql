@@ -103,7 +103,7 @@ INSERT INTO tbl_LoadFile_SS14_PAT (
 
 SELECT DISTINCT  
 	'simple' AS [type],
-	'SS14A-PAT-' +  CAST(a.ItemNumber AS nvarchar(255)) + '-' +  CAST(a.ColorCode AS nvarchar(255)) + '-' +  REPLACE(a.Size,'ALL','O/S') AS sku,
+	'SS14A-PAT-' +  CAST(a.ItemNumber AS nvarchar(255)) + '-' +  CASE WHEN LEN(a.ColorCode) = 2 THEN '0' + CAST(a.ColorCode AS nvarchar(255)) ELSE CAST(a.ColorCode AS nvarchar(255)) END + '-' +  REPLACE(a.Size,'ALL','O/S') AS sku,
 	dbo.getPATName(a.Name) AS name,
 	0 AS has_options,
 	CAST(b.MSRP AS float) - 0.01 AS price,
@@ -115,7 +115,7 @@ SELECT DISTINCT
 	REPLACE(a.Size,'ALL','O/S') AS choose_size,
 	CAST(a.UPC AS bigint) AS vendor_sku,
 	a.ItemNumber AS vendor_product_id,
-	a.ColorCode AS vendor_color_code,
+	CASE WHEN LEN(a.ColorCode) = 2 THEN '0' + CAST(a.ColorCode AS nvarchar(255)) ELSE CAST(a.ColorCode AS nvarchar(255)) END AS vendor_color_code,
 	REPLACE(a.Size,'ALL','O/S') AS vendor_size_code,
 	a.Weight_oz AS [weight]
 FROM tbl_RawData_SS14_PAT_UPC AS a

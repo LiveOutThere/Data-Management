@@ -109,10 +109,10 @@ INSERT INTO tbl_LoadFile_SS14_OR (
 SELECT DISTINCT
 	'simple'												AS type
  	,'SS14A-OR-' + CAST(a.[Style #] AS nvarchar(255)) + '-' + dbo.getORColorCode(a.Color) + '-' + REPLACE(a.Size,'1SIZE','O/S') AS sku 												
-	,dbo.getORProductName(b.name)							AS name
+	,dbo.getORProductName(ISNULL(b.name,a.[STYLE NAME]))	AS name
 	,0														AS has_options
-	,CAST(a.[MSRP (CAD)] AS float) - .01						AS price
-	,a.[Wholesale Price (CAD)]									AS cost
+	,CAST(a.[MSRP (CAD)] AS float) - .01					AS price
+	,a.[Wholesale Price (CAD)]								AS cost
 	,dbo.getORDepartment(a.Gender)							AS department	
 	,'Not Visible Individually'								AS visibility
 	,dbo.ProperCase(a.[Color Name])							AS image_label
@@ -120,14 +120,14 @@ SELECT DISTINCT
  	,REPLACE(a.Size,'1SIZE','O/S')							AS choose_size
  	,CAST(a.UPC AS bigint)									AS vendor_sku
 	,a.[Style #]											AS vendor_product_id
-	,dbo.getORColorCode(a.Color)						AS vendor_color_code
-	,a.Size										 			AS vendor_size_code
-	,REPLACE(b.weight_g,' g','') AS weight
+	,dbo.getORColorCode(a.Color)							AS vendor_color_code
+	,REPLACE(a.Size,'1SIZE','O/S')				 			AS vendor_size_code
+	,REPLACE(b.weight_g,' g','')							AS weight
 	,1														AS manage_stock
 	,1														AS use_config_manage_stock
 FROM tbl_RawData_SS14_OR_UPC_Price			AS a
-INNER JOIN tbl_RawData_SS14_OR_Marketing	AS b
-ON  a.[Style #] = b.style
+LEFT JOIN tbl_RawData_SS14_OR_Marketing	    AS b
+ON a.[Style #] = b.style
 GO
 
 INSERT INTO tbl_LoadFile_SS14_OR (

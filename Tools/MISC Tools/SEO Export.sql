@@ -6,23 +6,26 @@ SELECT
 	a.sku, 
 	b.description AS manufacturer_description, 
 	b.features AS features,
-	b.fabric AS fabric
+	b.fabric AS fabric,
+	b.url_key + '.html' AS url_key
 FROM tbl_Purchase_Order AS a
-INNER JOIN (SELECT sku, name, description, features, fabric 
+INNER JOIN (SELECT sku, name, description, features, fabric, url_key
 			FROM OPENQUERY(MAGENTO,'
-				SELECT a.sku, b.value AS description, c.value AS features, d.value AS fabric, e.value AS name
+				SELECT a.sku, b.value AS description, c.value AS features, d.value AS fabric, e.value AS name, g.value AS url_key
 				FROM catalog_product_entity AS a
-				INNER JOIN catalog_product_entity_text AS b
+				LEFT JOIN catalog_product_entity_text AS b
 				ON a.entity_id = b.entity_id AND b.attribute_id = (SELECT attribute_id FROM eav_attribute WHERE entity_type_id = 4 AND attribute_code = ''description'')
-				INNER JOIN catalog_product_entity_text AS c
+				LEFT JOIN catalog_product_entity_text AS c
 				ON a.entity_id = c.entity_id AND c.attribute_id = (SELECT attribute_id FROM eav_attribute WHERE entity_type_id = 4 AND attribute_code = ''features'')
-				INNER JOIN catalog_product_entity_text AS d
+				LEFT JOIN catalog_product_entity_text AS d
 				ON a.entity_id = d.entity_id AND d.attribute_id = (SELECT attribute_id FROM eav_attribute WHERE entity_type_id = 4 AND attribute_code = ''fabric'')
-				INNER JOIN catalog_product_entity_varchar AS e
+				LEFT JOIN catalog_product_entity_varchar AS e
 				ON a.entity_id = e.entity_id AND e.attribute_id = (SELECT attribute_id FROM eav_attribute WHERE entity_type_id = 4 AND attribute_code = ''name'')
-				INNER JOIN catalog_product_entity_varchar AS f
+				LEFT JOIN catalog_product_entity_varchar AS f
 				ON a.entity_id = f.entity_id AND f.attribute_id = (SELECT attribute_id FROM eav_attribute WHERE entity_type_id = 4 AND attribute_code = ''seo_status'')
-				WHERE a.type_id = ''configurable'' AND f.value = ''new''')) AS b
+				LEFT JOIN catalog_product_entity_varchar AS g
+				ON a.entity_id = g.entity_id AND g.attribute_id = (SELECT attribute_id FROM eav_attribute WHERE entity_type_id = 4 AND attribute_code = ''url_key'')
+				WHERE a.type_id = ''configurable'' AND (f.value IS NULL OR f.value = ''new'')')) AS b
 ON a.sku = b.sku
 WHERE a.PO_NUM LIKE '%S14%' AND a.type = 'configurable'
 
@@ -41,4 +44,13 @@ desc_optimized - ALL products that have come back from Dave Nagy with an SEO Opt
 fully_optimized - ALL products that have come back from Dave Nagy with SEO Optimized product features
 ???stale??? - seo_status IN('desc_optimized','fully_optimized') AND DATEDIFF(CURDATE(),seo_status_date, INTERVAL DAY) > 365
 
+*/
+
+--CHECKER
+
+/*
+SELECT * FROM OPENQUERY(MAGENTO,'
+	SELECT DISTINCT value 
+	FROM catalog_product_entity_datetime
+	WHERE attribute_id = (SELECT attribute_id FROM eav_attribute WHERE entity_type_id = 4 AND attribute_code = ''seo_status_date'')')
 */

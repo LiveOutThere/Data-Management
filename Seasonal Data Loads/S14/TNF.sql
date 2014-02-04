@@ -119,6 +119,7 @@ SELECT DISTINCT
 FROM tbl_RawData_SS14_TNF_UPC_Price
 GO
 
+--NAMES
 UPDATE a SET
 	a.name = dbo.getTNFName(b.Name)
 FROM tbl_LoadFile_SS14_TNF AS a
@@ -131,12 +132,20 @@ FROM tbl_LoadFile_SS14_TNF AS a
 INNER JOIN tbl_RawData_SS14_TNF_UPC_Price AS b
 ON a.vendor_product_id = b.Style AND a.name IS NULL
 
+--IMAGES
+UPDATE a
+	SET a.image = b.filename
+FROM tbl_LoadFile_SS14_TNF AS a
+INNER JOIN tbl_RawData_SS14_Image_Filenames AS b
+ON b.filename LIKE a.vendor_product_id + '_' + a.vendor_color_code + '%' + 'hero' + '%'
+WHERE a.type = 'simple' AND b.brand = 'TNF'
+
 UPDATE a
 	SET a.image = b.image
 FROM tbl_LoadFile_SS14_TNF AS a
 INNER JOIN tbl_LoadFile_FW13_TNF AS b
 ON b.vendor_sku = a.vendor_sku 
-WHERE a.type = 'simple'
+WHERE a.type = 'simple' AND a.image IS NULL
 
 UPDATE a
 	SET a.image = b.image
@@ -144,14 +153,8 @@ FROM tbl_LoadFile_SS14_TNF AS a
 INNER JOIN tbl_LoadFile_SS13_TNF AS b
 ON b.vendor_sku = a.vendor_sku 
 WHERE a.type = 'simple' AND a.image IS NULL
-/*
-UPDATE a
-	SET a.image = b.filename + '.jpg'
-FROM tbl_LoadFile_SS14_TNF AS a
-INNER JOIN tbl_RawData_SS14_Image_Filenames AS b
-ON a.vendor_product_id = b.style_number AND a.vendor_color_code = b.color_code
-WHERE a.type = 'simple' AND a.image IS NULL
-*/	
+
+--CONFIGS
 INSERT INTO tbl_LoadFile_SS14_TNF (
 	type
 	,sku

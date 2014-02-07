@@ -44,6 +44,7 @@ DELETE FROM #tmp_simples_to_delete WHERE entity_id IN(SELECT DISTINCT entity_id 
 --Prepare MAGMI delete file, excluding all SS14 products and Gift With Purchase SKUs:
 SELECT DISTINCT '1' AS [magmi:delete], sku
 FROM #tmp_simples_to_delete
+WHERE sku IS NOT NULL
 ORDER BY sku
 
 --Run & Analyze Diagnostics:

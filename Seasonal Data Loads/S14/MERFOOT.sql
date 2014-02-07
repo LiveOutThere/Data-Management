@@ -169,13 +169,20 @@ SELECT DISTINCT
    
 FROM dbo.tbl_LoadFile_SS14_MERFOOT
 GO
-/*
+
+UPDATE a SET
+	a.image = b.Filename
+FROM tbl_LoadFile_SS14_MERFOOT AS a 
+INNER JOIN tbl_RawData_SS14_Image_Filenames AS b
+ON b.filename = REPLACE(a.vendor_color_code,'W','') + '.jpg'
+WHERE b.Brand = 'MERFOOT' AND a.type ='simple'
+
 UPDATE a SET
 	a.image = b.image
 FROM tbl_LoadFile_SS14_MERFOOT AS a 
-INNER JOIN tbl_LoadFile_FW13_MER AS b
+INNER JOIN tbl_LoadFile_FW13_MERFOOT AS b
 ON a.vendor_sku = b.vendor_sku
-WHERE a.type ='simple'
+WHERE a.type ='simple' AND a.image IS NULL
 GO
   
 UPDATE a SET
@@ -185,15 +192,7 @@ INNER JOIN tbl_LoadFile_SS13_MER AS b
 ON a.vendor_sku = b.vendor_sku
 WHERE a.type ='simple' AND a.image IS NULL
 GO
- 
-UPDATE a SET
-	a.image = b.Filename
-FROM tbl_LoadFile_SS14_MERFOOT AS a 
-INNER JOIN tbl_RawData_SS14_Image_Filenames AS b
-ON b.filename = REPLACE(a.vendor_color_code,'W','') + '.jpg'
-WHERE b.Brand = 'MERFOOT' AND a.type ='simple' AND a.image IS NULL
-GO
- */
+
 UPDATE tbl_LoadFile_SS14_MERFOOT SET
 	categories		= dbo.getMagentoCategories(a.vendor_product_id),	
 	simples_skus	= dbo.getMERFOOTAssociatedProducts(a.vendor_product_id),

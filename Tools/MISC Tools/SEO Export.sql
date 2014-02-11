@@ -1,34 +1,42 @@
-SELECT 
-	CASE WHEN a.manufacturer = 'Columbia' AND LEFT(a.sku,3) = 'MON' THEN 'Montrail'
-		 WHEN a.manufacturer = 'Columbia' AND LEFT(a.sku,3) = 'MHW' THEN 'Mountain Hardwear' ELSE a.manufacturer END AS manufacturer, 
-	REPLACE(a.department,'Men|Women','Unisex') AS gender, 
-	b.name, 
-	a.sku, 
-	b.description AS manufacturer_description, 
-	b.features AS features,
-	b.fabric AS fabric,
-	b.url_key + '.html' AS url_key
-FROM tbl_Purchase_Order AS a
-INNER JOIN (SELECT sku, name, description, features, fabric, url_key
-			FROM OPENQUERY(MAGENTO,'
-				SELECT a.sku, b.value AS description, c.value AS features, d.value AS fabric, e.value AS name, g.value AS url_key
-				FROM catalog_product_entity AS a
-				LEFT JOIN catalog_product_entity_text AS b
-				ON a.entity_id = b.entity_id AND b.attribute_id = (SELECT attribute_id FROM eav_attribute WHERE entity_type_id = 4 AND attribute_code = ''description'')
-				LEFT JOIN catalog_product_entity_text AS c
-				ON a.entity_id = c.entity_id AND c.attribute_id = (SELECT attribute_id FROM eav_attribute WHERE entity_type_id = 4 AND attribute_code = ''features'')
-				LEFT JOIN catalog_product_entity_text AS d
-				ON a.entity_id = d.entity_id AND d.attribute_id = (SELECT attribute_id FROM eav_attribute WHERE entity_type_id = 4 AND attribute_code = ''fabric'')
-				LEFT JOIN catalog_product_entity_varchar AS e
-				ON a.entity_id = e.entity_id AND e.attribute_id = (SELECT attribute_id FROM eav_attribute WHERE entity_type_id = 4 AND attribute_code = ''name'')
-				LEFT JOIN catalog_product_entity_varchar AS f
-				ON a.entity_id = f.entity_id AND f.attribute_id = (SELECT attribute_id FROM eav_attribute WHERE entity_type_id = 4 AND attribute_code = ''seo_status'')
-				LEFT JOIN catalog_product_entity_varchar AS g
-				ON a.entity_id = g.entity_id AND g.attribute_id = (SELECT attribute_id FROM eav_attribute WHERE entity_type_id = 4 AND attribute_code = ''url_key'')
-				WHERE a.type_id = ''configurable'' AND (f.value IS NULL OR f.value = ''new'')')) AS b
-ON a.sku = b.sku
-WHERE a.PO_NUM LIKE '%S14%' AND a.type = 'configurable'
+IF OBJECT_ID('tempdb..#seo_export') IS NOT NULL BEGIN
+	DROP TABLE #seo_export
+END
 
+SELECT manufacturer, CASE WHEN department = '17216' THEN 'Women' WHEN department = '17215' THEN 'Men' WHEN department = '17215,17216' THEN 'Unisex' ELSE department END AS department, name, sku, description, features, fabric, url_key + '.html' AS url_key, seo_status, po_name
+INTO #seo_export
+FROM OPENQUERY(MAGENTO,'
+	SELECT a.sku, b.value AS description, c.value AS features, d.value AS fabric, e.value AS name, g.value AS url_key, f.value AS seo_status, h.manufacturer_value AS manufacturer, h.department, k.po_order_id AS po_name
+	FROM catalog_product_entity AS a
+	LEFT JOIN catalog_product_entity_text AS b
+	ON a.entity_id = b.entity_id AND b.attribute_id = (SELECT attribute_id FROM eav_attribute WHERE entity_type_id = 4 AND attribute_code = ''description'')
+	LEFT JOIN catalog_product_entity_text AS c
+	ON a.entity_id = c.entity_id AND c.attribute_id = (SELECT attribute_id FROM eav_attribute WHERE entity_type_id = 4 AND attribute_code = ''features'')
+	LEFT JOIN catalog_product_entity_text AS d
+	ON a.entity_id = d.entity_id AND d.attribute_id = (SELECT attribute_id FROM eav_attribute WHERE entity_type_id = 4 AND attribute_code = ''fabric'')
+	LEFT JOIN catalog_product_entity_varchar AS e
+	ON a.entity_id = e.entity_id AND e.attribute_id = (SELECT attribute_id FROM eav_attribute WHERE entity_type_id = 4 AND attribute_code = ''name'')
+	LEFT JOIN catalog_product_entity_varchar AS f
+	ON a.entity_id = f.entity_id AND f.attribute_id = (SELECT attribute_id FROM eav_attribute WHERE entity_type_id = 4 AND attribute_code = ''seo_status'')
+	LEFT JOIN catalog_product_entity_varchar AS g
+	ON a.entity_id = g.entity_id AND g.attribute_id = (SELECT attribute_id FROM eav_attribute WHERE entity_type_id = 4 AND attribute_code = ''url_key'')
+	LEFT JOIN catalog_product_flat_1 AS h
+	ON a.entity_id = h.entity_id
+	INNER JOIN catalog_product_super_link AS i
+	ON a.entity_id = i.parent_id
+	INNER JOIN purchase_order_product AS j
+	ON i.product_id = j.pop_product_id
+	INNER JOIN purchase_order AS k
+	ON j.pop_order_num = k.po_num
+	WHERE a.type_id = ''configurable'' AND k.po_order_id LIKE ''%S14%'' AND (f.value IS NULL OR f.value = ''new'')')
+
+SELECT DISTINCT a.po_name, a.manufacturer, a.department, a.name, a.sku, CAST(a.description AS varchar(MAX)) AS description, CAST(a.features AS varchar(MAX)) AS features, CAST(a.fabric AS varchar(MAX)) AS fabric, a.url_key, a.seo_status 
+FROM #seo_export AS a
+FULL JOIN tbl_Purchase_Order AS b
+ON a.sku = b.sku
+WHERE ISNULL(b.PO_NUM,'S14') LIKE '%S14%'
+ORDER BY a.po_name 
+
+SELECT DISTINCT sku FROM #seo_export
 /*
 
 MAGENTO ATTRIBUTES

@@ -126,7 +126,7 @@ UPDATE a
 	SET a.image = b.Filename 
 FROM tbl_LoadFile_SS14_IB AS a
 INNER JOIN tbl_RawData_SS14_Image_Filenames AS b
-ON b.Filename LIKE '%' + a.vendor_product_id + a.vendor_color_code + '_1.png'
+ON b.Filename LIKE '%' + a.vendor_product_id + a.vendor_color_code + '_1.jpg'
 WHERE a.type = 'simple' AND b.Brand = 'IB'
 
 UPDATE a

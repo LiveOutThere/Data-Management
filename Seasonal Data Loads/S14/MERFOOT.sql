@@ -1,4 +1,4 @@
-USE LOT_Inventory
+USE LOT_Inventory 
 GO
 SET ANSI_NULLS ON
 GO
@@ -6,31 +6,29 @@ SET QUOTED_IDENTIFIER ON
 GO
 SET ANSI_PADDING ON
 GO
-SET CONCAT_NULL_YIELDS_NULL OFF
-GO
-
-IF EXISTS (SELECT * FROM sysobjects WHERE id = object_id(N'[dbo].[tbl_LoadFile_SS14_MHW]')
+ 
+IF EXISTS (SELECT * FROM sysobjects WHERE id = object_id(N'[dbo].[tbl_LoadFile_SS14_MERFOOT]')
 AND OBJECTPROPERTY(id, N'IsUserTable') = 1)
-DROP TABLE [dbo].[tbl_LoadFile_SS14_MHW]
-
-CREATE TABLE [dbo].[tbl_LoadFile_SS14_MHW](
+DROP TABLE [dbo].[tbl_LoadFile_SS14_MERFOOT]
+ 
+CREATE TABLE [dbo].[tbl_LoadFile_SS14_MERFOOT](
 	[id] [int] IDENTITY(1,1) NOT NULL,
-	[store] [nvarchar](4000) COLLATE SQL_Latin1_General_CP1_CI_AS NULL CONSTRAINT [DF_tbl_LoadFile_SS14_MHW_store]  DEFAULT ('admin'),
-	[websites] [nvarchar](4000) COLLATE SQL_Latin1_General_CP1_CI_AS NULL CONSTRAINT [DF_tbl_LoadFile_SS14_MHW_websites]  DEFAULT ('base'),
+	[store] [nvarchar](4000) COLLATE SQL_Latin1_General_CP1_CI_AS NULL CONSTRAINT [DF_tbl_LoadFile_SS14_MERFOOT_store] DEFAULT ('admin'),
+	[websites] [nvarchar](4000) COLLATE SQL_Latin1_General_CP1_CI_AS NULL CONSTRAINT [DF_tbl_LoadFile_SS14_MERFOOT_websites] DEFAULT ('base'),
 	[type] [nvarchar](50) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
 	[sku] [nvarchar](50) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
 	[name] [nvarchar](4000) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
 	[categories] [nvarchar](4000) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
-	[attribute_set] [nvarchar](4000) COLLATE SQL_Latin1_General_CP1_CI_AS NULL CONSTRAINT [DF_tbl_LoadFile_SS14_MHW_attribute_set]  DEFAULT ('default'),
+	[attribute_set] [nvarchar](4000) COLLATE SQL_Latin1_General_CP1_CI_AS NULL CONSTRAINT [DF_tbl_LoadFile_SS14_MERFOOT_attribute_set] DEFAULT ('default'),
 	[configurable_attributes] [nvarchar](4000) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
 	[has_options] [nvarchar](4000) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
 	[price] [nvarchar](4000) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
 	[cost] [nvarchar](4000) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
 	[super_attribute_pricing] [nvarchar](4000) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
-	[status] [nvarchar](4000) COLLATE SQL_Latin1_General_CP1_CI_AS NULL CONSTRAINT [DF_tbl_LoadFile_SS14_MHW_status]  DEFAULT ('Enabled'),
-	[tax_class_id] [nvarchar](4000) COLLATE SQL_Latin1_General_CP1_CI_AS NULL CONSTRAINT [DF_tbl_LoadFile_SS14_MHW_tax_class]  DEFAULT ('Taxable Goods'),
+	[status] [nvarchar](4000) COLLATE SQL_Latin1_General_CP1_CI_AS NULL CONSTRAINT [DF_tbl_LoadFile_SS14_MERFOOT_status] DEFAULT ('Enabled'),
+	[tax_class_id] [nvarchar](4000) COLLATE SQL_Latin1_General_CP1_CI_AS NULL CONSTRAINT [DF_tbl_LoadFile_SS14_MERFOOT_tax_class] DEFAULT ('Taxable Goods'),
 	[department] [nvarchar](4000) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
-	[visibility] [nvarchar](4000) COLLATE SQL_Latin1_General_CP1_CI_AS NULL CONSTRAINT [DF_tbl_LoadFile_SS14_MHW_visibility]  DEFAULT ('Not Visible Individually'),
+	[visibility] [nvarchar](4000) COLLATE SQL_Latin1_General_CP1_CI_AS NULL CONSTRAINT [DF_tbl_LoadFile_SS14_MERFOOT_visibility] DEFAULT ('Not Visible Individually'),
 	[image] [nvarchar](4000) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
 	[image_label] [nvarchar](4000) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
 	[small_image] [nvarchar](4000) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
@@ -41,9 +39,9 @@ CREATE TABLE [dbo].[tbl_LoadFile_SS14_MHW](
 	[vendor_product_id] [nvarchar](50) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
 	[vendor_color_code] [nvarchar](4000) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
 	[vendor_size_code] [nvarchar](4000) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
-	[season_id] [nvarchar](4000) COLLATE SQL_Latin1_General_CP1_CI_AS NULL CONSTRAINT [DF_tbl_LoadFile_SS14_MHW_season]  DEFAULT (N'SS14 ASAP'),
+	[season_id] [nvarchar](4000) COLLATE SQL_Latin1_General_CP1_CI_AS NULL CONSTRAINT [DF_tbl_LoadFile_SS14_MERFOOT_season] DEFAULT ('SS14 ASAP'),
 	[short_description] [nvarchar](4000) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
-	[description] [nvarchar](MAX) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
+	[description] [nvarchar](4000) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
 	[features] [nvarchar](4000) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
 	[activities] [nvarchar](4000) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
 	[weather] [nvarchar](4000) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
@@ -52,163 +50,164 @@ CREATE TABLE [dbo].[tbl_LoadFile_SS14_MHW](
 	[fabric] [nvarchar](4000) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
 	[fit] [nvarchar](4000) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
 	[volume] [nvarchar](4000) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
-	[manufacturer] [nvarchar](4000) COLLATE SQL_Latin1_General_CP1_CI_AS NULL CONSTRAINT [DF_tbl_LoadFile_SS14_MHW_manufacturer]  DEFAULT ('Mountain Hardwear'),
-	[qty] [nvarchar](4000) COLLATE SQL_Latin1_General_CP1_CI_AS NULL CONSTRAINT [DF_tbl_LoadFile_SS14_MHW_qty]  DEFAULT ((0)),
-	[is_in_stock] [nvarchar](4000) COLLATE SQL_Latin1_General_CP1_CI_AS NULL CONSTRAINT [DF_tbl_LoadFile_SS14_MHW_is_in_stock]  DEFAULT ((0)),
-	[simples_skus] [nvarchar](MAX) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
+	[manufacturer] [nvarchar](4000) COLLATE SQL_Latin1_General_CP1_CI_AS NULL CONSTRAINT [DF_tbl_LoadFile_SS14_MERFOOT_manufacturer] DEFAULT ('Merrell'),
+	[qty] [nvarchar](4000) COLLATE SQL_Latin1_General_CP1_CI_AS NULL CONSTRAINT [DF_tbl_LoadFile_SS14_MERFOOT_qty] DEFAULT ((0)),
+	[is_in_stock] [nvarchar](4000) COLLATE SQL_Latin1_General_CP1_CI_AS NULL CONSTRAINT [DF_tbl_LoadFile_SS14_MERFOOT_is_in_stock] DEFAULT ((0)),
+	[simples_skus] [nvarchar](4000) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
 	[url_key] [nvarchar](4000) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
 	[meta_title] [nvarchar](4000) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
 	[videos] [nvarchar](4000) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
 	[weight] [nvarchar](4000) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
 	[merchandise_priority] [nvarchar](4000) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
-	[never_backorder] [nvarchar](4000) COLLATE SQL_Latin1_General_CP1_CI_AS NULL CONSTRAINT [DF_tbl_LoadFile_SS14_MHW_never_backorder]  DEFAULT ((0)),
-	[backorders] [nvarchar](4000) COLLATE SQL_Latin1_General_CP1_CI_AS NULL CONSTRAINT [DF_tbl_LoadFile_SS14_MHW_backorders]  DEFAULT ((0)),
-	[manage_stock] [nvarchar](4000) COLLATE SQL_Latin1_General_CP1_CI_AS NULL CONSTRAINT [DF_tbl_LoadFile_SS14_MHW_manage_stock]  DEFAULT ((1)),
-	[use_config_backorders] [nvarchar](4000) COLLATE SQL_Latin1_General_CP1_CI_AS NULL CONSTRAINT [DF_tbl_LoadFile_SS14_MHW_use_config_backorders]  DEFAULT ((0)),
-	[use_config_manage_stock] [nvarchar](4000) COLLATE SQL_Latin1_General_CP1_CI_AS NULL CONSTRAINT [DF_tbl_LoadFile_SS14_MHW_use_config_manage_stock]  DEFAULT ((1))
- CONSTRAINT [PK_tbl_LoadFile_SS14_MHW] PRIMARY KEY CLUSTERED 
+	[never_backorder] [nvarchar](4000) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
+	[backorders] [nvarchar](4000) COLLATE SQL_Latin1_General_CP1_CI_AS NULL CONSTRAINT [DF_tbl_LoadFile_SS14_MERFOOT_backorders] DEFAULT ((0)),
+	[manage_stock] [nvarchar](4000) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
+	[use_config_backorders] [nvarchar](4000) COLLATE SQL_Latin1_General_CP1_CI_AS NULL CONSTRAINT [DF_tbl_LoadFile_SS14_MERFOOT_use_config_backorders] DEFAULT ((0)),
+	[use_config_manage_stock] [nvarchar](4000) COLLATE SQL_Latin1_General_CP1_CI_AS NULL CONSTRAINT [DF_tbl_LoadFile_SS14_MERFOOT_use_config_manage_stock] DEFAULT ((1))
+	
+ CONSTRAINT [PK_tbl_LoadFile_SS14_MERFOOT] PRIMARY KEY CLUSTERED 
 (
-	[id] ASC
+		[id] ASC
 )WITH (IGNORE_DUP_KEY = OFF) ON [PRIMARY]
 ) ON [PRIMARY]
-
-CREATE NONCLUSTERED INDEX [IX_tbl_LoadFile_SS14_MHW] ON [dbo].[tbl_LoadFile_SS14_MHW] 
+ 
+CREATE NONCLUSTERED INDEX [IX_tbl_LoadFile_SS14_MERFOOT] ON [dbo].[tbl_LoadFile_SS14_MERFOOT] 
 (
 	[sku] ASC,
 	[type] ASC,
 	[vendor_product_id] ASC
 )WITH (PAD_INDEX  = OFF, STATISTICS_NORECOMPUTE  = OFF, SORT_IN_TEMPDB = OFF, IGNORE_DUP_KEY = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS  = ON, ALLOW_PAGE_LOCKS  = ON) ON [PRIMARY]
-
+ 
 GO
-TRUNCATE TABLE tbl_LoadFile_SS14_MHW
-
+ 
+TRUNCATE TABLE tbl_LoadFile_SS14_MERFOOT
+ 
 GO
-INSERT INTO tbl_LoadFile_SS14_MHW (
-		[type]		
+INSERT INTO tbl_LoadFile_SS14_MERFOOT (
+		 type		
 		,sku
-		,[name]
+		,name
 		,has_options
 		,price
 		,cost
-		,department
-		,[image]
+		,department  
 		,image_label
-		,choose_color
+		,choose_color 
 		,choose_size
 		,vendor_sku
 		,vendor_product_id
 		,vendor_color_code
-		,vendor_size_code
-		,weight)
-
-SELECT DISTINCT
-	'simple' AS type
-	,'SS14A-MHW-' + LEFT(CONVERT(varchar(255),CAST(a.Material AS decimal)),6) + '-' + CASE WHEN LEN(a.ColorCode) = 1 THEN '00' + CAST(a.ColorCode AS varchar(255)) WHEN LEN(a.ColorCode) = 2 THEN '0' + CAST(a.ColorCode AS varchar(255)) ELSE CAST(a.ColorCode AS varchar(255)) END + '-' + dbo.getCOLSize(a.Size,a.Dim) AS sku
-	,dbo.getMHWName(SUBSTRING(a.[Long Description],0,CHARINDEX('-',a.[Long Description]))) AS name
-	,0 AS has_options
-	,CAST(ROUND(b.MSRP,0) AS float) - 0.01 AS price
-	,b.WHSL AS cost
-	,dbo.getMHWDepartment(a.Gender) AS department
-	,NULL AS image
-	,a.ColorName AS image_label
-	,a.ColorName AS choose_color
-	,dbo.getMHWSize(a.Size,a.Dim) AS choose_size
-	,CAST(a.UPC AS bigint) AS vendor_sku
-	,LEFT(CONVERT(varchar(255),CAST(a.Material AS decimal)),6) AS vendor_product_id
-	,CASE WHEN LEN(a.ColorCode) = 1 THEN '00' + CAST(a.ColorCode AS varchar(255)) WHEN LEN(a.ColorCode) = 2 THEN '0' + CAST(a.ColorCode AS varchar(255)) ELSE CAST(a.ColorCode AS varchar(255)) END AS vendor_color_code
-	,dbo.getCOLSize(a.Size,a.Dim) AS vendor_size_code
-	,NULL AS weight
-FROM tbl_RawData_SS14_MHW_UPC_Marketing AS a
-INNER JOIN tbl_RawData_SS14_MHW_Price AS b
-ON b.MSRP IS NOT NULL AND LEFT(CONVERT(varchar(255),CAST(a.Material AS decimal)),6) = LEFT(CONVERT(varchar(255),CAST(b.Material AS decimal)),6) AND b.Iteration = (SELECT MAX(Iteration) FROM tbl_RawData_SS14_MHW_Price WHERE LEFT(CONVERT(varchar(255),CAST(Material AS decimal)),6) = LEFT(CONVERT(varchar(255),CAST(a.Material AS decimal)),6))
-GO
-
-UPDATE a
-	SET a.image = b.image
-FROM tbl_LoadFile_SS14_MHW AS a
-INNER JOIN tbl_LoadFile_FW13_MHW AS b
-ON b.vendor_sku = a.vendor_sku 
-WHERE a.type = 'simple'
-
-UPDATE a
-	SET a.image = b.image
-FROM tbl_LoadFile_SS14_MHW AS a
-INNER JOIN tbl_LoadFile_SS13_MHW AS b
-ON b.vendor_sku = a.vendor_sku 
-WHERE a.type = 'simple' AND a.image IS NULL
-/*
-UPDATE a
-	SET a.image = RIGHT(b.filename,CHARINDEX('/',REVERSE(b.filename)) - 1)
-FROM tbl_LoadFile_SS14_MHW AS a
-INNER JOIN tbl_RawData_SS14_Image_Filenames AS b
-ON RIGHT(b.filename,CHARINDEX('/',REVERSE(b.filename)) - 1) = a.vendor_product_id + '_' + a.vendor_color_code + '_f.jpg' 
-WHERE b.brand = 'COL' AND a.type = 'simple' AND a.image IS NULL
-
-UPDATE a
-	SET a.image = RIGHT(b.filename,CHARINDEX('/',REVERSE(b.filename)) - 1)
-FROM tbl_LoadFile_SS14_MHW AS a
-INNER JOIN tbl_RawData_SS14_Image_Filenames AS b
-ON RIGHT(b.filename,CHARINDEX('/',REVERSE(b.filename)) - 1) = a.vendor_product_id + '_' + a.vendor_color_code + '%.jpg' 
-WHERE b.brand = 'COL' AND a.type = 'simple' AND image IS NULL
-*/	
-INSERT INTO tbl_LoadFile_SS14_MHW (
-	type
-	,sku
-	,name
-	,categories
-	,configurable_attributes
-	,has_options
-	,price
-	,cost
-	,department
-	,visibility
-	,vendor_product_id
-	,url_key
-	,meta_title
-	,merchandise_priority
-	,manage_stock
-	,use_config_manage_stock
-	,qty
-	,is_in_stock
+		,vendor_size_code 
+		,never_backorder
+		,manage_stock  
+		,use_config_manage_stock
 )
 
-SELECT DISTINCT
-	'configurable' AS type
-	,'MHW-' + vendor_product_id AS sku
-	,name AS name
-	,'Uncategorized' AS categories
-	,'choose_color,choose_size' AS configurable_attributes
-	,'1' AS has_options
-	,price AS price
-	,cost AS cost
-	,department AS department
-	,'Catalog, Search' AS visibility
-	,vendor_product_id AS vendor_product_id
-	,dbo.getUrlKey(name,'Mountain Hardwear','',department) AS url_key
-	,'Mountain Hardwear ' + REPLACE(REPLACE(department + '''s ','Men|Women''s ',''),'Boy|Girl''s ','') + name AS meta_title
-	,'F' AS merchandise_priority
-	,0 AS manage_stock
-	,0 AS use_config_manage_stock
-	,NULL AS qty
-	,NULL AS is_in_stock
-FROM tbl_LoadFile_SS14_MHW
+SELECT DISTINCT 
+	'simple'												AS type
+ 	,'SS14A-MERFOOT-' + Style + '-' + Material + '-' + dbo.getMERFOOTSize(Size,Material) AS sku												
+	,dbo.getMERFOOTName(NAME)							    AS name
+	,0														AS has_options
+	,CAST(MSRP AS float) - .01								AS price
+	,WHSL													AS cost
+	,dbo.getMERFOOTDepartment(Material,Name)				AS department	
+	,ColorName												AS image_label 
+	,ColorName												AS choose_color 
+ 	,CASE WHEN RIGHT(dbo.getMERFOOTSize(Size,Material),1) = 'W' THEN REPLACE(dbo.getMERFOOTSize(Size,Material),'W',' (Wide)') ELSE dbo.getMERFOOTSize(Size,Material) END AS choose_size
+ 	,UPC													AS vendor_sku
+	,Style													AS vendor_product_id
+	,Material												AS vendor_color_code 
+	,dbo.getMERFOOTSize(Size,Material) 						AS vendor_size_code 
+	,0														AS never_backorder
+	,1														AS manage_stock 
+	,1														AS use_config_manage_stock
+FROM tbl_RawData_SS14_MERFOOT_UPC_Price
 GO
 
-UPDATE tbl_LoadFile_SS14_MHW SET
-	 categories = dbo.getMagentoCategories(a.vendor_product_id)
-	,description = (SELECT TOP 1 [Product Summary] FROM tbl_RawData_SS14_MHW_UPC_Marketing WHERE LEFT(Material,6) = a.vendor_product_id)
-	,simples_skus = dbo.getMHWAssociatedProducts(a.vendor_product_id)
-FROM tbl_LoadFile_SS14_MHW AS a
-WHERE type = 'configurable'
-GO
-	
-UPDATE tbl_LoadFile_SS14_MHW SET categories = NULL WHERE type = 'simple'
-UPDATE tbl_LoadFile_SS14_MHW SET status = 'Disabled' WHERE image IS NULL AND type = 'simple'
-UPDATE tbl_LoadFile_SS14_MHW SET thumbnail = image, small_image = image WHERE type = 'simple'
+UPDATE tbl_LoadFile_SS14_MERFOOT SET choose_size = REPLACE(choose_size,'.5','½')
+ 
+INSERT INTO tbl_LoadFile_SS14_MERFOOT (
+		 type		
+		,sku
+		,name
+		,configurable_attributes
+		,has_options
+		,price
+		,cost
+		,department  
+		,visibility 
+		,vendor_product_id
+		,url_key
+		,meta_title
+		,merchandise_priority
+		,never_backorder
+		,manage_stock 
+		,use_config_manage_stock
+		,qty
+		,is_in_stock
+)
+			 
+SELECT DISTINCT 
+	'configurable'											AS type
+ 	,'MERFOOT-' + vendor_product_id							AS sku											
+	,name													AS name
+	,'choose_color,choose_size'								AS configurable_attributes
+	,1														AS has_options
+	,price													AS price
+	,cost													AS cost
+	,department												AS department	
+	,'Catalog, Search'										AS visibility
+	,vendor_product_id 										AS vendor_product_id
+	,dbo.getUrlKey(name,'Merrell','',department)			AS url_key			
+	,'Merrell ' + REPLACE(REPLACE(department + '''s ','Men|Women''s ',''),'Boy|Girl''s ','') + name AS meta_title
+	,'F'													AS merchandise_priority												
+	,0														AS never_backorder
+	,0														AS manage_stock 
+	,0														AS use_config_manage_stock
+	,NULL													AS qty 
+	,NULL													AS is_in_stock
+   
+FROM dbo.tbl_LoadFile_SS14_MERFOOT
 GO
 
+UPDATE a SET
+	a.image = b.Filename
+FROM tbl_LoadFile_SS14_MERFOOT AS a 
+INNER JOIN tbl_RawData_SS14_Image_Filenames AS b
+ON b.filename = REPLACE(a.vendor_color_code,'W','') + '.jpg'
+WHERE b.Brand = 'MERFOOT' AND a.type ='simple'
+
+UPDATE a SET
+	a.image = b.image
+FROM tbl_LoadFile_SS14_MERFOOT AS a 
+INNER JOIN tbl_LoadFile_FW13_MERFOOT AS b
+ON a.vendor_sku = b.vendor_sku
+WHERE a.type ='simple' AND a.image IS NULL
+GO
+  
+UPDATE a SET
+	a.image = b.image
+FROM tbl_LoadFile_SS14_MERFOOT AS a 
+INNER JOIN tbl_LoadFile_SS13_MER AS b
+ON a.vendor_sku = b.vendor_sku
+WHERE a.type ='simple' AND a.image IS NULL
+GO
+
+UPDATE tbl_LoadFile_SS14_MERFOOT SET
+	categories		= dbo.getMagentoCategories(a.vendor_product_id),	
+	simples_skus	= dbo.getMERFOOTAssociatedProducts(a.vendor_product_id),
+	description		= dbo.getMERFOOTLDesc(a.name,a.vendor_product_id),
+	features		= dbo.getMERFOOTFeatures(a.name,a.vendor_product_id)
+FROM tbl_LoadFile_SS14_MERFOOT AS a
+WHERE a.type = 'configurable'
+GO
+ 	
+UPDATE tbl_LoadFile_SS14_MERFOOT SET categories = NULL WHERE type = 'simple'
+UPDATE tbl_LoadFile_SS14_MERFOOT SET status = 'Disabled' WHERE image IS NULL AND type = 'simple'
+UPDATE tbl_LoadFile_SS14_MERFOOT SET thumbnail = image, small_image = image WHERE type = 'simple'
+GO
 /*
-CREATE VIEW [dbo].[view_LoadFile_SS14_MHW]
+CREATE VIEW [dbo].[view_LoadFile_SS14_MERFOOT]
 AS
 SELECT  '"store"' AS store, 
 		'"websites"' AS websites, 
@@ -267,12 +266,12 @@ SELECT  '"' + RTRIM(LTRIM(REPLACE(a.store,'"','""'))) + '"','"' + RTRIM(LTRIM(RE
 		'"' + RTRIM(LTRIM(REPLACE(a.vendor_color_code,'"','""'))) + '"','"' + RTRIM(LTRIM(REPLACE(a.vendor_size_code,'"','""'))) + '"','"' + RTRIM(LTRIM(REPLACE(a.season_id,'"','""'))) + '"','"' + RTRIM(LTRIM(REPLACE(a. short_description,'"','""'))) + '"','"' + RTRIM(LTRIM(REPLACE(a.description,'"','""'))) + '"','"' + RTRIM(LTRIM(REPLACE(a.features,'"','""'))) + '"','"' + RTRIM(LTRIM(REPLACE(a.activities,'"','""'))) + '"','"' + RTRIM(LTRIM(REPLACE(a.weather,'"','""'))) + '"','"' + RTRIM(LTRIM(REPLACE(a.layering,'"','""'))) + '"','"' + RTRIM(LTRIM(REPLACE(a.care_instructions,'"','""'))) + '"',
 		'"' + RTRIM(LTRIM(REPLACE(a.fabric,'"','""'))) + '"','"' + RTRIM(LTRIM(REPLACE(a.fit,'"','""'))) + '"','"' + RTRIM(LTRIM(REPLACE(a.volume,'"','""'))) + '"','"' + RTRIM(LTRIM(REPLACE(a.manufacturer,'"','""'))) + '"','"' + RTRIM(LTRIM(REPLACE(a.qty,'"','""'))) + '"','"' + RTRIM(LTRIM(REPLACE(a.is_in_stock,'"','""'))) + '"','"' + RTRIM(LTRIM(REPLACE(a.simples_skus,'"','""'))) + '"','"' + RTRIM(LTRIM(REPLACE(a.url_key,'"','""'))) + '"',
 		'"' + RTRIM(LTRIM(REPLACE(a.videos,'"','""'))) + '"','"' + RTRIM(LTRIM(REPLACE(a.weight,'"','""'))) + '"','"' + RTRIM(LTRIM(REPLACE(a.merchandise_priority,'"','""'))) + '"','"' + RTRIM(LTRIM(REPLACE(a.backorders,'"','""'))) + '"','"' + RTRIM(LTRIM(REPLACE(a.manage_stock,'"','""'))) + '"','"' + RTRIM(LTRIM(REPLACE(a.never_backorder,'"','""'))) + '"','"' + RTRIM(LTRIM(REPLACE(a.use_config_manage_stock,'"','""'))) + '"','"' + RTRIM(LTRIM(REPLACE(a.use_config_backorders,'"','""'))) + '"','"' + RTRIM(LTRIM(REPLACE(a.meta_title,'"','""'))) + '"'
-FROM dbo.tbl_LoadFile_SS14_MHW AS a
+FROM dbo.tbl_LoadFile_SS14_MERFOOT AS a
 GO
-
+ 
 DECLARE @sql varchar(1024)
-SELECT @sql = 'bcp "SELECT * FROM LOT_Inventory.dbo.view_LoadFile_SS14_MHW" queryout "C:\Data\Shared\SS14MHW.csv" -w -t , -T -S ' + @@servername
+SELECT @sql = 'bcp "SELECT * FROM LOT_Inventory.dbo.view_LoadFile_SS14_MERFOOT" queryout "C:\Data\Shared\SS14MERFOOT.csv" -w -t , -T -S ' + @@servername
 EXEC master..xp_cmdshell @sql
-
-DROP VIEW view_LoadFile_SS14_MHW
+ 
+DROP VIEW view_LoadFile_SS14_MERFOOT
 */

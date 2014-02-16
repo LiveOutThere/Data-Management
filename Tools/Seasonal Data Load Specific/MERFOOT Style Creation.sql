@@ -1,246 +1,30 @@
---First I ran this select to see the diff between price list & UPC data
+--Start by adding department & style columns to the tables you will be working with:
+ALTER TABLE tbl_RawData_SS14_UPC_Price ADD Department nvarchar(255)
+ALTER TABLE tbl_RawData_SS14_UPC_Price ADD Style nvarchar(255)
+ALTER TABLE tbl_RawData_SS14_Marketing ADD Department nvarchar(255)
+ALTER TABLE tbl_RawData_SS14_Marketing ADD Style nvarchar(255)
 
-SELECT DISTINCT a.Name, b.Final_Pattern_name
-FROM tbl_RawData_FW13_MER_FOOT_UPC AS a
-FULL JOIN tbl_RawData_FW13_MER_FOOT_Price_List AS b
-ON a.Name = b.Final_Pattern_name
+--Update the Department column using dbo.getMERFOOTDepartment:
+UPDATE tbl_RawData_SS14_MERFOOT_UPC_Price SET Department = dbo.getMERFOOTDepartment(Material,Name)
+UPDATE tbl_RawData_SS14_MERFOOT_Marketing SET Department = dbo.getMERFOOTDepartment(Material,Name)
 
---Two styles were present on the price list but not in the UPC data. I have asked Ben H. about them.
---Several other styles did not match initially, so I manually updated the UPC data to conform to the price list naming conventions
---Now I can perform this join for my simples section:
+--Populate temp table with DISTINCT Name + Department + Style combinations from UPC table:
+SELECT DISTINCT Name, Department, (SELECT SUBSTRING(CONVERT(varchar(40), NEWID()),0,6)) AS Style INTO #MERFOOT_CONFIGS FROM tbl_RawData_SS14_MERFOOT_UPC_Price
 
-SELECT DISTINCT
-	...
-FROM tbl_RawData_FW13_MER_FOOT_UPC AS a 
-INNER JOIN tbl_RawData_FW13_MER_FOOT_Price_List AS b 
-ON a.Name = b.Final_Pattern_name
-
---Next I added a Department column to both tbl_RawData_FW13_MER_FOOT_Price_List & tbl_RawData_FW13_MER_FOOT_UPC and populated them using:
-
-UPDATE tbl_RawData_FW13_MER_FOOT_Price_List SET Department = dbo.getMERFOOTDepartment(type) --Then:
-
-UPDATE tbl_RawData_FW13_MER_FOOT_UPC SET Department = CASE WHEN RIGHT(REPLACE(Material,'W',''),1) % 2 = 0 THEN 'Women'
-														   WHEN RIGHT(REPLACE(Material,'W',''),1) % 2 <> 0 THEN 'Men'
-														   ELSE 'Men|Women' END
-UPDATE tbl_RawData_FW13_MER_FOOT_UPC SET Department = CASE WHEN RIGHT(Name,4) = 'Kids' THEN 'Boy|Girl' ELSE Department END
-														   
---Then I ran this SELECT statement to verify that all the Names and Genders were matching:
-
-SELECT DISTINCT a.Name AS upc_name, b.Final_Pattern_name AS price_name, a.Department AS upc_dep, b.Department AS price_dep
-FROM tbl_RawData_FW13_MER_FOOT_UPC AS a
-FULL JOIN tbl_RawData_FW13_MER_FOOT_Price_List AS b
-ON a.Name = b.Final_Pattern_name
-
---I could use the name as vendor_product_id, but that's sloppy, so I added the STYLENUMBER column to tbl_RawData_FW13_MER_FOOT_Price_List and ran this SELECT:
-
-SELECT DISTINCT (SELECT SUBSTRING(CONVERT(varchar(40), NEWID()),0,6)) AS STYLENUMBER, Final_Pattern_name, Department 
-FROM tbl_RawData_FW13_MER_FOOT_Price_List
-
---I then copied the output into TextMate and performed some Find & Replaces to generate this UPDATE block:
-UPDATE tbl_RawData_FW13_MER_FOOT_Price_List SET STYLENUMBER = 'E3EFE' WHERE Final_Pattern_name = 'Agama' AND Department = 'Men'
-UPDATE tbl_RawData_FW13_MER_FOOT_Price_List SET STYLENUMBER = '3FCDE' WHERE Final_Pattern_name = 'Amaryllis' AND Department = 'Women'
-UPDATE tbl_RawData_FW13_MER_FOOT_Price_List SET STYLENUMBER = 'FFF53' WHERE Final_Pattern_name = 'Arctic Fox 6 Waterproof' AND Department = 'Women'
-UPDATE tbl_RawData_FW13_MER_FOOT_Price_List SET STYLENUMBER = '120CD' WHERE Final_Pattern_name = 'Arctic Fox 8 Waterproof' AND Department = 'Women'
-UPDATE tbl_RawData_FW13_MER_FOOT_Price_List SET STYLENUMBER = 'A50A4' WHERE Final_Pattern_name = 'Arctic Fox Moc Waterproof' AND Department = 'Women'
-UPDATE tbl_RawData_FW13_MER_FOOT_Price_List SET STYLENUMBER = 'FB91F' WHERE Final_Pattern_name = 'Ascend Glove' AND Department = 'Men'
-UPDATE tbl_RawData_FW13_MER_FOOT_Price_List SET STYLENUMBER = '212AC' WHERE Final_Pattern_name = 'Ascend Glove' AND Department = 'Women'
-UPDATE tbl_RawData_FW13_MER_FOOT_Price_List SET STYLENUMBER = '71ACE' WHERE Final_Pattern_name = 'Avesso' AND Department = 'Women'
-UPDATE tbl_RawData_FW13_MER_FOOT_Price_List SET STYLENUMBER = 'D3EDB' WHERE Final_Pattern_name = 'Avian Light Convertible' AND Department = 'Women'
-UPDATE tbl_RawData_FW13_MER_FOOT_Price_List SET STYLENUMBER = '245AA' WHERE Final_Pattern_name = 'Avian Light Flip' AND Department = 'Women'
-UPDATE tbl_RawData_FW13_MER_FOOT_Price_List SET STYLENUMBER = '9E16B' WHERE Final_Pattern_name = 'Avian Light LTR' AND Department = 'Women'
-UPDATE tbl_RawData_FW13_MER_FOOT_Price_List SET STYLENUMBER = '2CAA9' WHERE Final_Pattern_name = 'Avian Light Mid WTPF' AND Department = 'Women'
-UPDATE tbl_RawData_FW13_MER_FOOT_Price_List SET STYLENUMBER = 'B83C2' WHERE Final_Pattern_name = 'Avian Light Strap' AND Department = 'Women'
-UPDATE tbl_RawData_FW13_MER_FOOT_Price_List SET STYLENUMBER = 'D3754' WHERE Final_Pattern_name = 'Avian Light Vent WTPF' AND Department = 'Women'
-UPDATE tbl_RawData_FW13_MER_FOOT_Price_List SET STYLENUMBER = '7583F' WHERE Final_Pattern_name = 'Avian Light Ventilator' AND Department = 'Women'
-UPDATE tbl_RawData_FW13_MER_FOOT_Price_List SET STYLENUMBER = '7E503' WHERE Final_Pattern_name = 'Bare Access 2' AND Department = 'Men'
-UPDATE tbl_RawData_FW13_MER_FOOT_Price_List SET STYLENUMBER = '5212E' WHERE Final_Pattern_name = 'Bare Access Arc 2' AND Department = 'Women'
-UPDATE tbl_RawData_FW13_MER_FOOT_Price_List SET STYLENUMBER = 'CA14A' WHERE Final_Pattern_name = 'Cambrian Strap Sport' AND Department = 'Men'
-UPDATE tbl_RawData_FW13_MER_FOOT_Price_List SET STYLENUMBER = 'C24A2' WHERE Final_Pattern_name = 'Captiva Emme' AND Department = 'Women'
-UPDATE tbl_RawData_FW13_MER_FOOT_Price_List SET STYLENUMBER = '8D10D' WHERE Final_Pattern_name = 'Captiva Lace' AND Department = 'Women'
-UPDATE tbl_RawData_FW13_MER_FOOT_Price_List SET STYLENUMBER = 'BCC3E' WHERE Final_Pattern_name = 'Captiva Launch Waterproof' AND Department = 'Women'
-UPDATE tbl_RawData_FW13_MER_FOOT_Price_List SET STYLENUMBER = '49E4F' WHERE Final_Pattern_name = 'Captiva Mid Waterproof' AND Department = 'Women'
-UPDATE tbl_RawData_FW13_MER_FOOT_Price_List SET STYLENUMBER = 'A8B51' WHERE Final_Pattern_name = 'Captiva Moc' AND Department = 'Women'
-UPDATE tbl_RawData_FW13_MER_FOOT_Price_List SET STYLENUMBER = '8B29C' WHERE Final_Pattern_name = 'Captiva Slide' AND Department = 'Women'
-UPDATE tbl_RawData_FW13_MER_FOOT_Price_List SET STYLENUMBER = 'D9B9C' WHERE Final_Pattern_name = 'Captiva Strap Waterproof' AND Department = 'Women'
-UPDATE tbl_RawData_FW13_MER_FOOT_Price_List SET STYLENUMBER = '2AE85' WHERE Final_Pattern_name = 'Cham 5 Mid Vent WTPF' AND Department = 'Men'
-UPDATE tbl_RawData_FW13_MER_FOOT_Price_List SET STYLENUMBER = '577FC' WHERE Final_Pattern_name = 'Cham 5 Vent' AND Department = 'Men'
-UPDATE tbl_RawData_FW13_MER_FOOT_Price_List SET STYLENUMBER = '25471' WHERE Final_Pattern_name = 'Cham 5 WTPF' AND Department = 'Men'
-UPDATE tbl_RawData_FW13_MER_FOOT_Price_List SET STYLENUMBER = 'ADB2E' WHERE Final_Pattern_name = 'Cham Arc Contender WTPF' AND Department = 'Women'
-UPDATE tbl_RawData_FW13_MER_FOOT_Price_List SET STYLENUMBER = 'B328F' WHERE Final_Pattern_name = 'Cham Arc Voyager Sport' AND Department = 'Women'
-UPDATE tbl_RawData_FW13_MER_FOOT_Price_List SET STYLENUMBER = 'A635D' WHERE Final_Pattern_name = 'Chameleon 4 Mid Trek Wtpf Kids' AND Department = 'Boy|Girl'
-UPDATE tbl_RawData_FW13_MER_FOOT_Price_List SET STYLENUMBER = '565BB' WHERE Final_Pattern_name = 'Chameleon 4 Mid Vent Kids' AND Department = 'Boy|Girl'
-UPDATE tbl_RawData_FW13_MER_FOOT_Price_List SET STYLENUMBER = '641B2' WHERE Final_Pattern_name = 'Chameleon 4 Vent Strap Kids' AND Department = 'Boy|Girl'
-UPDATE tbl_RawData_FW13_MER_FOOT_Price_List SET STYLENUMBER = '34B03' WHERE Final_Pattern_name = 'Chameleon 4 Ventilator Kids' AND Department = 'Boy|Girl'
-UPDATE tbl_RawData_FW13_MER_FOOT_Price_List SET STYLENUMBER = '4C94E' WHERE Final_Pattern_name = 'Chameleon Spin Waterproof Kids' AND Department = 'Boy|Girl'
-UPDATE tbl_RawData_FW13_MER_FOOT_Price_List SET STYLENUMBER = '4A308' WHERE Final_Pattern_name = 'Chameleon Thermo 6 W/P Synthc' AND Department = 'Men'
-UPDATE tbl_RawData_FW13_MER_FOOT_Price_List SET STYLENUMBER = '5EF09' WHERE Final_Pattern_name = 'Chameleon Thermo 8 W/P Syn' AND Department = 'Women'
-UPDATE tbl_RawData_FW13_MER_FOOT_Price_List SET STYLENUMBER = '6E195' WHERE Final_Pattern_name = 'Chameleon Thermo 8 W/P Synthc' AND Department = 'Men'
-UPDATE tbl_RawData_FW13_MER_FOOT_Price_List SET STYLENUMBER = 'DFF98' WHERE Final_Pattern_name = 'Circuit Access' AND Department = 'Men'
-UPDATE tbl_RawData_FW13_MER_FOOT_Price_List SET STYLENUMBER = '2F6BE' WHERE Final_Pattern_name = 'Crush Glove' AND Department = 'Women'
-UPDATE tbl_RawData_FW13_MER_FOOT_Price_List SET STYLENUMBER = 'A6588' WHERE Final_Pattern_name = 'Crush Glove Kids' AND Department = 'Boy|Girl'
-UPDATE tbl_RawData_FW13_MER_FOOT_Price_List SET STYLENUMBER = '44BC2' WHERE Final_Pattern_name = 'Cypher Glove' AND Department = 'Men'
-UPDATE tbl_RawData_FW13_MER_FOOT_Price_List SET STYLENUMBER = '86984' WHERE Final_Pattern_name = 'Decora Chant WTPF' AND Department = 'Women'
-UPDATE tbl_RawData_FW13_MER_FOOT_Price_List SET STYLENUMBER = 'E9AE2' WHERE Final_Pattern_name = 'Decora Minuet WTPF' AND Department = 'Women'
-UPDATE tbl_RawData_FW13_MER_FOOT_Price_List SET STYLENUMBER = '662BD' WHERE Final_Pattern_name = 'Decora Prelude WTPF' AND Department = 'Women'
-UPDATE tbl_RawData_FW13_MER_FOOT_Price_List SET STYLENUMBER = 'E212D' WHERE Final_Pattern_name = 'Decora Sonata WTPF' AND Department = 'Women'
-UPDATE tbl_RawData_FW13_MER_FOOT_Price_List SET STYLENUMBER = '96D0F' WHERE Final_Pattern_name = 'Encore Apex Waterproof' AND Department = 'Women'
-UPDATE tbl_RawData_FW13_MER_FOOT_Price_List SET STYLENUMBER = '1AF21' WHERE Final_Pattern_name = 'Encore Blip' AND Department = 'Women'
-UPDATE tbl_RawData_FW13_MER_FOOT_Price_List SET STYLENUMBER = '91D6C' WHERE Final_Pattern_name = 'Encore Nova Crystal ' AND Department = 'Women'
-UPDATE tbl_RawData_FW13_MER_FOOT_Price_List SET STYLENUMBER = '4EDDD' WHERE Final_Pattern_name = 'Encore Nova Crystal LTR' AND Department = 'Women'
-UPDATE tbl_RawData_FW13_MER_FOOT_Price_List SET STYLENUMBER = '46B71' WHERE Final_Pattern_name = 'Encore Pleat Moc' AND Department = 'Women'
-UPDATE tbl_RawData_FW13_MER_FOOT_Price_List SET STYLENUMBER = '0498E' WHERE Final_Pattern_name = 'Encore Pleat Slide' AND Department = 'Women'
-UPDATE tbl_RawData_FW13_MER_FOOT_Price_List SET STYLENUMBER = '65888' WHERE Final_Pattern_name = 'Evera Amp' AND Department = 'Women'
-UPDATE tbl_RawData_FW13_MER_FOOT_Price_List SET STYLENUMBER = 'D27C4' WHERE Final_Pattern_name = 'Evera Draft' AND Department = 'Women'
-UPDATE tbl_RawData_FW13_MER_FOOT_Price_List SET STYLENUMBER = 'F5AB5' WHERE Final_Pattern_name = 'Evera Fade' AND Department = 'Women'
-UPDATE tbl_RawData_FW13_MER_FOOT_Price_List SET STYLENUMBER = 'D944E' WHERE Final_Pattern_name = 'Evera Rush' AND Department = 'Women'
-UPDATE tbl_RawData_FW13_MER_FOOT_Price_List SET STYLENUMBER = 'DC687' WHERE Final_Pattern_name = 'Excursion Glove' AND Department = 'Men'
-UPDATE tbl_RawData_FW13_MER_FOOT_Price_List SET STYLENUMBER = 'F7C00' WHERE Final_Pattern_name = 'Flux Glove' AND Department = 'Men'
-UPDATE tbl_RawData_FW13_MER_FOOT_Price_List SET STYLENUMBER = 'E16ED' WHERE Final_Pattern_name = 'Flux Glove Kids' AND Department = 'Boy|Girl'
-UPDATE tbl_RawData_FW13_MER_FOOT_Price_List SET STYLENUMBER = 'CF790' WHERE Final_Pattern_name = 'Geomorph Blaze' AND Department = 'Men'
-UPDATE tbl_RawData_FW13_MER_FOOT_Price_List SET STYLENUMBER = 'A67D3' WHERE Final_Pattern_name = 'Geomorph Blaze Mid Thermo WTPF' AND Department = 'Men'
-UPDATE tbl_RawData_FW13_MER_FOOT_Price_List SET STYLENUMBER = '77641' WHERE Final_Pattern_name = 'Geomorph Blaze Mid WTPF' AND Department = 'Men'
-UPDATE tbl_RawData_FW13_MER_FOOT_Price_List SET STYLENUMBER = 'A86AE' WHERE Final_Pattern_name = 'Geomorph Blaze Waterproof' AND Department = 'Men'
-UPDATE tbl_RawData_FW13_MER_FOOT_Price_List SET STYLENUMBER = '55C1C' WHERE Final_Pattern_name = 'Grasshopper Sport' AND Department = 'Women'
-UPDATE tbl_RawData_FW13_MER_FOOT_Price_List SET STYLENUMBER = '1C394' WHERE Final_Pattern_name = 'Grasshopper Sport Mid WTPF' AND Department = 'Women'
-UPDATE tbl_RawData_FW13_MER_FOOT_Price_List SET STYLENUMBER = '56448' WHERE Final_Pattern_name = 'Grasshopper Sport WTPF' AND Department = 'Women'
-UPDATE tbl_RawData_FW13_MER_FOOT_Price_List SET STYLENUMBER = '457E4' WHERE Final_Pattern_name = 'Haven Autumn WTPF' AND Department = 'Women'
-UPDATE tbl_RawData_FW13_MER_FOOT_Price_List SET STYLENUMBER = 'BD0CC' WHERE Final_Pattern_name = 'Haven Winter WTPF' AND Department = 'Women'
-UPDATE tbl_RawData_FW13_MER_FOOT_Price_List SET STYLENUMBER = 'A04EA' WHERE Final_Pattern_name = 'Himavat Chukka WTPF' AND Department = 'Men'
-UPDATE tbl_RawData_FW13_MER_FOOT_Price_List SET STYLENUMBER = '2FBC7' WHERE Final_Pattern_name = 'Hollyleaf' AND Department = 'Women'
-UPDATE tbl_RawData_FW13_MER_FOOT_Price_List SET STYLENUMBER = 'BE517' WHERE Final_Pattern_name = 'Hylox' AND Department = 'Men'
-UPDATE tbl_RawData_FW13_MER_FOOT_Price_List SET STYLENUMBER = 'F42CA' WHERE Final_Pattern_name = 'Hyperbolic' AND Department = 'Men'
-UPDATE tbl_RawData_FW13_MER_FOOT_Price_List SET STYLENUMBER = '54C8C' WHERE Final_Pattern_name = 'Iceclaw Mid WTPF' AND Department = 'Men'
-UPDATE tbl_RawData_FW13_MER_FOOT_Price_List SET STYLENUMBER = 'C6FA2' WHERE Final_Pattern_name = 'Immerse Mid WTPF' AND Department = 'Men'
-UPDATE tbl_RawData_FW13_MER_FOOT_Price_List SET STYLENUMBER = 'F6D79' WHERE Final_Pattern_name = 'Jacardia' AND Department = 'Women'
-UPDATE tbl_RawData_FW13_MER_FOOT_Price_List SET STYLENUMBER = '746D1' WHERE Final_Pattern_name = 'Jungle Glove' AND Department = 'Men'
-UPDATE tbl_RawData_FW13_MER_FOOT_Price_List SET STYLENUMBER = '723C3' WHERE Final_Pattern_name = 'Jungle Glove' AND Department = 'Women'
-UPDATE tbl_RawData_FW13_MER_FOOT_Price_List SET STYLENUMBER = '30CF5' WHERE Final_Pattern_name = 'Jungle Moc' AND Department = 'Men'
-UPDATE tbl_RawData_FW13_MER_FOOT_Price_List SET STYLENUMBER = '88090' WHERE Final_Pattern_name = 'Jungle Moc' AND Department = 'Women'
-UPDATE tbl_RawData_FW13_MER_FOOT_Price_List SET STYLENUMBER = '5DBBB' WHERE Final_Pattern_name = 'Jungle Moc Frosty Wtpf Kids' AND Department = 'Boy|Girl'
-UPDATE tbl_RawData_FW13_MER_FOOT_Price_List SET STYLENUMBER = 'F33E3' WHERE Final_Pattern_name = 'Jungle Moc Kids' AND Department = 'Boy|Girl'
-UPDATE tbl_RawData_FW13_MER_FOOT_Price_List SET STYLENUMBER = '2840A' WHERE Final_Pattern_name = 'Jungle Moc Leather' AND Department = 'Men'
-UPDATE tbl_RawData_FW13_MER_FOOT_Price_List SET STYLENUMBER = 'A60BB' WHERE Final_Pattern_name = 'Jungle Moc Leather' AND Department = 'Women'
-UPDATE tbl_RawData_FW13_MER_FOOT_Price_List SET STYLENUMBER = 'D159C' WHERE Final_Pattern_name = 'Jungle Moc Leather Kids' AND Department = 'Boy|Girl'
-UPDATE tbl_RawData_FW13_MER_FOOT_Price_List SET STYLENUMBER = '587E6' WHERE Final_Pattern_name = 'Jungle Moc Nubuck' AND Department = 'Men'
-UPDATE tbl_RawData_FW13_MER_FOOT_Price_List SET STYLENUMBER = 'E22DC' WHERE Final_Pattern_name = 'Lorelei Link' AND Department = 'Women'
-UPDATE tbl_RawData_FW13_MER_FOOT_Price_List SET STYLENUMBER = '5DF33' WHERE Final_Pattern_name = 'Lorelei Twine' AND Department = 'Women'
-UPDATE tbl_RawData_FW13_MER_FOOT_Price_List SET STYLENUMBER = '4CADB' WHERE Final_Pattern_name = 'Lorelei Zip' AND Department = 'Women'
-UPDATE tbl_RawData_FW13_MER_FOOT_Price_List SET STYLENUMBER = 'DF152' WHERE Final_Pattern_name = 'Luxe Whip' AND Department = 'Women'
-UPDATE tbl_RawData_FW13_MER_FOOT_Price_List SET STYLENUMBER = 'C3AC6' WHERE Final_Pattern_name = 'Mattertal Echo Gore-Tex' AND Department = 'Women'
-UPDATE tbl_RawData_FW13_MER_FOOT_Price_List SET STYLENUMBER = '40740' WHERE Final_Pattern_name = 'Mattertal Gore-Tex' AND Department = 'Men'
-UPDATE tbl_RawData_FW13_MER_FOOT_Price_List SET STYLENUMBER = '289D1' WHERE Final_Pattern_name = 'Mimosa Ginger' AND Department = 'Women'
-UPDATE tbl_RawData_FW13_MER_FOOT_Price_List SET STYLENUMBER = '59C2B' WHERE Final_Pattern_name = 'Mimosa Glee' AND Department = 'Women'
-UPDATE tbl_RawData_FW13_MER_FOOT_Price_List SET STYLENUMBER = '00969' WHERE Final_Pattern_name = 'Mimosa Harvest Waterproof Kids' AND Department = 'Boy|Girl'
-UPDATE tbl_RawData_FW13_MER_FOOT_Price_List SET STYLENUMBER = '3CD86' WHERE Final_Pattern_name = 'Mimosa Lace' AND Department = 'Women'
-UPDATE tbl_RawData_FW13_MER_FOOT_Price_List SET STYLENUMBER = 'EDD6A' WHERE Final_Pattern_name = 'Mimosa Moc' AND Department = 'Women'
-UPDATE tbl_RawData_FW13_MER_FOOT_Price_List SET STYLENUMBER = 'E54A4' WHERE Final_Pattern_name = 'Mimosa Toggle Kids' AND Department = 'Boy|Girl'
-UPDATE tbl_RawData_FW13_MER_FOOT_Price_List SET STYLENUMBER = '0D6E5' WHERE Final_Pattern_name = 'Mimosa Toggle Wtpf Kids' AND Department = 'Boy|Girl'
-UPDATE tbl_RawData_FW13_MER_FOOT_Price_List SET STYLENUMBER = '3A58A' WHERE Final_Pattern_name = 'Mimosa Vex WTPF' AND Department = 'Women'
-UPDATE tbl_RawData_FW13_MER_FOOT_Price_List SET STYLENUMBER = '9771E' WHERE Final_Pattern_name = 'Mix Master 2 WTPF' AND Department = 'Men'
-UPDATE tbl_RawData_FW13_MER_FOOT_Price_List SET STYLENUMBER = '15F0D' WHERE Final_Pattern_name = 'Mix Master Jam Kids' AND Department = 'Boy|Girl'
-UPDATE tbl_RawData_FW13_MER_FOOT_Price_List SET STYLENUMBER = '89789' WHERE Final_Pattern_name = 'Mix Master Jam Z-Rap Kids' AND Department = 'Boy|Girl'
-UPDATE tbl_RawData_FW13_MER_FOOT_Price_List SET STYLENUMBER = '80A99' WHERE Final_Pattern_name = 'Mix Master Move' AND Department = 'Men'
-UPDATE tbl_RawData_FW13_MER_FOOT_Price_List SET STYLENUMBER = 'D5ADE' WHERE Final_Pattern_name = 'Mix Master Move Glide' AND Department = 'Women'
-UPDATE tbl_RawData_FW13_MER_FOOT_Price_List SET STYLENUMBER = '28117' WHERE Final_Pattern_name = 'Mix Master Tuff' AND Department = 'Men'
-UPDATE tbl_RawData_FW13_MER_FOOT_Price_List SET STYLENUMBER = 'B17B3' WHERE Final_Pattern_name = 'Mix Master Tuff Mid WTPF' AND Department = 'Men'
-UPDATE tbl_RawData_FW13_MER_FOOT_Price_List SET STYLENUMBER = 'B0614' WHERE Final_Pattern_name = 'Moab GTX' AND Department = 'Men'
-UPDATE tbl_RawData_FW13_MER_FOOT_Price_List SET STYLENUMBER = '220FA' WHERE Final_Pattern_name = 'Moab Mid GTX' AND Department = 'Men'
-UPDATE tbl_RawData_FW13_MER_FOOT_Price_List SET STYLENUMBER = 'BD32D' WHERE Final_Pattern_name = 'Moab Polar Mid Strap Wtpf Kids' AND Department = 'Boy|Girl'
-UPDATE tbl_RawData_FW13_MER_FOOT_Price_List SET STYLENUMBER = '0CC49' WHERE Final_Pattern_name = 'Moab Polar WTPF' AND Department = 'Men'
-UPDATE tbl_RawData_FW13_MER_FOOT_Price_List SET STYLENUMBER = '63D60' WHERE Final_Pattern_name = 'Moab Ventilator' AND Department = 'Men'
-UPDATE tbl_RawData_FW13_MER_FOOT_Price_List SET STYLENUMBER = '7658D' WHERE Final_Pattern_name = 'Mountain Diggs' AND Department = 'Men'
-UPDATE tbl_RawData_FW13_MER_FOOT_Price_List SET STYLENUMBER = 'B9127' WHERE Final_Pattern_name = 'Mountain Kicks' AND Department = 'Men'
-UPDATE tbl_RawData_FW13_MER_FOOT_Price_List SET STYLENUMBER = 'B8945' WHERE Final_Pattern_name = 'Mountain Moc' AND Department = 'Men'
-UPDATE tbl_RawData_FW13_MER_FOOT_Price_List SET STYLENUMBER = '2CFD9' WHERE Final_Pattern_name = 'Mountain Treads WTPF' AND Department = 'Men'
-UPDATE tbl_RawData_FW13_MER_FOOT_Price_List SET STYLENUMBER = '8F77E' WHERE Final_Pattern_name = 'Natalya Waterproof' AND Department = 'Women'
-UPDATE tbl_RawData_FW13_MER_FOOT_Price_List SET STYLENUMBER = '96481' WHERE Final_Pattern_name = 'Nikita Waterproof' AND Department = 'Women'
-UPDATE tbl_RawData_FW13_MER_FOOT_Price_List SET STYLENUMBER = '0B10E' WHERE Final_Pattern_name = 'Norsehund Alpha Waterproof' AND Department = 'Men'
-UPDATE tbl_RawData_FW13_MER_FOOT_Price_List SET STYLENUMBER = '80FCC' WHERE Final_Pattern_name = 'Norsehund Beta Waterproof' AND Department = 'Men'
-UPDATE tbl_RawData_FW13_MER_FOOT_Price_List SET STYLENUMBER = 'E4E68' WHERE Final_Pattern_name = 'Norsehund Omega Mid Waterproof' AND Department = 'Men'
-UPDATE tbl_RawData_FW13_MER_FOOT_Price_List SET STYLENUMBER = '44949' WHERE Final_Pattern_name = 'Olmec' AND Department = 'Men'
-UPDATE tbl_RawData_FW13_MER_FOOT_Price_List SET STYLENUMBER = '57FB3' WHERE Final_Pattern_name = 'Pace Glove 2' AND Department = 'Women'
-UPDATE tbl_RawData_FW13_MER_FOOT_Price_List SET STYLENUMBER = '42DBF' WHERE Final_Pattern_name = 'Phaser Epic WTPF' AND Department = 'Men'
-UPDATE tbl_RawData_FW13_MER_FOOT_Price_List SET STYLENUMBER = 'A905F' WHERE Final_Pattern_name = 'Phoenix Trek' AND Department = 'Men'
-UPDATE tbl_RawData_FW13_MER_FOOT_Price_List SET STYLENUMBER = 'CA77C' WHERE Final_Pattern_name = 'Phoenix Trek Mid WTPF' AND Department = 'Men'
-UPDATE tbl_RawData_FW13_MER_FOOT_Price_List SET STYLENUMBER = 'D49C9' WHERE Final_Pattern_name = 'Pivot Lace' AND Department = 'Men'
-UPDATE tbl_RawData_FW13_MER_FOOT_Price_List SET STYLENUMBER = '38C2D' WHERE Final_Pattern_name = 'Plumeria' AND Department = 'Women'
-UPDATE tbl_RawData_FW13_MER_FOOT_Price_List SET STYLENUMBER = '97341' WHERE Final_Pattern_name = 'Prevoz Waterproof' AND Department = 'Women'
-UPDATE tbl_RawData_FW13_MER_FOOT_Price_List SET STYLENUMBER = '4F9C3' WHERE Final_Pattern_name = 'Proterra' AND Department = 'Men'
-UPDATE tbl_RawData_FW13_MER_FOOT_Price_List SET STYLENUMBER = 'CAF6F' WHERE Final_Pattern_name = 'Proterra' AND Department = 'Women'
-UPDATE tbl_RawData_FW13_MER_FOOT_Price_List SET STYLENUMBER = 'FEA46' WHERE Final_Pattern_name = 'Proterra Frost Mid GTX' AND Department = 'Women'
-UPDATE tbl_RawData_FW13_MER_FOOT_Price_List SET STYLENUMBER = '8BB35' WHERE Final_Pattern_name = 'Proterra GTX' AND Department = 'Women'
-UPDATE tbl_RawData_FW13_MER_FOOT_Price_List SET STYLENUMBER = '61A17' WHERE Final_Pattern_name = 'Proterra Mid GTX' AND Department = 'Women'
-UPDATE tbl_RawData_FW13_MER_FOOT_Price_List SET STYLENUMBER = '65DC8' WHERE Final_Pattern_name = 'Proterra Mid Sport GTX' AND Department = 'Men'
-UPDATE tbl_RawData_FW13_MER_FOOT_Price_List SET STYLENUMBER = '75207' WHERE Final_Pattern_name = 'Proterra Mid Waterproof Kids' AND Department = 'Boy|Girl'
-UPDATE tbl_RawData_FW13_MER_FOOT_Price_List SET STYLENUMBER = 'E079E' WHERE Final_Pattern_name = 'Proterra Sport' AND Department = 'Men'
-UPDATE tbl_RawData_FW13_MER_FOOT_Price_List SET STYLENUMBER = '48909' WHERE Final_Pattern_name = 'Proterra Sport GTX' AND Department = 'Men'
-UPDATE tbl_RawData_FW13_MER_FOOT_Price_List SET STYLENUMBER = '65C3B' WHERE Final_Pattern_name = 'Proterra Sport Kids' AND Department = 'Boy|Girl'
-UPDATE tbl_RawData_FW13_MER_FOOT_Price_List SET STYLENUMBER = '730A6' WHERE Final_Pattern_name = 'Proterra Vim Sport' AND Department = 'Women'
-UPDATE tbl_RawData_FW13_MER_FOOT_Price_List SET STYLENUMBER = 'B0BDA' WHERE Final_Pattern_name = 'Radius Glove' AND Department = 'Men'
-UPDATE tbl_RawData_FW13_MER_FOOT_Price_List SET STYLENUMBER = '22E63' WHERE Final_Pattern_name = 'Rant' AND Department = 'Men'
-UPDATE tbl_RawData_FW13_MER_FOOT_Price_List SET STYLENUMBER = 'F73D2' WHERE Final_Pattern_name = 'Rant Evo' AND Department = 'Men'
-UPDATE tbl_RawData_FW13_MER_FOOT_Price_List SET STYLENUMBER = '22BDF' WHERE Final_Pattern_name = 'Reach Glove' AND Department = 'Men'
-UPDATE tbl_RawData_FW13_MER_FOOT_Price_List SET STYLENUMBER = '729EB' WHERE Final_Pattern_name = 'Realm Lace' AND Department = 'Men'
-UPDATE tbl_RawData_FW13_MER_FOOT_Price_List SET STYLENUMBER = '868C0' WHERE Final_Pattern_name = 'Realm Moc' AND Department = 'Men'
-UPDATE tbl_RawData_FW13_MER_FOOT_Price_List SET STYLENUMBER = '09261' WHERE Final_Pattern_name = 'Realm Pull' AND Department = 'Men'
-UPDATE tbl_RawData_FW13_MER_FOOT_Price_List SET STYLENUMBER = 'C8901' WHERE Final_Pattern_name = 'River Glove' AND Department = 'Women'
-UPDATE tbl_RawData_FW13_MER_FOOT_Price_List SET STYLENUMBER = '8363D' WHERE Final_Pattern_name = 'Road Glove 2' AND Department = 'Men'
-UPDATE tbl_RawData_FW13_MER_FOOT_Price_List SET STYLENUMBER = '0B004' WHERE Final_Pattern_name = 'Road Glove Dash 2' AND Department = 'Women'
-UPDATE tbl_RawData_FW13_MER_FOOT_Price_List SET STYLENUMBER = '17D70' WHERE Final_Pattern_name = 'Rosella Lace' AND Department = 'Women'
-UPDATE tbl_RawData_FW13_MER_FOOT_Price_List SET STYLENUMBER = 'F5064' WHERE Final_Pattern_name = 'Rosella Truss' AND Department = 'Women'
-UPDATE tbl_RawData_FW13_MER_FOOT_Price_List SET STYLENUMBER = 'F49B4' WHERE Final_Pattern_name = 'Salida' AND Department = 'Women'
-UPDATE tbl_RawData_FW13_MER_FOOT_Price_List SET STYLENUMBER = '83A99' WHERE Final_Pattern_name = 'Salida Mid WTPF' AND Department = 'Women'
-UPDATE tbl_RawData_FW13_MER_FOOT_Price_List SET STYLENUMBER = '60352' WHERE Final_Pattern_name = 'Salida Trekker' AND Department = 'Women'
-UPDATE tbl_RawData_FW13_MER_FOOT_Price_List SET STYLENUMBER = '29D90' WHERE Final_Pattern_name = 'Sector Pike' AND Department = 'Men'
-UPDATE tbl_RawData_FW13_MER_FOOT_Price_List SET STYLENUMBER = '5491F' WHERE Final_Pattern_name = 'Shiver Boot Waterproof' AND Department = 'Men'
-UPDATE tbl_RawData_FW13_MER_FOOT_Price_List SET STYLENUMBER = 'FA859' WHERE Final_Pattern_name = 'Shiver Moc 2 Waterproof' AND Department = 'Men'
-UPDATE tbl_RawData_FW13_MER_FOOT_Price_List SET STYLENUMBER = 'B7904' WHERE Final_Pattern_name = 'Sight' AND Department = 'Men'
-UPDATE tbl_RawData_FW13_MER_FOOT_Price_List SET STYLENUMBER = '0770F' WHERE Final_Pattern_name = 'Siren Ginger' AND Department = 'Women'
-UPDATE tbl_RawData_FW13_MER_FOOT_Price_List SET STYLENUMBER = 'FBB39' WHERE Final_Pattern_name = 'Siren Mid Thermo' AND Department = 'Women'
-UPDATE tbl_RawData_FW13_MER_FOOT_Price_List SET STYLENUMBER = '06E6A' WHERE Final_Pattern_name = 'Siren Sport' AND Department = 'Women'
-UPDATE tbl_RawData_FW13_MER_FOOT_Price_List SET STYLENUMBER = 'BA616' WHERE Final_Pattern_name = 'Siren Sport GTX' AND Department = 'Women'
-UPDATE tbl_RawData_FW13_MER_FOOT_Price_List SET STYLENUMBER = '8DEA2' WHERE Final_Pattern_name = 'Siren Surge' AND Department = 'Women'
-UPDATE tbl_RawData_FW13_MER_FOOT_Price_List SET STYLENUMBER = '81B66' WHERE Final_Pattern_name = 'Siren Ventilator' AND Department = 'Women'
-UPDATE tbl_RawData_FW13_MER_FOOT_Price_List SET STYLENUMBER = 'C5F63' WHERE Final_Pattern_name = 'Skylark' AND Department = 'Men'
-UPDATE tbl_RawData_FW13_MER_FOOT_Price_List SET STYLENUMBER = 'F77A0' WHERE Final_Pattern_name = 'Snow Bank Waterproof Kids' AND Department = 'Boy|Girl'
-UPDATE tbl_RawData_FW13_MER_FOOT_Price_List SET STYLENUMBER = 'BD10B' WHERE Final_Pattern_name = 'Snowbound Drift Mid WTPF' AND Department = 'Women'
-UPDATE tbl_RawData_FW13_MER_FOOT_Price_List SET STYLENUMBER = 'CAAFD' WHERE Final_Pattern_name = 'Snowbound Mid Waterproof' AND Department = 'Women'
-UPDATE tbl_RawData_FW13_MER_FOOT_Price_List SET STYLENUMBER = '61091' WHERE Final_Pattern_name = 'Snowhound Mid WTPF' AND Department = 'Men'
-UPDATE tbl_RawData_FW13_MER_FOOT_Price_List SET STYLENUMBER = '89680' WHERE Final_Pattern_name = 'Spellbound Peak' AND Department = 'Women'
-UPDATE tbl_RawData_FW13_MER_FOOT_Price_List SET STYLENUMBER = 'DE6F9' WHERE Final_Pattern_name = 'Spellbound Zip' AND Department = 'Women'
-UPDATE tbl_RawData_FW13_MER_FOOT_Price_List SET STYLENUMBER = 'BF76D' WHERE Final_Pattern_name = 'Spruzzi Wtpf Kids' AND Department = 'Boy|Girl'
-UPDATE tbl_RawData_FW13_MER_FOOT_Price_List SET STYLENUMBER = '30431' WHERE Final_Pattern_name = 'Swirl Glove' AND Department = 'Women'
-UPDATE tbl_RawData_FW13_MER_FOOT_Price_List SET STYLENUMBER = 'E1C5B' WHERE Final_Pattern_name = 'Tailgate' AND Department = 'Men'
-UPDATE tbl_RawData_FW13_MER_FOOT_Price_List SET STYLENUMBER = '58F5E' WHERE Final_Pattern_name = 'Tailspin Toggle Kids' AND Department = 'Boy|Girl'
-UPDATE tbl_RawData_FW13_MER_FOOT_Price_List SET STYLENUMBER = '665B3' WHERE Final_Pattern_name = 'Tailspin Toggle Wtpf Kids' AND Department = 'Boy|Girl'
-UPDATE tbl_RawData_FW13_MER_FOOT_Price_List SET STYLENUMBER = 'E0372' WHERE Final_Pattern_name = 'Tegus' AND Department = 'Men'
-UPDATE tbl_RawData_FW13_MER_FOOT_Price_List SET STYLENUMBER = '1A9F4' WHERE Final_Pattern_name = 'Terrapin' AND Department = 'Men'
-UPDATE tbl_RawData_FW13_MER_FOOT_Price_List SET STYLENUMBER = '43873' WHERE Final_Pattern_name = 'Thermo Arc 8 Waterproof' AND Department = 'Women'
-UPDATE tbl_RawData_FW13_MER_FOOT_Price_List SET STYLENUMBER = 'CB6BE' WHERE Final_Pattern_name = 'Tour Glove' AND Department = 'Men'
-UPDATE tbl_RawData_FW13_MER_FOOT_Price_List SET STYLENUMBER = '19300' WHERE Final_Pattern_name = 'Trail Glove 2' AND Department = 'Men'
-UPDATE tbl_RawData_FW13_MER_FOOT_Price_List SET STYLENUMBER = 'D17BD' WHERE Final_Pattern_name = 'Trail Glove Kids' AND Department = 'Boy|Girl'
-UPDATE tbl_RawData_FW13_MER_FOOT_Price_List SET STYLENUMBER = 'C71D3' WHERE Final_Pattern_name = 'Traveler Rove' AND Department = 'Men'
-UPDATE tbl_RawData_FW13_MER_FOOT_Price_List SET STYLENUMBER = 'F0366' WHERE Final_Pattern_name = 'Traveler Sphere' AND Department = 'Men'
-UPDATE tbl_RawData_FW13_MER_FOOT_Price_List SET STYLENUMBER = 'E561B' WHERE Final_Pattern_name = 'Traveler Spin' AND Department = 'Men'
-UPDATE tbl_RawData_FW13_MER_FOOT_Price_List SET STYLENUMBER = '23807' WHERE Final_Pattern_name = 'Traveler Tour WTPF' AND Department = 'Men'
-UPDATE tbl_RawData_FW13_MER_FOOT_Price_List SET STYLENUMBER = '065ED' WHERE Final_Pattern_name = 'Tucson' AND Department = 'Men'
-UPDATE tbl_RawData_FW13_MER_FOOT_Price_List SET STYLENUMBER = 'B0322' WHERE Final_Pattern_name = 'Tucson WTPF' AND Department = 'Men'
-UPDATE tbl_RawData_FW13_MER_FOOT_Price_List SET STYLENUMBER = 'DE04A' WHERE Final_Pattern_name = 'Twist Glove' AND Department = 'Women'
-UPDATE tbl_RawData_FW13_MER_FOOT_Price_List SET STYLENUMBER = '5EC9F' WHERE Final_Pattern_name = 'Vapor Glove' AND Department = 'Men'
-UPDATE tbl_RawData_FW13_MER_FOOT_Price_List SET STYLENUMBER = '57F38' WHERE Final_Pattern_name = 'Vapor Glove' AND Department = 'Women'
-UPDATE tbl_RawData_FW13_MER_FOOT_Price_List SET STYLENUMBER = '6DD41' WHERE Final_Pattern_name = 'Violotta' AND Department = 'Women'
-UPDATE tbl_RawData_FW13_MER_FOOT_Price_List SET STYLENUMBER = '73EFA' WHERE Final_Pattern_name = 'Waterpro Ganges' AND Department = 'Men'
-UPDATE tbl_RawData_FW13_MER_FOOT_Price_List SET STYLENUMBER = 'A51B9' WHERE Final_Pattern_name = 'Waterpro Gauley' AND Department = 'Men'
-UPDATE tbl_RawData_FW13_MER_FOOT_Price_List SET STYLENUMBER = '4E56A' WHERE Final_Pattern_name = 'Wedgetarian Lexi' AND Department = 'Women'
-UPDATE tbl_RawData_FW13_MER_FOOT_Price_List SET STYLENUMBER = 'E8030' WHERE Final_Pattern_name = 'Wedgetarian Lyla' AND Department = 'Women'
-UPDATE tbl_RawData_FW13_MER_FOOT_Price_List SET STYLENUMBER = '0BB43' WHERE Final_Pattern_name = 'Wonder Glove' AND Department = 'Women'
-UPDATE tbl_RawData_FW13_MER_FOOT_Price_List SET STYLENUMBER = '8ACBA' WHERE Final_Pattern_name = 'Zermatt Echo Sport Gore-Tex' AND Department = 'Women'
-UPDATE tbl_RawData_FW13_MER_FOOT_Price_List SET STYLENUMBER = '86B87' WHERE Final_Pattern_name = 'Zermatt Sport GTX' AND Department = 'Men'
-
---Then I added the STYLENUMBER column to tbl_RawData_FW13_MER_FOOT_UPC and ran this UPDATE to normalize the randomly generated vendor_product_id values:
-
+--SELECT * FROM #MERFOOT_CONFIGS
+						   
+--Update the Style column in the UPC table:
 UPDATE a SET
-	a.STYLENUMBER = b.STYLENUMBER
-FROM tbl_RawData_FW13_MER_FOOT_UPC AS a 
-INNER JOIN tbl_RawData_FW13_MER_FOOT_Price_List AS b 
-ON a.Name = b.Final_Pattern_name AND a.Department = b.Department
+	a.Style = b.Style
+FROM tbl_RawData_SS14_MERFOOT_UPC_Price AS a
+INNER JOIN #MERFOOT_CONFIGS AS b
+ON a.Name = b.Name AND a.Department = b.Department
+
+--Update the Style column in the Marketing table to match the values in the UPC table
+UPDATE a SET
+	a.Style = b.Style
+FROM tbl_RawData_SS14_MERFOOT_Marketing AS a 
+INNER JOIN tbl_RawData_SS14_MERFOOT_UPC_Price AS b 
+ON a.Name = b.Name AND a.Department = b.Department
+
+--DONE!!!

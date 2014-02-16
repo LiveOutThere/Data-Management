@@ -21,14 +21,16 @@ SELECT * INTO catalog_product_entity FROM OPENQUERY(DGDEV,'SELECT * FROM catalog
 
 SELECT a.* INTO catalog_product_entity_restore FROM catalog_product_entity AS a
 WHERE entity_id IN (
-347640)
-
+	SELECT a.entity_id FROM #tmp_simple_ids_staging AS a LEFT JOIN #tmp_simple_ids_production AS b ON a.entity_id = b.entity_id WHERE b.entity_id IS NULL
+)
+/*
 -- At this point I created a table on MySQL
 -- CREATE TABLE entity_ids_to_restore (entity_id integer)
 
 -- Push these entity_ids back into the Staging database in MySQL so we can do joins against these IDs and the tables containing the actual product data
 INSERT INTO OPENQUERY(DGDEV, 'SELECT entity_id FROM entity_ids_to_restore')
 SELECT entity_id FROM catalog_product_entity_restore
+*/
 
 -- Select the product data from the Staging database for products that were deleted into a series of tables on MSSQL
 SELECT * INTO catalog_product_entity_varchar_restore FROM OPENQUERY(DGDEV,'SELECT a.* FROM catalog_product_entity_varchar AS a INNER JOIN entity_ids_to_restore AS b ON a.entity_id = b.entity_id')
@@ -39,11 +41,13 @@ SELECT * INTO catalog_product_entity_media_gallery_restore FROM OPENQUERY(DGDEV,
 SELECT * INTO catalog_product_entity_media_gallery_value_restore FROM OPENQUERY(DGDEV,'SELECT c.* FROM catalog_product_entity_media_gallery AS a INNER JOIN entity_ids_to_restore AS b ON a.entity_id = b.entity_id INNER JOIN catalog_product_entity_media_gallery_value AS c ON a.value_id = c.value_id')
 SELECT * INTO catalog_product_entity_text_restore FROM OPENQUERY(DGDEV,'SELECT a.* FROM catalog_product_entity_text AS a INNER JOIN entity_ids_to_restore AS b ON a.entity_id = b.entity_id')
 
--- product simple configurable link data 
-SELECT * INTO catalog_product_super_link_restore FROM OPENQUERY(DGDEV,'SELECT a.* FROM catalog_product_super_link AS a INNER JOIN entity_ids_to_restore AS b ON a.parent_id = b.entity_id')
+-- product simple configurable link data - you have to SWAP product_id and child_id for parent_id depending on if you are restoring simples or configurables
+SELECT * INTO catalog_product_super_link_restore FROM OPENQUERY(DGDEV,'SELECT a.* FROM catalog_product_super_link AS a INNER JOIN entity_ids_to_restore AS b ON a.product_id = b.entity_id')
+SELECT * INTO catalog_product_relation_restore FROM OPENQUERY(DGDEV,'SELECT a.* FROM catalog_product_relation AS a INNER JOIN entity_ids_to_restore AS b ON a.child_id = b.entity_id')
+
+-- only valid if you are restoring configurables
 SELECT * INTO catalog_product_super_attribute_restore FROM OPENQUERY(DGDEV,'SELECT a.* FROM catalog_product_super_attribute AS a INNER JOIN entity_ids_to_restore AS b ON a.product_id = b.entity_id')
 SELECT * INTO catalog_product_super_attribute_label_restore FROM OPENQUERY(DGDEV,'SELECT c.* FROM catalog_product_super_attribute AS a INNER JOIN entity_ids_to_restore AS b ON a.product_id = b.entity_id INNER JOIN catalog_product_super_attribute_label AS c ON a.product_super_attribute_id = c.product_super_attribute_id')
-SELECT * INTO catalog_product_relation_restore FROM OPENQUERY(DGDEV,'SELECT a.* FROM catalog_product_relation AS a INNER JOIN entity_ids_to_restore AS b ON a.parent_id = b.entity_id')
 
 -- catalog inventory data
 SELECT * INTO cataloginventory_stock_item_restore FROM OPENQUERY(DGDEV,'SELECT a.* FROM cataloginventory_stock_item AS a INNER JOIN entity_ids_to_restore AS b ON a.product_id = b.entity_id')
@@ -51,6 +55,7 @@ SELECT * INTO cataloginventory_stock_status_restore FROM OPENQUERY(DGDEV,'SELECT
 
 SELECT * INTO catalog_product_website_restore FROM OPENQUERY(DGDEV,'SELECT a.* FROM catalog_product_website AS a INNER JOIN entity_ids_to_restore AS b ON a.product_id = b.entity_id')
 
+-- only valid if restoring configurables
 SELECT * INTO catalog_category_product_restore FROM OPENQUERY(DGDEV,'SELECT a.* FROM catalog_category_product AS a INNER JOIN entity_ids_to_restore AS b ON a.product_id = b.entity_id')
 
 -- Now let's insert the data we pulled from the Staging database back into the Production database
@@ -63,34 +68,36 @@ WHERE b.entity_id IS NULL
 
 -- Now that we've done catalog_product_entity we can insert to the other tables without getting FK errors
 INSERT INTO OPENQUERY(MAGENTO, 'SELECT * FROM catalog_product_entity_varchar')
+-- If you run into inexplicable FK errors you can also do something like this to generate a .sql file to pipe directly into mysql:
+--SELECT 'INSERT IGNORE INTO catalog_product_entity_varchar (value_id, entity_type_id, attribute_id, store_id, entity_id, value) VALUES (' + CAST(a.value_id AS varchar(255)) + ',' + CAST(a.entity_type_id AS varchar(255)) + ',' + CAST(a.attribute_id AS varchar(255)) + ',' + CAST(a.store_id AS varchar(255)) + ',' + CAST(a.entity_id AS varchar(255)) + ',''' + REPLACE(a.value,'''','\''') + ''');' FROM catalog_product_entity_varchar_restore AS a
 SELECT a.* FROM catalog_product_entity_varchar_restore AS a
-LEFT JOIN (SELECT * FROM OPENQUERY(MAGENTO, 'SELECT DISTINCT entity_id FROM catalog_product_entity_varchar')) AS b
-ON a.entity_id = b.entity_id 
-WHERE b.entity_id IS NULL
+LEFT JOIN (SELECT * FROM OPENQUERY(MAGENTO, 'SELECT value_id FROM catalog_product_entity_varchar')) AS b
+ON a.value_id = b.value_id 
+WHERE b.value_id IS NULL
 
 INSERT INTO OPENQUERY(MAGENTO, 'SELECT * FROM catalog_product_entity_datetime')
 SELECT a.* FROM catalog_product_entity_datetime_restore AS a
-LEFT JOIN (SELECT * FROM OPENQUERY(MAGENTO, 'SELECT DISTINCT entity_id FROM catalog_product_entity_datetime')) AS b
-ON a.entity_id = b.entity_id 
-WHERE b.entity_id IS NULL
+LEFT JOIN (SELECT * FROM OPENQUERY(MAGENTO, 'SELECT value_id FROM catalog_product_entity_datetime')) AS b
+ON a.value_id = b.value_id 
+WHERE b.value_id IS NULL
 
 INSERT INTO OPENQUERY(MAGENTO, 'SELECT * FROM catalog_product_entity_decimal')
 SELECT a.* FROM catalog_product_entity_decimal_restore AS a
-LEFT JOIN (SELECT * FROM OPENQUERY(MAGENTO, 'SELECT DISTINCT entity_id FROM catalog_product_entity_decimal')) AS b
-ON a.entity_id = b.entity_id 
-WHERE b.entity_id IS NULL
+LEFT JOIN (SELECT * FROM OPENQUERY(MAGENTO, 'SELECT value_id FROM catalog_product_entity_decimal')) AS b
+ON a.value_id = b.value_id 
+WHERE b.value_id IS NULL
 
 INSERT INTO OPENQUERY(MAGENTO, 'SELECT * FROM catalog_product_entity_int')
 SELECT a.* FROM catalog_product_entity_int_restore AS a
-LEFT JOIN (SELECT * FROM OPENQUERY(MAGENTO, 'SELECT DISTINCT entity_id FROM catalog_product_entity_int')) AS b
-ON a.entity_id = b.entity_id 
-WHERE b.entity_id IS NULL
+LEFT JOIN (SELECT * FROM OPENQUERY(MAGENTO, 'SELECT value_id FROM catalog_product_entity_int')) AS b
+ON a.value_id = b.value_id 
+WHERE b.value_id IS NULL
 
 INSERT INTO OPENQUERY(MAGENTO, 'SELECT * FROM catalog_product_entity_media_gallery')
 SELECT a.* FROM catalog_product_entity_media_gallery_restore AS a
-LEFT JOIN (SELECT * FROM OPENQUERY(MAGENTO, 'SELECT DISTINCT entity_id FROM catalog_product_entity_media_gallery')) AS b
-ON a.entity_id = b.entity_id 
-WHERE b.entity_id IS NULL
+LEFT JOIN (SELECT * FROM OPENQUERY(MAGENTO, 'SELECT value_id FROM catalog_product_entity_media_gallery')) AS b
+ON a.value_id = b.value_id 
+WHERE b.value_id IS NULL
 
 INSERT INTO OPENQUERY(MAGENTO, 'SELECT * FROM catalog_product_entity_media_gallery_value')
 SELECT a.* FROM catalog_product_entity_media_gallery_value_restore AS a
@@ -100,9 +107,9 @@ WHERE b.value_id IS NULL
 
 INSERT INTO OPENQUERY(MAGENTO, 'SELECT * FROM catalog_product_entity_text')
 SELECT a.* FROM catalog_product_entity_text_restore AS a
-LEFT JOIN (SELECT * FROM OPENQUERY(MAGENTO, 'SELECT DISTINCT entity_id FROM catalog_product_entity_text')) AS b
-ON a.entity_id = b.entity_id 
-WHERE b.entity_id IS NULL
+LEFT JOIN (SELECT * FROM OPENQUERY(MAGENTO, 'SELECT value_id FROM catalog_product_entity_text')) AS b
+ON a.value_id = b.value_id 
+WHERE b.value_id IS NULL
 
 INSERT INTO OPENQUERY(MAGENTO, 'SELECT * FROM catalog_product_super_link')
 SELECT a.* FROM catalog_product_super_link_restore AS a

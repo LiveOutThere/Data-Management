@@ -95,9 +95,9 @@ INSERT INTO tbl_LoadFile_SS13_IB (
 		image_label,
 		url_key
 )
-SELECT  dbo.getMagentoSimpleSKU('SS13A-IB', a.Style, a.Colour, a.Size) AS sku,
+SELECT  'SS13A-IB-' + a.Style + '-' + a.Colour + '-' + a.Size AS sku,
 		a.Style AS vendor_product_id,
-		dbo.getIBName(a.[Style Description]) AS name,
+		RTRIM(SUBSTRING(a.[Style Description],0,LEN(RTRIM(a.[Style Description])) - CHARINDEX(' ',RTRIM(REVERSE(a.[Style Description]))) +1)) AS name,
 		a.Sex AS gender,
 		a.[Colour description] AS choose_color,
 		REPLACE(a.Size,'OSO','O/S') AS choose_size,
@@ -172,7 +172,7 @@ INSERT INTO tbl_LoadFile_SS13_IB (
 	use_config_manage_stock
 )
 SELECT DISTINCT
-	   dbo.getMagentoConfigurableSKU('SS13A-IB', a.vendor_product_id) AS sku,
+	   'IB-' + a.vendor_product_id AS sku,
 		'choose_color,choose_size' AS configurable_attributes,
 		a.vendor_product_id AS vendor_product_id,
 		'Uncategorized' AS categories,
@@ -191,7 +191,7 @@ SELECT DISTINCT
 FROM tbl_LoadFile_SS13_IB AS a
 
 UPDATE a SET
-	categories = CASE WHEN (SELECT TOP 1 REPLACE(categories,'"','') FROM LOT_Reporting.dbo.tbl_Categories WHERE vendor_product_id = a.vendor_product_id) IS NULL THEN 'Uncategorized' ELSE (SELECT TOP 1 REPLACE(categories,'"','') FROM LOT_Reporting.dbo.tbl_Categories WHERE vendor_product_id = a.vendor_product_id) END,
+	categories = dbo.getMagentoCategories(a.vendor_product_id),
 	description = (SELECT TOP 1 Description FROM tbl_RawData_SS13_IB_Marketing WHERE Style = a.vendor_product_id),
 	care_instructions = (SELECT TOP 1 Care FROM tbl_RawData_SS13_IB_Marketing WHERE Style = a.vendor_product_id),
 	fabric = (SELECT TOP 1 Fabric FROM tbl_RawData_SS13_IB_Marketing WHERE Style = a.vendor_product_id),
@@ -228,12 +228,12 @@ INNER JOIN tbl_LoadFile_F12_IB AS b
 ON b.vendor_sku = a.vendor_sku
 WHERE a.type = 'simple' AND a.description IS NULL
 
-UPDATE tbl_LoadFile_SS13_IB SET categories = dbo.getCategory(categories,manufacturer,department)
+--UPDATE tbl_LoadFile_SS13_IB SET categories = dbo.getCategory(categories,manufacturer,department)
 UPDATE tbl_LoadFile_SS13_IB SET categories = NULL WHERE type = 'simple'
 UPDATE tbl_LoadFile_SS13_IB SET status = 'Disabled' WHERE image IS NULL AND type = 'simple'
 UPDATE tbl_LoadFile_SS13_IB SET thumbnail = image, small_image = image
 GO
-
+/*
 CREATE VIEW [dbo].[view_LoadFile_SS13_IB]
 AS
 SELECT  '"store"' AS store, '"websites"' AS websites, '"type"' AS type, '"sku"' AS sku, '"name"' AS name, '"categories"' AS categories, '"attribute_set"' AS attribute_set, 
@@ -258,3 +258,4 @@ SELECT @sql = 'bcp "SELECT * FROM LOT_Inventory.dbo.view_LoadFile_SS13_IB" query
 EXEC master..xp_cmdshell @sql
 
 DROP VIEW view_LoadFile_SS13_IB
+*/

@@ -101,7 +101,7 @@ INSERT INTO tbl_LoadFile_SS14_OSP (
 		
 SELECT DISTINCT
 	'simple' AS type
-	,('SS14A-OSP-' + CAST(Style1 AS varchar(255)) + '-' + CAST(StyleColor AS varchar(255)) + '-' + dbo.getOSPSize(Size))AS sku
+	,('SS14A-OSP-' + CAST(Style1 AS varchar(255)) + '-' + CASE WHEN CAST(StyleColor AS varchar(255)) = '0' THEN '000' ELSE CAST(StyleColor AS varchar(255)) END + '-' + dbo.getOSPSize(Size))AS sku
 	,dbo.getOSPName(Description)							AS name
 	,0														AS has_options
 	,dbo.getOSPDepartment(Description,Size)					AS department
@@ -110,7 +110,7 @@ SELECT DISTINCT
 	,dbo.getOSPSize(Size)									AS choose_size
 	,CAST(UPC AS bigint)									AS vendor_sku
 	,Style1				AS vendor_product_id
-	,StyleColor AS vendor_color_code
+	,CASE WHEN CAST(StyleColor AS varchar(255)) = '0' THEN '000' ELSE CAST(StyleColor AS varchar(255)) END AS vendor_color_code
 	,dbo.getOSPSize(Size)									AS vendor_size_code
 	,1														AS manage_stock
 	,0														AS never_backorder

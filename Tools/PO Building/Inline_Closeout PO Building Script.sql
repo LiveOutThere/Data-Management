@@ -75,6 +75,9 @@ BEGIN
 	DECLARE @config_string varchar(MAX)
 	SET @config_string = '''''HH-62253'''',''''HH-62265'''',''''HH-62282'''',''''HH-62300'''',''''HH-62252'''',''''HH-67002'''',''''HH-55964'''',''''HH-62266'''',''''HH-62290'''''
 	
+	DECLARE @config_string_verbose varchar(MAX)
+	SET @config_string_verbose = '''''M-Loke Jacket'''',''''M-Odin Sitka Jacket'''',''''M-Loke Pants'''',''''U-HH Duffel Bag 50L'''',''''W-Long Belfast Jacket'''',''''W-Loke Pants'''',''''W-Loke Jacket'''',''''W-Lyness Coat'''',''''W-Nine K Jacket'''''
+	
 	--Here #view_PO_LoadFile gets created and then populated with the desired rows from your desired loadfile:
 	IF OBJECT_ID('tempdb..#view_PO_LoadFile') IS NOT NULL BEGIN
 		DROP TABLE #view_PO_LoadFile
@@ -282,7 +285,7 @@ BEGIN
 			
 	--Begin simples_skus analysis:
 	IF OBJECT_ID('tempdb..#po_style_color_size') IS NOT NULL BEGIN
-	DROP TABLE #po_style_color_size
+		DROP TABLE #po_style_color_size
 	END	
 		
 	CREATE TABLE #po_style_color_size (style varchar(155), color_code nvarchar(155), size_code varchar(155))
@@ -295,9 +298,17 @@ BEGIN
 	ON (a.vendor_product_id + ''-'' + a.vendor_color_code + ''-'' + a.vendor_size_code) COLLATE Latin1_General_CI_AS = REPLACE(b.style_color_size,'''''''','''') COLLATE Latin1_General_CI_AS
 	WHERE a.type = ''simple'')'
 	EXEC(@sql)
+	
+	IF OBJECT_ID('tempdb..##association_sku_discreps') IS NOT NULL BEGIN
+		DROP TABLE ##association_sku_discreps
+	END	
+	IF OBJECT_ID('tempdb..##association_name_gender_discreps') IS NOT NULL BEGIN
+		DROP TABLE ##association_name_gender_discreps
+	END	
 		
 	SET @sql = '
 	SELECT a.style AS new_style, a.color_code AS new_color, a.size_code AS new_size, LEFT(b.sku,CHARINDEX(''-'',b.sku) - 1) AS existing_season, b.style AS existing_style, b.color_code AS existing_color, b.size_code AS existing_size, CASE WHEN b.is_in_stock = ''0'' THEN ''OOS'' ELSE ''In-Stock'' END AS is_in_stock, (b.qty - b.qty_reserved) AS qty_on_hand, b.sku AS sku
+	INTO ##association_sku_discreps
 	FROM #po_style_color_size AS a
 	FULL JOIN (SELECT sku, is_in_stock, qty, qty_reserved, style, color_code, size_code FROM OPENQUERY(MAGENTO,''
 	SELECT simple_products.child_sku AS sku, stock.qty AS qty, stock.stock_reserved_qty AS qty_reserved, stock.is_in_stock AS is_in_stock, style_code.value AS style, color_code.value AS color_code, size_code.value AS size_code
@@ -323,6 +334,53 @@ BEGIN
 	ON a.style = b.style AND a.color_code = b.color_code AND a.size_code = b.size_code
 	WHERE (b.qty - b.qty_reserved) > 0'
 	EXEC(@sql)
+	
+	SET @sql = '
+	SELECT a.style AS new_style, a.color_code AS new_color, a.size_code AS new_size, LEFT(b.sku,CHARINDEX(''-'',b.sku) - 1) AS existing_season, b.style AS existing_style, b.color_code AS existing_color, b.size_code AS existing_size, CASE WHEN b.is_in_stock = ''0'' THEN ''OOS'' ELSE ''In-Stock'' END AS is_in_stock, (b.qty - b.qty_reserved) AS qty_on_hand, b.sku AS sku
+	INTO ##association_name_gender_discreps
+	FROM #po_style_color_size AS a
+	FULL JOIN (SELECT sku, is_in_stock, qty, qty_reserved, style, color_code, size_code 
+	FROM OPENQUERY(MAGENTO,''
+		SELECT simple_products.child_sku AS sku, stock.qty AS qty, stock.stock_reserved_qty AS qty_reserved, stock.is_in_stock AS is_in_stock, style_code.value AS style, color_code.value AS color_code, size_code.value AS size_code
+		FROM
+			(SELECT x.sku AS parent_sku, a.sku AS child_sku
+			FROM catalog_product_entity AS a
+			INNER JOIN (SELECT DISTINCT b.sku, a.product_id
+						FROM catalog_product_super_link AS a
+						INNER JOIN catalog_product_entity AS b
+						ON a.parent_id = b.entity_id
+						INNER JOIN catalog_product_entity_varchar AS c
+						ON b.entity_id = c.entity_id AND c.attribute_id = (SELECT attribute_id FROM eav_attribute WHERE entity_type_id = 4 AND attribute_code = ''''name'''')
+						INNER JOIN catalog_product_entity_varchar AS d
+						ON b.entity_id = d.entity_id AND d.attribute_id = (SELECT attribute_id FROM eav_attribute WHERE entity_type_id = 4 AND attribute_code = ''''department'''')
+						WHERE CONCAT(CASE WHEN d.value = ''''17215,17216'''' THEN ''''U-'''' 
+										  WHEN d.value = ''''17215'''' THEN ''''M-'''' 
+										  WHEN d.value = ''''17216'''' THEN ''''W-'''' ELSE '''''''' END,CAST(c.value AS CHAR(255))) IN(' + @config_string_verbose + ')) AS x
+			ON a.entity_id = x.product_id) AS simple_products
+			INNER JOIN catalog_product_entity AS z
+			ON simple_products.child_sku = z.sku AND z.type_id = ''''simple''''
+			INNER JOIN catalog_product_entity_varchar AS style_code
+			ON z.entity_id = style_code.entity_id AND style_code.attribute_id = (SELECT attribute_id FROM eav_attribute WHERE entity_type_id = 4 AND attribute_code = ''''vendor_product_id'''')
+			INNER JOIN catalog_product_entity_varchar AS color_code
+			ON z.entity_id = color_code.entity_id AND color_code.attribute_id = (SELECT attribute_id FROM eav_attribute WHERE entity_type_id = 4 AND attribute_code = ''''vendor_color_code'''')
+			INNER JOIN catalog_product_entity_varchar AS size_code
+			ON z.entity_id = size_code.entity_id AND size_code.attribute_id = (SELECT attribute_id FROM eav_attribute WHERE entity_type_id = 4 AND attribute_code = ''''vendor_size_code'''')
+			INNER JOIN cataloginventory_stock_item AS stock
+			ON z.entity_id = stock.product_id AND stock.stock_id = 1'')) AS b
+	ON a.style = b.style AND a.color_code = b.color_code AND a.size_code = b.size_code
+	WHERE (b.qty - b.qty_reserved) > 0'
+	EXEC(@sql)
+	
+	SELECT DISTINCT a.* FROM (
+	SELECT a.*
+	FROM ##association_sku_discreps AS a
+	LEFT JOIN ##association_name_gender_discreps AS b
+	ON a.sku = b.sku
+	UNION ALL
+	SELECT b.*
+	FROM ##association_sku_discreps AS a
+	RIGHT JOIN ##association_name_gender_discreps AS b
+	ON a.sku = b.sku) AS a
 	
 	--Create #view_Export_PO and insert into it a header row, as well as the contents of tbl_Purchase_Order (for the PO in question):
 	IF OBJECT_ID('tempdb..##view_Export_PO') IS NOT NULL BEGIN

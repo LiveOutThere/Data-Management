@@ -3,11 +3,11 @@
   <DataSet Name="">
     <Query>
       <DataSourceReference>LOT_Reporting</DataSourceReference>
-      <CommandText>SELECT * FROM magento_manufacturer_list</CommandText>
+      <CommandText>SELECT DISTINCT brand FROM [LOT_Reporting].[dbo].[tbl_Sell_Through_Log] WHERE brand IS NOT NULL</CommandText>
     </Query>
     <Fields>
-      <Field Name="value">
-        <DataField>value</DataField>
+      <Field Name="brand">
+        <DataField>brand</DataField>
         <rd:TypeName>System.String</rd:TypeName>
       </Field>
     </Fields>

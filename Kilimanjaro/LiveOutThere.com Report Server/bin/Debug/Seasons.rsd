@@ -3,11 +3,11 @@
   <DataSet Name="">
     <Query>
       <DataSourceReference>LOT_Reporting</DataSourceReference>
-      <CommandText>SELECT DISTINCT Season FROM [LOT_Reporting].[dbo].[tbl_Magento_PO_Items]ORDER BY Season</CommandText>
+      <CommandText>SELECT DISTINCT season FROM [LOT_Reporting].[dbo].[tbl_Sell_Through_Log]</CommandText>
     </Query>
     <Fields>
       <Field Name="Season">
-        <DataField>Season</DataField>
+        <DataField>season</DataField>
         <rd:TypeName>System.String</rd:TypeName>
       </Field>
     </Fields>

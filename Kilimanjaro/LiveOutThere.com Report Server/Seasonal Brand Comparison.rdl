@@ -708,8 +708,10 @@
                             <Paragraph>
                               <TextRuns>
                                 <TextRun>
-                                  <Value>=Round(Fields!margin.Value * 100,0) &amp; "%"</Value>
-                                  <Style />
+                                  <Value>=Fields!margin.Value</Value>
+                                  <Style>
+                                    <Format>0%</Format>
+                                  </Style>
                                 </TextRun>
                               </TextRuns>
                               <Style>

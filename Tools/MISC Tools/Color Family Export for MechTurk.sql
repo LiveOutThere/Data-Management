@@ -6,7 +6,7 @@ IF OBJECT_ID('tempdb..#old_colors') IS NOT NULL BEGIN
 END
 IF OBJECT_ID('tempdb..#export') IS NOT NULL BEGIN
 	DROP TABLE #export
-END
+END		   
 
 -- Determine NET NEW choose_color values from season(s) of choice:
 SELECT * 
@@ -60,10 +60,20 @@ FROM OPENQUERY(MAGENTO,'
 		  e.value IS NULL AND 
 		  g.qoh > 0')
 
-SELECT DISTINCT choose_color, image_url INTO #export FROM #net_new_colors
-INSERT INTO #export
-SELECT DISTINCT choose_color, image_url FROM #old_colors
+SELECT DISTINCT SUBSTRING(SUBSTRING(sku,7,LEN(sku)),0,CHARINDEX('-',SUBSTRING(sku,7,LEN(sku)))) AS brand,
+				choose_color, 
+				image_url 
+INTO #export 
+FROM #net_new_colors
 
-SELECT choose_color, MAX(image_url) AS image_url
+INSERT INTO #export
+SELECT DISTINCT SUBSTRING(SUBSTRING(sku,7,LEN(sku)),0,CHARINDEX('-',SUBSTRING(sku,7,LEN(sku)))) AS brand,
+				choose_color, 
+				image_url
+FROM #old_colors
+
+SELECT DISTINCT brand, choose_color, MAX(image_url) AS image_url
 FROM #export
-GROUP BY choose_color
+GROUP BY brand, choose_color
+
+-- ONCE YOU HAVE RECEIVED THE MECHANICAL TURK RESULTS, TRUNCATE LOT_Inventory.dbo.tbl_Color_Family_Lookup AND IMPORT THE RESULTS TABLE INTO THE choose_color, color_family1, and color_family2 COLUMNS

@@ -1,3 +1,16 @@
+-- FIND CONFIG IMAGES FROM SIMPLES IN MAGENTO:
+SELECT * FROM OPENQUERY(MAGENTO,'
+	SELECT a.sku, a.name, MAX(c.value) AS image
+	FROM catalog_product_flat_1 AS a
+	INNER JOIN catalog_product_super_link AS b
+	ON a.entity_id = b.parent_id
+	INNER JOIN catalog_product_entity_varchar AS c
+	ON b.product_id = c.entity_id AND c.attribute_id = (SELECT attribute_id FROM eav_attribute WHERE entity_type_id = 4 AND attribute_code = ''image'')
+	WHERE a.sku IN(''TNF-A9MK'')
+GROUP BY a.sku, a.name')
+
+-- FIND CONFIG IMAGES FROM LOADFILE DATA ON FS01:
+
 IF OBJECT_ID('tempdb..#image_setter') IS NOT NULL BEGIN
 	DROP TABLE #image_setter
 END

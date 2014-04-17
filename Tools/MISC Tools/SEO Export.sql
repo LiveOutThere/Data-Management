@@ -2,10 +2,10 @@ IF OBJECT_ID('tempdb..#seo_export') IS NOT NULL BEGIN
 	DROP TABLE #seo_export
 END
 
-SELECT manufacturer, CASE WHEN department = '17216' THEN 'Women' WHEN department = '17215' THEN 'Men' WHEN department = '17215,17216' THEN 'Unisex' ELSE department END AS department, name, sku, description, features, fabric, url_key + '.html' AS url_key, seo_status, season_id
+SELECT manufacturer, CASE WHEN department = '17216' THEN 'Women' WHEN department = '17215' THEN 'Men' WHEN department = '17215,17216' THEN 'Unisex' ELSE department END AS department, name, sku, description, features, fabric, url_key + '.html' AS url_key, seo_status, age
 INTO #seo_export
 FROM OPENQUERY(MAGENTO,'
-	SELECT a.sku, b.value AS description, c.value AS features, d.value AS fabric, e.value AS name, g.value AS url_key, f.value AS seo_status, m.value AS manufacturer, k.value AS department, i.value AS season_id
+	SELECT a.sku, b.value AS description, c.value AS features, d.value AS fabric, e.value AS name, g.value AS url_key, f.value AS seo_status, m.value AS manufacturer, k.value AS department, DATEDIFF(CURDATE(),a.created_at) AS age
 	FROM catalog_product_entity AS a
 	LEFT JOIN catalog_product_entity_text AS b
 	ON a.entity_id = b.entity_id AND b.attribute_id = (SELECT attribute_id FROM eav_attribute WHERE entity_type_id = 4 AND attribute_code = ''description'')
@@ -19,10 +19,6 @@ FROM OPENQUERY(MAGENTO,'
 	ON a.entity_id = f.entity_id AND f.attribute_id = (SELECT attribute_id FROM eav_attribute WHERE entity_type_id = 4 AND attribute_code = ''seo_status'')
 	LEFT JOIN catalog_product_entity_varchar AS g
 	ON a.entity_id = g.entity_id AND g.attribute_id = (SELECT attribute_id FROM eav_attribute WHERE entity_type_id = 4 AND attribute_code = ''url_key'')
-	LEFT JOIN catalog_product_entity_int AS h
-	ON a.entity_id = h.entity_id AND h.attribute_id = (SELECT attribute_id FROM eav_attribute WHERE entity_type_id = 4 AND attribute_code = ''season_id'')
-	LEFT JOIN eav_attribute_option_value AS i
-	ON h.value = i.option_id AND i.store_id = 0
 	LEFT JOIN catalog_product_entity_varchar AS j
 	ON a.entity_id = j.entity_id AND j.attribute_id = (SELECT attribute_id FROM eav_attribute WHERE entity_type_id = 4 AND attribute_code = ''department'')
 	LEFT JOIN eav_attribute_option_value AS k
@@ -31,13 +27,13 @@ FROM OPENQUERY(MAGENTO,'
 	ON a.entity_id = l.entity_id AND l.attribute_id = (SELECT attribute_id FROM eav_attribute WHERE entity_type_id = 4 AND attribute_code = ''manufacturer'')
 	LEFT JOIN eav_attribute_option_value AS m
 	ON l.value = m.option_id AND m.store_id = 0
-	WHERE a.type_id = ''configurable'' AND i.value LIKE ''%SS14%'' AND (f.value IS NULL OR f.value = ''new'')')
+	WHERE a.type_id = ''configurable'' AND DATEDIFF(CURDATE(),a.created_at) < 60 AND (f.value IS NULL OR f.value = ''new'')')
 
 SELECT DISTINCT manufacturer,
-				season_id,
 				department, 
 				name, 
-				sku, 
+				sku,
+				age, 
 				CAST(description AS varchar(MAX)) AS description, 
 				CAST(features AS varchar(MAX)) AS features, 
 				CAST(fabric AS varchar(MAX)) AS fabric, 

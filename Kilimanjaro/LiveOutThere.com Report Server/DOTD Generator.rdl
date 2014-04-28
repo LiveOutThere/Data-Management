@@ -1823,6 +1823,11 @@
   <ReportParameters>
     <ReportParameter Name="children_cap">
       <DataType>String</DataType>
+      <DefaultValue>
+        <Values>
+          <Value>10</Value>
+        </Values>
+      </DefaultValue>
       <Prompt>Sale Units Minimum:</Prompt>
     </ReportParameter>
     <ReportParameter Name="repeat_deal_cap">
@@ -1840,7 +1845,7 @@
       <Nullable>true</Nullable>
       <DefaultValue>
         <Values>
-          <Value>15</Value>
+          <Value xsi:nil="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" />
         </Values>
       </DefaultValue>
       <Prompt>Number of Suggestions:</Prompt>

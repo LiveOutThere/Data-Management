@@ -6,7 +6,7 @@
         <TablixBody>
           <TablixColumns>
             <TablixColumn>
-              <Width>23.21874in</Width>
+              <Width>23.54166in</Width>
             </TablixColumn>
           </TablixColumns>
           <TablixRows>
@@ -21,7 +21,7 @@
                           <TablixBody>
                             <TablixColumns>
                               <TablixColumn>
-                                <Width>1.36458in</Width>
+                                <Width>1.52083in</Width>
                               </TablixColumn>
                               <TablixColumn>
                                 <Width>2.64583in</Width>
@@ -39,7 +39,7 @@
                                 <Width>1in</Width>
                               </TablixColumn>
                               <TablixColumn>
-                                <Width>1in</Width>
+                                <Width>1.16667in</Width>
                               </TablixColumn>
                               <TablixColumn>
                                 <Width>1in</Width>
@@ -258,6 +258,34 @@
                                   </TablixCell>
                                   <TablixCell>
                                     <CellContents>
+                                      <Textbox Name="Textbox15">
+                                        <CanGrow>true</CanGrow>
+                                        <KeepTogether>true</KeepTogether>
+                                        <Paragraphs>
+                                          <Paragraph>
+                                            <TextRuns>
+                                              <TextRun>
+                                                <Value>On Order Units</Value>
+                                                <Style>
+                                                  <FontWeight>Bold</FontWeight>
+                                                </Style>
+                                              </TextRun>
+                                            </TextRuns>
+                                            <Style />
+                                          </Paragraph>
+                                        </Paragraphs>
+                                        <rd:DefaultName>Textbox15</rd:DefaultName>
+                                        <Style>
+                                          <PaddingLeft>2pt</PaddingLeft>
+                                          <PaddingRight>2pt</PaddingRight>
+                                          <PaddingTop>2pt</PaddingTop>
+                                          <PaddingBottom>2pt</PaddingBottom>
+                                        </Style>
+                                      </Textbox>
+                                    </CellContents>
+                                  </TablixCell>
+                                  <TablixCell>
+                                    <CellContents>
                                       <Textbox Name="textbox9">
                                         <CanGrow>true</CanGrow>
                                         <KeepTogether>true</KeepTogether>
@@ -310,39 +338,6 @@
                                           </Paragraph>
                                         </Paragraphs>
                                         <rd:DefaultName>textbox10</rd:DefaultName>
-                                        <Style>
-                                          <Border>
-                                            <Style>None</Style>
-                                          </Border>
-                                          <PaddingLeft>2pt</PaddingLeft>
-                                          <PaddingRight>2pt</PaddingRight>
-                                          <PaddingTop>2pt</PaddingTop>
-                                          <PaddingBottom>2pt</PaddingBottom>
-                                        </Style>
-                                      </Textbox>
-                                    </CellContents>
-                                  </TablixCell>
-                                  <TablixCell>
-                                    <CellContents>
-                                      <Textbox Name="Textbox15">
-                                        <CanGrow>true</CanGrow>
-                                        <KeepTogether>true</KeepTogether>
-                                        <Paragraphs>
-                                          <Paragraph>
-                                            <TextRuns>
-                                              <TextRun>
-                                                <Value>Airtime</Value>
-                                                <Style>
-                                                  <FontWeight>Bold</FontWeight>
-                                                </Style>
-                                              </TextRun>
-                                            </TextRuns>
-                                            <Style>
-                                              <TextAlign>Right</TextAlign>
-                                            </Style>
-                                          </Paragraph>
-                                        </Paragraphs>
-                                        <rd:DefaultName>Textbox15</rd:DefaultName>
                                         <Style>
                                           <Border>
                                             <Style>None</Style>
@@ -938,6 +933,40 @@
                                   </TablixCell>
                                   <TablixCell>
                                     <CellContents>
+                                      <Textbox Name="on_order_units3">
+                                        <CanGrow>true</CanGrow>
+                                        <KeepTogether>true</KeepTogether>
+                                        <Paragraphs>
+                                          <Paragraph>
+                                            <TextRuns>
+                                              <TextRun>
+                                                <Value>=Sum(Fields!on_order_units.Value)</Value>
+                                                <Style />
+                                              </TextRun>
+                                            </TextRuns>
+                                            <Style />
+                                          </Paragraph>
+                                        </Paragraphs>
+                                        <rd:DefaultName>on_order_units3</rd:DefaultName>
+                                        <Style>
+                                          <Border>
+                                            <Style>None</Style>
+                                          </Border>
+                                          <TopBorder>
+                                            <Color>Black</Color>
+                                            <Style>Solid</Style>
+                                            <Width>1pt</Width>
+                                          </TopBorder>
+                                          <PaddingLeft>2pt</PaddingLeft>
+                                          <PaddingRight>2pt</PaddingRight>
+                                          <PaddingTop>2pt</PaddingTop>
+                                          <PaddingBottom>2pt</PaddingBottom>
+                                        </Style>
+                                      </Textbox>
+                                    </CellContents>
+                                  </TablixCell>
+                                  <TablixCell>
+                                    <CellContents>
                                       <Textbox Name="qty_on_hand3">
                                         <CanGrow>true</CanGrow>
                                         <KeepTogether>true</KeepTogether>
@@ -993,40 +1022,6 @@
                                           </Paragraph>
                                         </Paragraphs>
                                         <rd:DefaultName>net_sold_qty</rd:DefaultName>
-                                        <Style>
-                                          <Border>
-                                            <Style>None</Style>
-                                          </Border>
-                                          <TopBorder>
-                                            <Color>Black</Color>
-                                            <Style>Solid</Style>
-                                            <Width>1pt</Width>
-                                          </TopBorder>
-                                          <PaddingLeft>2pt</PaddingLeft>
-                                          <PaddingRight>2pt</PaddingRight>
-                                          <PaddingTop>2pt</PaddingTop>
-                                          <PaddingBottom>2pt</PaddingBottom>
-                                        </Style>
-                                      </Textbox>
-                                    </CellContents>
-                                  </TablixCell>
-                                  <TablixCell>
-                                    <CellContents>
-                                      <Textbox Name="Textbox24">
-                                        <CanGrow>true</CanGrow>
-                                        <KeepTogether>true</KeepTogether>
-                                        <Paragraphs>
-                                          <Paragraph>
-                                            <TextRuns>
-                                              <TextRun>
-                                                <Value />
-                                                <Style />
-                                              </TextRun>
-                                            </TextRuns>
-                                            <Style />
-                                          </Paragraph>
-                                        </Paragraphs>
-                                        <rd:DefaultName>Textbox24</rd:DefaultName>
                                         <Style>
                                           <Border>
                                             <Style>None</Style>
@@ -1242,7 +1237,9 @@
                                                 </Style>
                                               </TextRun>
                                             </TextRuns>
-                                            <Style />
+                                            <Style>
+                                              <TextAlign>Right</TextAlign>
+                                            </Style>
                                           </Paragraph>
                                         </Paragraphs>
                                         <rd:DefaultName>Textbox56</rd:DefaultName>
@@ -1696,6 +1693,40 @@
                                   </TablixCell>
                                   <TablixCell>
                                     <CellContents>
+                                      <Textbox Name="on_order_units2">
+                                        <CanGrow>true</CanGrow>
+                                        <KeepTogether>true</KeepTogether>
+                                        <Paragraphs>
+                                          <Paragraph>
+                                            <TextRuns>
+                                              <TextRun>
+                                                <Value>=Sum(Fields!on_order_units.Value)</Value>
+                                                <Style />
+                                              </TextRun>
+                                            </TextRuns>
+                                            <Style />
+                                          </Paragraph>
+                                        </Paragraphs>
+                                        <rd:DefaultName>on_order_units2</rd:DefaultName>
+                                        <Style>
+                                          <Border>
+                                            <Style>None</Style>
+                                          </Border>
+                                          <TopBorder>
+                                            <Color>Black</Color>
+                                            <Style>Solid</Style>
+                                            <Width>1pt</Width>
+                                          </TopBorder>
+                                          <PaddingLeft>2pt</PaddingLeft>
+                                          <PaddingRight>2pt</PaddingRight>
+                                          <PaddingTop>2pt</PaddingTop>
+                                          <PaddingBottom>2pt</PaddingBottom>
+                                        </Style>
+                                      </Textbox>
+                                    </CellContents>
+                                  </TablixCell>
+                                  <TablixCell>
+                                    <CellContents>
                                       <Textbox Name="qty_on_hand2">
                                         <CanGrow>true</CanGrow>
                                         <KeepTogether>true</KeepTogether>
@@ -1751,40 +1782,6 @@
                                           </Paragraph>
                                         </Paragraphs>
                                         <rd:DefaultName>net_sold_qty1</rd:DefaultName>
-                                        <Style>
-                                          <Border>
-                                            <Style>None</Style>
-                                          </Border>
-                                          <TopBorder>
-                                            <Color>Black</Color>
-                                            <Style>Solid</Style>
-                                            <Width>1pt</Width>
-                                          </TopBorder>
-                                          <PaddingLeft>2pt</PaddingLeft>
-                                          <PaddingRight>2pt</PaddingRight>
-                                          <PaddingTop>2pt</PaddingTop>
-                                          <PaddingBottom>2pt</PaddingBottom>
-                                        </Style>
-                                      </Textbox>
-                                    </CellContents>
-                                  </TablixCell>
-                                  <TablixCell>
-                                    <CellContents>
-                                      <Textbox Name="airtime">
-                                        <CanGrow>true</CanGrow>
-                                        <KeepTogether>true</KeepTogether>
-                                        <Paragraphs>
-                                          <Paragraph>
-                                            <TextRuns>
-                                              <TextRun>
-                                                <Value>=Avg(Fields!airtime.Value)</Value>
-                                                <Style />
-                                              </TextRun>
-                                            </TextRuns>
-                                            <Style />
-                                          </Paragraph>
-                                        </Paragraphs>
-                                        <rd:DefaultName>airtime</rd:DefaultName>
                                         <Style>
                                           <Border>
                                             <Style>None</Style>
@@ -2000,7 +1997,9 @@
                                                 </Style>
                                               </TextRun>
                                             </TextRuns>
-                                            <Style />
+                                            <Style>
+                                              <TextAlign>Right</TextAlign>
+                                            </Style>
                                           </Paragraph>
                                         </Paragraphs>
                                         <rd:DefaultName>Textbox57</rd:DefaultName>
@@ -2473,6 +2472,41 @@
                                   </TablixCell>
                                   <TablixCell>
                                     <CellContents>
+                                      <Textbox Name="on_order_units">
+                                        <CanGrow>true</CanGrow>
+                                        <KeepTogether>true</KeepTogether>
+                                        <Paragraphs>
+                                          <Paragraph>
+                                            <TextRuns>
+                                              <TextRun>
+                                                <Value>=Fields!on_order_units.Value</Value>
+                                                <Style>
+                                                  <Format>0;(0)</Format>
+                                                  <Color>DimGray</Color>
+                                                </Style>
+                                              </TextRun>
+                                            </TextRuns>
+                                            <Style />
+                                          </Paragraph>
+                                        </Paragraphs>
+                                        <rd:DefaultName>on_order_units</rd:DefaultName>
+                                        <Style>
+                                          <Border>
+                                            <Style>None</Style>
+                                          </Border>
+                                          <TopBorder>
+                                            <Style>Solid</Style>
+                                          </TopBorder>
+                                          <PaddingLeft>2pt</PaddingLeft>
+                                          <PaddingRight>2pt</PaddingRight>
+                                          <PaddingTop>2pt</PaddingTop>
+                                          <PaddingBottom>2pt</PaddingBottom>
+                                        </Style>
+                                      </Textbox>
+                                    </CellContents>
+                                  </TablixCell>
+                                  <TablixCell>
+                                    <CellContents>
                                       <Textbox Name="qty_on_hand">
                                         <CanGrow>true</CanGrow>
                                         <KeepTogether>true</KeepTogether>
@@ -2530,42 +2564,6 @@
                                           </Paragraph>
                                         </Paragraphs>
                                         <rd:DefaultName>net_sold_qty2</rd:DefaultName>
-                                        <Style>
-                                          <Border>
-                                            <Style>None</Style>
-                                          </Border>
-                                          <TopBorder>
-                                            <Color>Black</Color>
-                                            <Style>Solid</Style>
-                                            <Width>1pt</Width>
-                                          </TopBorder>
-                                          <PaddingLeft>2pt</PaddingLeft>
-                                          <PaddingRight>2pt</PaddingRight>
-                                          <PaddingTop>2pt</PaddingTop>
-                                          <PaddingBottom>2pt</PaddingBottom>
-                                        </Style>
-                                      </Textbox>
-                                    </CellContents>
-                                  </TablixCell>
-                                  <TablixCell>
-                                    <CellContents>
-                                      <Textbox Name="Textbox30">
-                                        <CanGrow>true</CanGrow>
-                                        <KeepTogether>true</KeepTogether>
-                                        <Paragraphs>
-                                          <Paragraph>
-                                            <TextRuns>
-                                              <TextRun>
-                                                <Value />
-                                                <Style>
-                                                  <Color>DimGray</Color>
-                                                </Style>
-                                              </TextRun>
-                                            </TextRuns>
-                                            <Style />
-                                          </Paragraph>
-                                        </Paragraphs>
-                                        <rd:DefaultName>Textbox30</rd:DefaultName>
                                         <Style>
                                           <Border>
                                             <Style>None</Style>
@@ -2784,7 +2782,9 @@
                                                 </Style>
                                               </TextRun>
                                             </TextRuns>
-                                            <Style />
+                                            <Style>
+                                              <TextAlign>Right</TextAlign>
+                                            </Style>
                                           </Paragraph>
                                         </Paragraphs>
                                         <rd:DefaultName>margin</rd:DefaultName>
@@ -3256,6 +3256,42 @@
                                   </TablixCell>
                                   <TablixCell>
                                     <CellContents>
+                                      <Textbox Name="on_order_units1">
+                                        <CanGrow>true</CanGrow>
+                                        <KeepTogether>true</KeepTogether>
+                                        <Paragraphs>
+                                          <Paragraph>
+                                            <TextRuns>
+                                              <TextRun>
+                                                <Value>=Sum(Fields!on_order_units.Value)</Value>
+                                                <Style>
+                                                  <FontStyle>Italic</FontStyle>
+                                                </Style>
+                                              </TextRun>
+                                            </TextRuns>
+                                            <Style />
+                                          </Paragraph>
+                                        </Paragraphs>
+                                        <rd:DefaultName>on_order_units1</rd:DefaultName>
+                                        <Style>
+                                          <Border>
+                                            <Style>None</Style>
+                                          </Border>
+                                          <TopBorder>
+                                            <Color>Black</Color>
+                                            <Style>Solid</Style>
+                                            <Width>1pt</Width>
+                                          </TopBorder>
+                                          <PaddingLeft>2pt</PaddingLeft>
+                                          <PaddingRight>2pt</PaddingRight>
+                                          <PaddingTop>2pt</PaddingTop>
+                                          <PaddingBottom>2pt</PaddingBottom>
+                                        </Style>
+                                      </Textbox>
+                                    </CellContents>
+                                  </TablixCell>
+                                  <TablixCell>
+                                    <CellContents>
                                       <Textbox Name="qty_on_hand1">
                                         <CanGrow>true</CanGrow>
                                         <KeepTogether>true</KeepTogether>
@@ -3313,42 +3349,6 @@
                                           </Paragraph>
                                         </Paragraphs>
                                         <rd:DefaultName>net_sold_qty3</rd:DefaultName>
-                                        <Style>
-                                          <Border>
-                                            <Style>None</Style>
-                                          </Border>
-                                          <TopBorder>
-                                            <Color>Black</Color>
-                                            <Style>Solid</Style>
-                                            <Width>1pt</Width>
-                                          </TopBorder>
-                                          <PaddingLeft>2pt</PaddingLeft>
-                                          <PaddingRight>2pt</PaddingRight>
-                                          <PaddingTop>2pt</PaddingTop>
-                                          <PaddingBottom>2pt</PaddingBottom>
-                                        </Style>
-                                      </Textbox>
-                                    </CellContents>
-                                  </TablixCell>
-                                  <TablixCell>
-                                    <CellContents>
-                                      <Textbox Name="Textbox31">
-                                        <CanGrow>true</CanGrow>
-                                        <KeepTogether>true</KeepTogether>
-                                        <Paragraphs>
-                                          <Paragraph>
-                                            <TextRuns>
-                                              <TextRun>
-                                                <Value />
-                                                <Style>
-                                                  <FontStyle>Italic</FontStyle>
-                                                </Style>
-                                              </TextRun>
-                                            </TextRuns>
-                                            <Style />
-                                          </Paragraph>
-                                        </Paragraphs>
-                                        <rd:DefaultName>Textbox31</rd:DefaultName>
                                         <Style>
                                           <Border>
                                             <Style>None</Style>
@@ -3563,7 +3563,9 @@
                                                 </Style>
                                               </TextRun>
                                             </TextRuns>
-                                            <Style />
+                                            <Style>
+                                              <TextAlign>Right</TextAlign>
+                                            </Style>
                                           </Paragraph>
                                         </Paragraphs>
                                         <rd:DefaultName>Textbox59</rd:DefaultName>
@@ -3922,7 +3924,7 @@
                           <DataSetName>DataSet1</DataSetName>
                           <Top>0.5in</Top>
                           <Height>1.09in</Height>
-                          <Width>23.21874in</Width>
+                          <Width>23.54166in</Width>
                           <Style />
                         </Tablix>
                         <Textbox Name="season">
@@ -3992,7 +3994,7 @@
         </PageBreak>
         <Top>0.21in</Top>
         <Height>1.59in</Height>
-        <Width>23.21874in</Width>
+        <Width>23.54166in</Width>
         <Style />
       </Tablix>
       <Textbox Name="textbox1">
@@ -4026,7 +4028,7 @@
     <Height>1.8in</Height>
     <Style />
   </Body>
-  <Width>23.21874in</Width>
+  <Width>23.54166in</Width>
   <Page>
     <LeftMargin>1in</LeftMargin>
     <RightMargin>1in</RightMargin>
@@ -4120,6 +4122,10 @@
           <DataField>cost</DataField>
           <rd:TypeName>System.Decimal</rd:TypeName>
         </Field>
+        <Field Name="on_order_units">
+          <DataField>on_order_units</DataField>
+          <rd:TypeName>System.Int32</rd:TypeName>
+        </Field>
         <Field Name="discount_invoiced">
           <DataField>discount_invoiced</DataField>
           <rd:TypeName>System.Int32</rd:TypeName>
@@ -4192,12 +4198,12 @@
           <DataField>ext_gross_sales_revenue</DataField>
           <rd:TypeName>System.Int32</rd:TypeName>
         </Field>
-        <Field Name="airtime">
-          <DataField>airtime</DataField>
-          <rd:TypeName>System.Int32</rd:TypeName>
-        </Field>
         <Field Name="ext_net_sales_revenue">
           <DataField>ext_net_sales_revenue</DataField>
+          <rd:TypeName>System.Int32</rd:TypeName>
+        </Field>
+        <Field Name="airtime">
+          <DataField>airtime</DataField>
           <rd:TypeName>System.Int32</rd:TypeName>
         </Field>
         <Field Name="margin">

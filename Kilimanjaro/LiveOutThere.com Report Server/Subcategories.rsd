@@ -3,11 +3,11 @@
   <DataSet Name="">
     <Query>
       <DataSourceReference>LOT_Reporting</DataSourceReference>
-      <CommandText>SELECT DISTINCT category FROM [LOT_Reporting].[dbo].[tbl_Sell_Through_Log]</CommandText>
+      <CommandText>SELECT DISTINCT subcategory FROM [LOT_Reporting].[dbo].[tbl_Sell_Through_Log]</CommandText>
     </Query>
     <Fields>
-      <Field Name="category">
-        <DataField>category</DataField>
+      <Field Name="subcategory">
+        <DataField>subcategory</DataField>
         <rd:TypeName>System.String</rd:TypeName>
       </Field>
     </Fields>

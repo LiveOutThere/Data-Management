@@ -7639,9 +7639,10 @@
                                         <KeepTogether>true</KeepTogether>
                                       </TablixMember>
                                       <TablixMember>
-                                        <Group Name="table1_name">
+                                        <Group Name="table1_name_gender">
                                           <GroupExpressions>
                                             <GroupExpression>=Fields!name.Value</GroupExpression>
+                                            <GroupExpression>=Fields!department.Value</GroupExpression>
                                           </GroupExpressions>
                                         </Group>
                                         <SortExpressions>

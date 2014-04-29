@@ -101,7 +101,7 @@
                         <Paragraph>
                           <TextRuns>
                             <TextRun>
-                              <Value>&lt;&lt;&lt; MONERIS &gt;&gt;&gt;</Value>
+                              <Value>&lt;&lt;&lt; GATEWAY&gt;&gt;&gt;</Value>
                               <Style>
                                 <FontWeight>Normal</FontWeight>
                                 <TextDecoration>None</TextDecoration>

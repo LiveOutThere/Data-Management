@@ -22,14 +22,17 @@
           <QueryParameter Name="@Category">
             <Value>=Parameters!Category.Value</Value>
           </QueryParameter>
-          <QueryParameter Name="@Subcategory">
-            <Value>=Parameters!Subcategory.Value</Value>
+          <QueryParameter Name="@SeasonType">
+            <Value>=Parameters!SeasonType.Value</Value>
+          </QueryParameter>
+          <QueryParameter Name="@InventoryType">
+            <Value>=Parameters!InventoryType.Value</Value>
           </QueryParameter>
           <QueryParameter Name="@OnOrder">
             <Value>=Parameters!OnOrder.Value</Value>
           </QueryParameter>
         </QueryParameters>
-        <CommandText>EXEC dbo.report_Sell_Through_Rollup @Brand,@Season, @Category, @Subcategory, @OnOrder</CommandText>
+        <CommandText>EXEC dbo.report_Sell_Through_Rollup @Brand,@Season,@SeasonType, @InventoryType, @Category, @OnOrder</CommandText>
         <rd:UseGenericDesigner>true</rd:UseGenericDesigner>
       </Query>
       <Fields>
@@ -129,9 +132,9 @@
           <DataField>category</DataField>
           <rd:TypeName>System.String</rd:TypeName>
         </Field>
-        <Field Name="subcategory">
-          <DataField>subcategory</DataField>
-          <rd:TypeName>System.String</rd:TypeName>
+        <Field Name="ext_qoh_cost">
+          <DataField>ext_qoh_cost</DataField>
+          <rd:TypeName>System.Double</rd:TypeName>
         </Field>
         <Field Name="ext_net_sales_revenue">
           <DataField>ext_net_sales_revenue</DataField>
@@ -181,6 +184,10 @@
           <DataField>sell_through4</DataField>
           <rd:TypeName>System.Double</rd:TypeName>
         </Field>
+        <Field Name="inventory_type">
+          <DataField>inventory_type</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
       </Fields>
     </DataSet>
     <DataSet Name="Brands">
@@ -217,13 +224,15 @@
         </Field>
       </Fields>
     </DataSet>
-    <DataSet Name="Subcategories">
-      <SharedDataSet>
-        <SharedDataSetReference>Subcategories</SharedDataSetReference>
-      </SharedDataSet>
+    <DataSet Name="SeasonCodes">
+      <Query>
+        <DataSourceName>LOT_Reporting</DataSourceName>
+        <CommandText>SELECT DISTINCT LEFT(season,4)
+FROM [LOT_Reporting].[dbo].[tbl_Sell_Through_Log]</CommandText>
+      </Query>
       <Fields>
-        <Field Name="subcategory">
-          <DataField>subcategory</DataField>
+        <Field Name="ID">
+          <DataField />
           <rd:TypeName>System.String</rd:TypeName>
         </Field>
       </Fields>
@@ -267,10 +276,10 @@
                                     <Width>1.1875in</Width>
                                   </TablixColumn>
                                   <TablixColumn>
-                                    <Width>1.52083in</Width>
+                                    <Width>1.10417in</Width>
                                   </TablixColumn>
                                   <TablixColumn>
-                                    <Width>3.22917in</Width>
+                                    <Width>2.52083in</Width>
                                   </TablixColumn>
                                   <TablixColumn>
                                     <Width>2.58333in</Width>
@@ -321,10 +330,13 @@
                                     <Width>1in</Width>
                                   </TablixColumn>
                                   <TablixColumn>
-                                    <Width>1.94792in</Width>
+                                    <Width>1.52084in</Width>
                                   </TablixColumn>
                                   <TablixColumn>
-                                    <Width>1.71875in</Width>
+                                    <Width>1.51042in</Width>
+                                  </TablixColumn>
+                                  <TablixColumn>
+                                    <Width>1in</Width>
                                   </TablixColumn>
                                   <TablixColumn>
                                     <Width>1.22917in</Width>
@@ -625,14 +637,14 @@
                                       </TablixCell>
                                       <TablixCell>
                                         <CellContents>
-                                          <Textbox Name="Textbox27">
+                                          <Textbox Name="Textbox30">
                                             <CanGrow>true</CanGrow>
                                             <KeepTogether>true</KeepTogether>
                                             <Paragraphs>
                                               <Paragraph>
                                                 <TextRuns>
                                                   <TextRun>
-                                                    <Value>Category</Value>
+                                                    <Value>Inventory Type</Value>
                                                     <Style>
                                                       <FontWeight>Bold</FontWeight>
                                                     </Style>
@@ -643,7 +655,7 @@
                                                 </Style>
                                               </Paragraph>
                                             </Paragraphs>
-                                            <rd:DefaultName>Textbox27</rd:DefaultName>
+                                            <rd:DefaultName>Textbox30</rd:DefaultName>
                                             <Style>
                                               <Border>
                                                 <Style>Solid</Style>
@@ -678,14 +690,14 @@
                                       </TablixCell>
                                       <TablixCell>
                                         <CellContents>
-                                          <Textbox Name="Textbox37">
+                                          <Textbox Name="Textbox27">
                                             <CanGrow>true</CanGrow>
                                             <KeepTogether>true</KeepTogether>
                                             <Paragraphs>
                                               <Paragraph>
                                                 <TextRuns>
                                                   <TextRun>
-                                                    <Value>Subcategory</Value>
+                                                    <Value>Category</Value>
                                                     <Style>
                                                       <FontWeight>Bold</FontWeight>
                                                     </Style>
@@ -696,7 +708,7 @@
                                                 </Style>
                                               </Paragraph>
                                             </Paragraphs>
-                                            <rd:DefaultName>Textbox37</rd:DefaultName>
+                                            <rd:DefaultName>Textbox27</rd:DefaultName>
                                             <Style>
                                               <Border>
                                                 <Style>Solid</Style>
@@ -1003,7 +1015,7 @@
                                               <Paragraph>
                                                 <TextRuns>
                                                   <TextRun>
-                                                    <Value>On Order Units</Value>
+                                                    <Value>QOO</Value>
                                                     <Style>
                                                       <FontWeight>Bold</FontWeight>
                                                     </Style>
@@ -1602,7 +1614,7 @@
                                               <Paragraph>
                                                 <TextRuns>
                                                   <TextRun>
-                                                    <Value>Net Sales Revenue</Value>
+                                                    <Value>Ext. Sold $</Value>
                                                     <Style>
                                                       <FontWeight>Bold</FontWeight>
                                                     </Style>
@@ -1659,7 +1671,7 @@
                                               <Paragraph>
                                                 <TextRuns>
                                                   <TextRun>
-                                                    <Value>Net Sales Cost</Value>
+                                                    <Value>Ext. Cost $</Value>
                                                     <Style>
                                                       <FontWeight>Bold</FontWeight>
                                                     </Style>
@@ -1671,6 +1683,59 @@
                                               </Paragraph>
                                             </Paragraphs>
                                             <rd:DefaultName>Textbox123</rd:DefaultName>
+                                            <Style>
+                                              <Border>
+                                                <Style>Solid</Style>
+                                              </Border>
+                                              <TopBorder>
+                                                <Color>Black</Color>
+                                                <Style>Solid</Style>
+                                                <Width>1pt</Width>
+                                              </TopBorder>
+                                              <BottomBorder>
+                                                <Color>Black</Color>
+                                                <Style>Solid</Style>
+                                                <Width>1pt</Width>
+                                              </BottomBorder>
+                                              <LeftBorder>
+                                                <Color>Black</Color>
+                                                <Style>Solid</Style>
+                                                <Width>1pt</Width>
+                                              </LeftBorder>
+                                              <RightBorder>
+                                                <Color>Black</Color>
+                                                <Style>Solid</Style>
+                                                <Width>1pt</Width>
+                                              </RightBorder>
+                                              <PaddingLeft>2pt</PaddingLeft>
+                                              <PaddingRight>2pt</PaddingRight>
+                                              <PaddingTop>2pt</PaddingTop>
+                                              <PaddingBottom>2pt</PaddingBottom>
+                                            </Style>
+                                          </Textbox>
+                                        </CellContents>
+                                      </TablixCell>
+                                      <TablixCell>
+                                        <CellContents>
+                                          <Textbox Name="Textbox48">
+                                            <CanGrow>true</CanGrow>
+                                            <KeepTogether>true</KeepTogether>
+                                            <Paragraphs>
+                                              <Paragraph>
+                                                <TextRuns>
+                                                  <TextRun>
+                                                    <Value>QOH Cost $</Value>
+                                                    <Style>
+                                                      <FontWeight>Bold</FontWeight>
+                                                    </Style>
+                                                  </TextRun>
+                                                </TextRuns>
+                                                <Style>
+                                                  <TextAlign>Left</TextAlign>
+                                                </Style>
+                                              </Paragraph>
+                                            </Paragraphs>
+                                            <rd:DefaultName>Textbox48</rd:DefaultName>
                                             <Style>
                                               <Border>
                                                 <Style>Solid</Style>
@@ -2462,15 +2527,17 @@
                                       </TablixCell>
                                       <TablixCell>
                                         <CellContents>
-                                          <Textbox Name="Textbox29">
+                                          <Textbox Name="inventory_type3">
                                             <CanGrow>true</CanGrow>
                                             <KeepTogether>true</KeepTogether>
                                             <Paragraphs>
                                               <Paragraph>
                                                 <TextRuns>
                                                   <TextRun>
-                                                    <Value />
-                                                    <Style />
+                                                    <Value>=Fields!inventory_type.Value</Value>
+                                                    <Style>
+                                                      <TextDecoration>None</TextDecoration>
+                                                    </Style>
                                                   </TextRun>
                                                 </TextRuns>
                                                 <Style>
@@ -2478,7 +2545,7 @@
                                                 </Style>
                                               </Paragraph>
                                             </Paragraphs>
-                                            <rd:DefaultName>Textbox29</rd:DefaultName>
+                                            <rd:DefaultName>inventory_type</rd:DefaultName>
                                             <Style>
                                               <Border>
                                                 <Style>Solid</Style>
@@ -2513,7 +2580,7 @@
                                       </TablixCell>
                                       <TablixCell>
                                         <CellContents>
-                                          <Textbox Name="Textbox39">
+                                          <Textbox Name="Textbox29">
                                             <CanGrow>true</CanGrow>
                                             <KeepTogether>true</KeepTogether>
                                             <Paragraphs>
@@ -2529,7 +2596,7 @@
                                                 </Style>
                                               </Paragraph>
                                             </Paragraphs>
-                                            <rd:DefaultName>Textbox39</rd:DefaultName>
+                                            <rd:DefaultName>Textbox29</rd:DefaultName>
                                             <Style>
                                               <Border>
                                                 <Style>Solid</Style>
@@ -3508,6 +3575,40 @@
                                       </TablixCell>
                                       <TablixCell>
                                         <CellContents>
+                                          <Textbox Name="ext_qoh_cost2">
+                                            <CanGrow>true</CanGrow>
+                                            <KeepTogether>true</KeepTogether>
+                                            <Paragraphs>
+                                              <Paragraph>
+                                                <TextRuns>
+                                                  <TextRun>
+                                                    <Value>=Sum(Fields!ext_qoh_cost.Value)</Value>
+                                                    <Style>
+                                                      <Format>'$'0.00;('$'0.00)</Format>
+                                                    </Style>
+                                                  </TextRun>
+                                                </TextRuns>
+                                                <Style>
+                                                  <TextAlign>Left</TextAlign>
+                                                </Style>
+                                              </Paragraph>
+                                            </Paragraphs>
+                                            <rd:DefaultName>ext_qoh_cost2</rd:DefaultName>
+                                            <Style>
+                                              <Border>
+                                                <Style>Solid</Style>
+                                              </Border>
+                                              <PaddingLeft>2pt</PaddingLeft>
+                                              <PaddingRight>2pt</PaddingRight>
+                                              <PaddingTop>2pt</PaddingTop>
+                                              <PaddingBottom>2pt</PaddingBottom>
+                                              <rd:FormatSymbolCulture>en-US</rd:FormatSymbolCulture>
+                                            </Style>
+                                          </Textbox>
+                                        </CellContents>
+                                      </TablixCell>
+                                      <TablixCell>
+                                        <CellContents>
                                           <Textbox Name="airtime12">
                                             <CanGrow>true</CanGrow>
                                             <KeepTogether>true</KeepTogether>
@@ -4041,14 +4142,14 @@
                                       </TablixCell>
                                       <TablixCell>
                                         <CellContents>
-                                          <Textbox Name="textbox51">
+                                          <Textbox Name="brand2">
                                             <CanGrow>true</CanGrow>
                                             <KeepTogether>true</KeepTogether>
                                             <Paragraphs>
                                               <Paragraph>
                                                 <TextRuns>
                                                   <TextRun>
-                                                    <Value />
+                                                    <Value>=Fields!brand.Value</Value>
                                                     <Style />
                                                   </TextRun>
                                                 </TextRuns>
@@ -4057,7 +4158,7 @@
                                                 </Style>
                                               </Paragraph>
                                             </Paragraphs>
-                                            <rd:DefaultName>textbox51</rd:DefaultName>
+                                            <rd:DefaultName>brand</rd:DefaultName>
                                             <Style>
                                               <Border>
                                                 <Style>Solid</Style>
@@ -4245,16 +4346,16 @@
                                       </TablixCell>
                                       <TablixCell>
                                         <CellContents>
-                                          <Textbox Name="category2">
+                                          <Textbox Name="inventory_type2">
                                             <CanGrow>true</CanGrow>
                                             <KeepTogether>true</KeepTogether>
                                             <Paragraphs>
                                               <Paragraph>
                                                 <TextRuns>
                                                   <TextRun>
-                                                    <Value>=Fields!category.Value</Value>
+                                                    <Value>=Fields!inventory_type.Value</Value>
                                                     <Style>
-                                                      <TextDecoration>Underline</TextDecoration>
+                                                      <TextDecoration>None</TextDecoration>
                                                     </Style>
                                                   </TextRun>
                                                 </TextRuns>
@@ -4263,7 +4364,7 @@
                                                 </Style>
                                               </Paragraph>
                                             </Paragraphs>
-                                            <rd:DefaultName>category</rd:DefaultName>
+                                            <rd:DefaultName>inventory_type</rd:DefaultName>
                                             <Style>
                                               <Border>
                                                 <Style>Solid</Style>
@@ -4298,14 +4399,14 @@
                                       </TablixCell>
                                       <TablixCell>
                                         <CellContents>
-                                          <Textbox Name="subcategory2">
+                                          <Textbox Name="category2">
                                             <CanGrow>true</CanGrow>
                                             <KeepTogether>true</KeepTogether>
                                             <Paragraphs>
                                               <Paragraph>
                                                 <TextRuns>
                                                   <TextRun>
-                                                    <Value>=Fields!subcategory.Value</Value>
+                                                    <Value>=Fields!category.Value</Value>
                                                     <Style>
                                                       <TextDecoration>Underline</TextDecoration>
                                                     </Style>
@@ -4316,7 +4417,7 @@
                                                 </Style>
                                               </Paragraph>
                                             </Paragraphs>
-                                            <rd:DefaultName>subcategory</rd:DefaultName>
+                                            <rd:DefaultName>category</rd:DefaultName>
                                             <Style>
                                               <Border>
                                                 <Style>Solid</Style>
@@ -5295,6 +5396,40 @@
                                       </TablixCell>
                                       <TablixCell>
                                         <CellContents>
+                                          <Textbox Name="ext_qoh_cost1">
+                                            <CanGrow>true</CanGrow>
+                                            <KeepTogether>true</KeepTogether>
+                                            <Paragraphs>
+                                              <Paragraph>
+                                                <TextRuns>
+                                                  <TextRun>
+                                                    <Value>=Sum(Fields!ext_qoh_cost.Value)</Value>
+                                                    <Style>
+                                                      <Format>'$'0.00;('$'0.00)</Format>
+                                                    </Style>
+                                                  </TextRun>
+                                                </TextRuns>
+                                                <Style>
+                                                  <TextAlign>Left</TextAlign>
+                                                </Style>
+                                              </Paragraph>
+                                            </Paragraphs>
+                                            <rd:DefaultName>ext_qoh_cost1</rd:DefaultName>
+                                            <Style>
+                                              <Border>
+                                                <Style>Solid</Style>
+                                              </Border>
+                                              <PaddingLeft>2pt</PaddingLeft>
+                                              <PaddingRight>2pt</PaddingRight>
+                                              <PaddingTop>2pt</PaddingTop>
+                                              <PaddingBottom>2pt</PaddingBottom>
+                                              <rd:FormatSymbolCulture>en-US</rd:FormatSymbolCulture>
+                                            </Style>
+                                          </Textbox>
+                                        </CellContents>
+                                      </TablixCell>
+                                      <TablixCell>
+                                        <CellContents>
                                           <Textbox Name="airtime11">
                                             <CanGrow>true</CanGrow>
                                             <KeepTogether>true</KeepTogether>
@@ -5828,14 +5963,14 @@
                                       </TablixCell>
                                       <TablixCell>
                                         <CellContents>
-                                          <Textbox Name="textbox3">
+                                          <Textbox Name="brand3">
                                             <CanGrow>true</CanGrow>
                                             <KeepTogether>true</KeepTogether>
                                             <Paragraphs>
                                               <Paragraph>
                                                 <TextRuns>
                                                   <TextRun>
-                                                    <Value />
+                                                    <Value>=Fields!brand.Value</Value>
                                                     <Style />
                                                   </TextRun>
                                                 </TextRuns>
@@ -5844,7 +5979,7 @@
                                                 </Style>
                                               </Paragraph>
                                             </Paragraphs>
-                                            <rd:DefaultName>textbox3</rd:DefaultName>
+                                            <rd:DefaultName>brand</rd:DefaultName>
                                             <Style>
                                               <Border>
                                                 <Style>Solid</Style>
@@ -5879,14 +6014,14 @@
                                       </TablixCell>
                                       <TablixCell>
                                         <CellContents>
-                                          <Textbox Name="textbox5">
+                                          <Textbox Name="name2">
                                             <CanGrow>true</CanGrow>
                                             <KeepTogether>true</KeepTogether>
                                             <Paragraphs>
                                               <Paragraph>
                                                 <TextRuns>
                                                   <TextRun>
-                                                    <Value />
+                                                    <Value>=Fields!name.Value</Value>
                                                     <Style />
                                                   </TextRun>
                                                 </TextRuns>
@@ -5895,7 +6030,7 @@
                                                 </Style>
                                               </Paragraph>
                                             </Paragraphs>
-                                            <rd:DefaultName>textbox5</rd:DefaultName>
+                                            <rd:DefaultName>name</rd:DefaultName>
                                             <Style>
                                               <Border>
                                                 <Style>Solid</Style>
@@ -6042,16 +6177,16 @@
                                       </TablixCell>
                                       <TablixCell>
                                         <CellContents>
-                                          <Textbox Name="category">
+                                          <Textbox Name="inventory_type">
                                             <CanGrow>true</CanGrow>
                                             <KeepTogether>true</KeepTogether>
                                             <Paragraphs>
                                               <Paragraph>
                                                 <TextRuns>
                                                   <TextRun>
-                                                    <Value>=Fields!category.Value</Value>
+                                                    <Value>=Fields!inventory_type.Value</Value>
                                                     <Style>
-                                                      <TextDecoration>Underline</TextDecoration>
+                                                      <TextDecoration>None</TextDecoration>
                                                     </Style>
                                                   </TextRun>
                                                 </TextRuns>
@@ -6060,7 +6195,7 @@
                                                 </Style>
                                               </Paragraph>
                                             </Paragraphs>
-                                            <rd:DefaultName>category</rd:DefaultName>
+                                            <rd:DefaultName>inventory_type</rd:DefaultName>
                                             <Style>
                                               <Border>
                                                 <Style>Solid</Style>
@@ -6095,14 +6230,14 @@
                                       </TablixCell>
                                       <TablixCell>
                                         <CellContents>
-                                          <Textbox Name="subcategory">
+                                          <Textbox Name="category">
                                             <CanGrow>true</CanGrow>
                                             <KeepTogether>true</KeepTogether>
                                             <Paragraphs>
                                               <Paragraph>
                                                 <TextRuns>
                                                   <TextRun>
-                                                    <Value>=Fields!subcategory.Value</Value>
+                                                    <Value>=Fields!category.Value</Value>
                                                     <Style>
                                                       <TextDecoration>Underline</TextDecoration>
                                                     </Style>
@@ -6113,7 +6248,7 @@
                                                 </Style>
                                               </Paragraph>
                                             </Paragraphs>
-                                            <rd:DefaultName>subcategory</rd:DefaultName>
+                                            <rd:DefaultName>category</rd:DefaultName>
                                             <Style>
                                               <Border>
                                                 <Style>Solid</Style>
@@ -7098,6 +7233,40 @@
                                       </TablixCell>
                                       <TablixCell>
                                         <CellContents>
+                                          <Textbox Name="ext_qoh_cost">
+                                            <CanGrow>true</CanGrow>
+                                            <KeepTogether>true</KeepTogether>
+                                            <Paragraphs>
+                                              <Paragraph>
+                                                <TextRuns>
+                                                  <TextRun>
+                                                    <Value>=Fields!ext_qoh_cost.Value</Value>
+                                                    <Style>
+                                                      <Format>'$'0.00;('$'0.00)</Format>
+                                                    </Style>
+                                                  </TextRun>
+                                                </TextRuns>
+                                                <Style>
+                                                  <TextAlign>Left</TextAlign>
+                                                </Style>
+                                              </Paragraph>
+                                            </Paragraphs>
+                                            <rd:DefaultName>ext_qoh_cost</rd:DefaultName>
+                                            <Style>
+                                              <Border>
+                                                <Style>Solid</Style>
+                                              </Border>
+                                              <PaddingLeft>2pt</PaddingLeft>
+                                              <PaddingRight>2pt</PaddingRight>
+                                              <PaddingTop>2pt</PaddingTop>
+                                              <PaddingBottom>2pt</PaddingBottom>
+                                              <rd:FormatSymbolCulture>en-US</rd:FormatSymbolCulture>
+                                            </Style>
+                                          </Textbox>
+                                        </CellContents>
+                                      </TablixCell>
+                                      <TablixCell>
+                                        <CellContents>
                                           <Textbox Name="airtime1">
                                             <CanGrow>true</CanGrow>
                                             <KeepTogether>true</KeepTogether>
@@ -7613,6 +7782,7 @@
                                   <TablixMember />
                                   <TablixMember />
                                   <TablixMember />
+                                  <TablixMember />
                                 </TablixMembers>
                               </TablixColumnHierarchy>
                               <TablixRowHierarchy>
@@ -7683,35 +7853,9 @@
                               <DataSetName>DataSet1</DataSetName>
                               <Top>0.5in</Top>
                               <Height>0.84in</Height>
-                              <Width>49.60417in</Width>
+                              <Width>48.84376in</Width>
                               <Style />
                             </Tablix>
-                            <Textbox Name="week_id">
-                              <CanGrow>true</CanGrow>
-                              <KeepTogether>true</KeepTogether>
-                              <Paragraphs>
-                                <Paragraph>
-                                  <TextRuns>
-                                    <TextRun>
-                                      <Value />
-                                      <Style />
-                                    </TextRun>
-                                  </TextRuns>
-                                  <Style />
-                                </Paragraph>
-                              </Paragraphs>
-                              <rd:DefaultName>week_id</rd:DefaultName>
-                              <Top>0.5in</Top>
-                              <Height>0.21in</Height>
-                              <Width>24in</Width>
-                              <ZIndex>1</ZIndex>
-                              <Style>
-                                <PaddingLeft>2pt</PaddingLeft>
-                                <PaddingRight>2pt</PaddingRight>
-                                <PaddingTop>2pt</PaddingTop>
-                                <PaddingBottom>2pt</PaddingBottom>
-                              </Style>
-                            </Textbox>
                           </ReportItems>
                           <KeepTogether>true</KeepTogether>
                           <Style />
@@ -7818,33 +7962,57 @@
       <Prompt>Season:</Prompt>
       <ValidValues>
         <DataSetReference>
+          <DataSetName>SeasonCodes</DataSetName>
+          <ValueField>ID</ValueField>
+          <LabelField>ID</LabelField>
+        </DataSetReference>
+      </ValidValues>
+    </ReportParameter>
+    <ReportParameter Name="SeasonType">
+      <DataType>String</DataType>
+      <Nullable>true</Nullable>
+      <Prompt>Season Type:</Prompt>
+      <ValidValues>
+        <DataSetReference>
           <DataSetName>Seasons</DataSetName>
           <ValueField>Season</ValueField>
           <LabelField>Season</LabelField>
         </DataSetReference>
       </ValidValues>
     </ReportParameter>
+    <ReportParameter Name="InventoryType">
+      <DataType>String</DataType>
+      <Nullable>true</Nullable>
+      <Prompt>Inventory Type:</Prompt>
+      <ValidValues>
+        <ParameterValues>
+          <ParameterValue>
+            <Label>(Null)</Label>
+          </ParameterValue>
+          <ParameterValue>
+            <Value>Apparel</Value>
+            <Label>Apparel</Label>
+          </ParameterValue>
+          <ParameterValue>
+            <Value>Gear</Value>
+            <Label>Gear</Label>
+          </ParameterValue>
+          <ParameterValue>
+            <Value>Footwear</Value>
+            <Label>Footwear</Label>
+          </ParameterValue>
+        </ParameterValues>
+      </ValidValues>
+    </ReportParameter>
     <ReportParameter Name="Category">
       <DataType>String</DataType>
       <Nullable>true</Nullable>
-      <Prompt>Category Filter:</Prompt>
+      <Prompt>Category:</Prompt>
       <ValidValues>
         <DataSetReference>
           <DataSetName>Categories</DataSetName>
           <ValueField>category</ValueField>
           <LabelField>category</LabelField>
-        </DataSetReference>
-      </ValidValues>
-    </ReportParameter>
-    <ReportParameter Name="Subcategory">
-      <DataType>String</DataType>
-      <Nullable>true</Nullable>
-      <Prompt>Subcategory Filter:</Prompt>
-      <ValidValues>
-        <DataSetReference>
-          <DataSetName>Subcategories</DataSetName>
-          <ValueField>subcategory</ValueField>
-          <LabelField>subcategory</LabelField>
         </DataSetReference>
       </ValidValues>
     </ReportParameter>

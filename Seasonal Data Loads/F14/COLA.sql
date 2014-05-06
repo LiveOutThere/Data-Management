@@ -9,11 +9,11 @@ GO
 SET CONCAT_NULL_YIELDS_NULL OFF
 GO
 
-IF EXISTS (SELECT * FROM sysobjects WHERE id = object_id(N'[dbo].[tbl_LoadFile_FW14_COL]')
+IF EXISTS (SELECT * FROM sysobjects WHERE id = object_id(N'[dbo].[tbl_LoadFile_FW14_COLA]')
 AND OBJECTPROPERTY(id, N'IsUserTable') = 1)
-DROP TABLE [dbo].[tbl_LoadFile_FW14_COL]
+DROP TABLE [dbo].[tbl_LoadFile_FW14_COLA]
 
-CREATE TABLE [dbo].[tbl_LoadFile_FW14_COL](
+CREATE TABLE [dbo].[tbl_LoadFile_FW14_COLA](
 	[id] [int] IDENTITY(1,1) NOT NULL,
 	[store] [nvarchar](4000) COLLATE SQL_Latin1_General_CP1_CI_AS NULL CONSTRAINT [DF_tbl_LoadFile_FW14_COL_store]  DEFAULT ('admin'),
 	[websites] [nvarchar](4000) COLLATE SQL_Latin1_General_CP1_CI_AS NULL CONSTRAINT [DF_tbl_LoadFile_FW14_COL_websites]  DEFAULT ('base'),
@@ -72,7 +72,7 @@ CREATE TABLE [dbo].[tbl_LoadFile_FW14_COL](
 )WITH (IGNORE_DUP_KEY = OFF) ON [PRIMARY]
 ) ON [PRIMARY]
 
-CREATE NONCLUSTERED INDEX [IX_tbl_LoadFile_FW14_COL] ON [dbo].[tbl_LoadFile_FW14_COL] 
+CREATE NONCLUSTERED INDEX [IX_tbl_LoadFile_FW14_COL] ON [dbo].[tbl_LoadFile_FW14_COLA] 
 (
 	[sku] ASC,
 	[type] ASC,
@@ -80,10 +80,10 @@ CREATE NONCLUSTERED INDEX [IX_tbl_LoadFile_FW14_COL] ON [dbo].[tbl_LoadFile_FW14
 )WITH (PAD_INDEX  = OFF, STATISTICS_NORECOMPUTE  = OFF, SORT_IN_TEMPDB = OFF, IGNORE_DUP_KEY = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS  = ON, ALLOW_PAGE_LOCKS  = ON) ON [PRIMARY]
 
 GO
-TRUNCATE TABLE tbl_LoadFile_FW14_COL
+TRUNCATE TABLE tbl_LoadFile_FW14_COLA
 
 GO
-INSERT INTO tbl_LoadFile_FW14_COL (
+INSERT INTO tbl_LoadFile_FW14_COLA (
 		[type]		
 		,sku
 		,[name]
@@ -106,20 +106,20 @@ SELECT DISTINCT
 	
 	--seasoncode-brandcode-style-colorcode-size
 	
-	,'FW14I-COL-' + LEFT(CONVERT(varchar(255),CAST(a.Material AS decimal)),6) + '-' + CASE WHEN LEN(a.ColorCode) = 1 THEN '00' + CAST(a.ColorCode AS varchar(255)) WHEN LEN(a.ColorCode) = 2 THEN '0' + CAST(a.ColorCode AS varchar(255)) ELSE CAST(a.ColorCode AS varchar(255)) END + '-' + dbo.getCOLSize(a.Size,a.Dim) AS sku
-	,dbo.getCOLName(SUBSTRING(a.[Long Description],0,CHARINDEX('-',a.[Long Description]))) AS name
+	,'FW14I-COL-' + LEFT(CONVERT(varchar(255),CAST(a.[Material Number] AS decimal)),7) + '-' + CASE WHEN LEN(a.[Colorway Number]) = 1 THEN '00' + CAST(a.[Colorway Number] AS varchar(255)) WHEN LEN(a.[Colorway Number]) = 2 THEN '0' + CAST(a.[Colorway Number] AS varchar(255)) ELSE CAST(a.[Colorway Number] AS varchar(255)) END + '-' + dbo.getCOLSize(a.[Size Code],a.[Dimension Code]) AS sku
+	,dbo.getCOLName(a.[Style Description]) AS name
 	,0 AS has_options
 	,CAST(ROUND(b.MSRP,0) AS float) - 0.01 AS price
-	,b.WHSL AS cost
-	,dbo.getCOLDepartment(a.Gender) AS department
+	,b.cost AS cost
+	,dbo.getCOLDepartment(a.[Target Group Description]) AS department
 	,NULL AS image
-	,a.ColorName AS image_label
-	,a.ColorName AS choose_color
-	,dbo.getCOLSize(a.Size,a.Dim) AS choose_size
-	,CAST(a.UPC AS bigint) AS vendor_sku
-	,LEFT(CONVERT(varchar(255),CAST(a.Material AS decimal)),6) AS vendor_product_id
-	,CASE WHEN LEN(a.ColorCode) = 1 THEN '00' + CAST(a.ColorCode AS varchar(255)) WHEN LEN(a.ColorCode) = 2 THEN '0' + CAST(a.ColorCode AS varchar(255)) ELSE CAST(a.ColorCode AS varchar(255)) END AS vendor_color_code
-	,dbo.getCOLSize(a.Size,a.Dim) AS vendor_size_code
+	,a.[Romantic Color Description] AS image_label
+	,a.[Romantic Color Description] AS choose_color
+	,dbo.getCOLSize(a.[Size Code],a.[Dimension Code]) AS choose_size
+	,CAST(a.[UPC Number] AS bigint) AS vendor_sku
+	,LEFT(CONVERT(varchar(255),CAST(a.[Material Number] AS decimal)),7) AS vendor_product_id
+	,CASE WHEN LEN(a.[Colorway Number]) = 1 THEN '00' + CAST(a.[Colorway Number] AS varchar(255)) WHEN LEN(a.[Colorway Number]) = 2 THEN '0' + CAST(a.[Colorway Number] AS varchar(255)) ELSE CAST(a.[Colorway Number] AS varchar(255)) END AS vendor_color_code
+	,dbo.getCOLSize(a.[Size Code],a.[Dimension Code]) AS vendor_size_code
 	,NULL AS weight
 FROM tbl_RawData_FW14_COLA_UPC_Marketing AS a
 INNER JOIN tbl_RawData_FW14_COLA_Price AS b
@@ -127,15 +127,15 @@ ON LEFT(a.[Material Number],7) = b.material
 
 UPDATE a
 	SET a.image = b.image
-FROM tbl_LoadFile_FW14_COL AS a
-INNER JOIN tbl_LoadFile_FW13_COL AS b
+FROM tbl_LoadFile_FW14_COLA AS a
+INNER JOIN tbl_LoadFile_SS14_COL AS b
 ON b.vendor_sku = a.vendor_sku 
 WHERE a.type = 'simple'
 
 UPDATE a
 	SET a.image = b.image
-FROM tbl_LoadFile_FW14_COL AS a
-INNER JOIN tbl_LoadFile_SS13_COL AS b
+FROM tbl_LoadFile_FW14_COLA AS a
+INNER JOIN tbl_LoadFile_FW13_COL AS b
 ON b.vendor_sku = a.vendor_sku 
 WHERE a.type = 'simple' AND a.image IS NULL
 
@@ -153,8 +153,9 @@ FROM tbl_LoadFile_FW14_COL AS a
 INNER JOIN tbl_RawData_FW14_Image_Filenames AS b
 ON RIGHT(b.filename,CHARINDEX('/',REVERSE(b.filename)) - 1) = a.vendor_product_id + '_' + a.vendor_color_code + '%.jpg' 
 WHERE b.brand = 'COL' AND a.type = 'simple' AND image IS NULL
-*/	
-INSERT INTO tbl_LoadFile_FW14_COL (
+*/
+	
+INSERT INTO tbl_LoadFile_FW14_COLA(
 	type
 	,sku
 	,name
@@ -194,18 +195,20 @@ SELECT DISTINCT
 	,0 AS use_config_manage_stock
 	,NULL AS qty
 	,NULL AS is_in_stock
-FROM tbl_LoadFile_FW14_COL
+FROM tbl_LoadFile_FW14_COLA
 GO
 
-UPDATE tbl_LoadFile_FW14_COL SET
+UPDATE tbl_LoadFile_FW14_COLA SET
 	 categories = dbo.getMagentoCategories(a.vendor_product_id)
-	,description = (SELECT TOP 1 [Product Summary] FROM tbl_RawData_FW14_COL_UPC_Marketing WHERE LEFT(Material,6) = a.vendor_product_id)
+	,fabric = (SELECT TOP 1 [Catalog Fabric] FROM tbl_RawData_FW14_COLA_UPC_Marketing WHERE LEFT([Material Number],7) = a.vendor_product_id)
+	,features = (SELECT TOP 1 [Catalog Features] FROM tbl_RawData_FW14_COLA_UPC_Marketing WHERE LEFT([Material Number],7) = a.vendor_product_id)
+	,fit = (SELECT TOP 1 [Fit Description] FROM tbl_RawData_FW14_COLA_UPC_Marketing WHERE LEFT([Material Number],7) = a.vendor_product_id)
 	,simples_skus = dbo.getCOLAssociatedProducts(a.vendor_product_id)
-FROM tbl_LoadFile_FW14_COL AS a
+FROM tbl_LoadFile_FW14_COLA AS a
 WHERE type = 'configurable'
 GO
 	
-UPDATE tbl_LoadFile_FW14_COL SET thumbnail = image, small_image = image WHERE type = 'simple'
+UPDATE tbl_LoadFile_FW14_COLA SET thumbnail = image, small_image = image WHERE type = 'simple'
 GO
 
 /*

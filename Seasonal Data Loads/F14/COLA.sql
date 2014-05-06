@@ -99,11 +99,14 @@ INSERT INTO tbl_LoadFile_FW14_COL (
 		,vendor_product_id
 		,vendor_color_code
 		,vendor_size_code
-		,weight)
+		,[weight])
 
 SELECT DISTINCT
 	'simple' AS type
-	,'FW14A-COL-' + LEFT(CONVERT(varchar(255),CAST(a.Material AS decimal)),6) + '-' + CASE WHEN LEN(a.ColorCode) = 1 THEN '00' + CAST(a.ColorCode AS varchar(255)) WHEN LEN(a.ColorCode) = 2 THEN '0' + CAST(a.ColorCode AS varchar(255)) ELSE CAST(a.ColorCode AS varchar(255)) END + '-' + dbo.getCOLSize(a.Size,a.Dim) AS sku
+	
+	--seasoncode-brandcode-style-colorcode-size
+	
+	,'FW14I-COL-' + LEFT(CONVERT(varchar(255),CAST(a.Material AS decimal)),6) + '-' + CASE WHEN LEN(a.ColorCode) = 1 THEN '00' + CAST(a.ColorCode AS varchar(255)) WHEN LEN(a.ColorCode) = 2 THEN '0' + CAST(a.ColorCode AS varchar(255)) ELSE CAST(a.ColorCode AS varchar(255)) END + '-' + dbo.getCOLSize(a.Size,a.Dim) AS sku
 	,dbo.getCOLName(SUBSTRING(a.[Long Description],0,CHARINDEX('-',a.[Long Description]))) AS name
 	,0 AS has_options
 	,CAST(ROUND(b.MSRP,0) AS float) - 0.01 AS price
@@ -118,10 +121,9 @@ SELECT DISTINCT
 	,CASE WHEN LEN(a.ColorCode) = 1 THEN '00' + CAST(a.ColorCode AS varchar(255)) WHEN LEN(a.ColorCode) = 2 THEN '0' + CAST(a.ColorCode AS varchar(255)) ELSE CAST(a.ColorCode AS varchar(255)) END AS vendor_color_code
 	,dbo.getCOLSize(a.Size,a.Dim) AS vendor_size_code
 	,NULL AS weight
-FROM tbl_RawData_FW14_COL_UPC_Marketing AS a
-INNER JOIN tbl_RawData_FW14_COL_Price AS b
-ON LEFT(CONVERT(varchar(255),CAST(a.Material AS decimal)),6) = LEFT(CONVERT(varchar(255),CAST(b.Material AS decimal)),6) AND b.Iteration = (SELECT MAX(Iteration) FROM tbl_RawData_FW14_COL_Price WHERE LEFT(CONVERT(varchar(255),CAST(Material AS decimal)),6) = LEFT(CONVERT(varchar(255),CAST(a.Material AS decimal)),6))
-GO
+FROM tbl_RawData_FW14_COLA_UPC_Marketing AS a
+INNER JOIN tbl_RawData_FW14_COLA_Price AS b
+ON LEFT(a.[Material Number],7) = b.material
 
 UPDATE a
 	SET a.image = b.image
@@ -136,6 +138,7 @@ FROM tbl_LoadFile_FW14_COL AS a
 INNER JOIN tbl_LoadFile_SS13_COL AS b
 ON b.vendor_sku = a.vendor_sku 
 WHERE a.type = 'simple' AND a.image IS NULL
+
 /*
 UPDATE a
 	SET a.image = RIGHT(b.filename,CHARINDEX('/',REVERSE(b.filename)) - 1)
@@ -202,8 +205,6 @@ FROM tbl_LoadFile_FW14_COL AS a
 WHERE type = 'configurable'
 GO
 	
-UPDATE tbl_LoadFile_FW14_COL SET categories = NULL WHERE type = 'simple'
-UPDATE tbl_LoadFile_FW14_COL SET status = 'Disabled' WHERE image IS NULL AND type = 'simple'
 UPDATE tbl_LoadFile_FW14_COL SET thumbnail = image, small_image = image WHERE type = 'simple'
 GO
 

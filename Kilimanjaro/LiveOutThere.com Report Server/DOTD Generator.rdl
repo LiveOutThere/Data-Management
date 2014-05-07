@@ -1813,8 +1813,8 @@
         <CommandText>SELECT * FROM view_DOTD_Generator_Brands</CommandText>
       </Query>
       <Fields>
-        <Field Name="manufacturer_value">
-          <DataField>manufacturer_value</DataField>
+        <Field Name="brand">
+          <DataField>brand</DataField>
           <rd:TypeName>System.String</rd:TypeName>
         </Field>
       </Fields>
@@ -1862,8 +1862,8 @@
       <ValidValues>
         <DataSetReference>
           <DataSetName>DataSet2</DataSetName>
-          <ValueField>manufacturer_value</ValueField>
-          <LabelField>manufacturer_value</LabelField>
+          <ValueField>brand</ValueField>
+          <LabelField>brand</LabelField>
         </DataSetReference>
       </ValidValues>
     </ReportParameter>

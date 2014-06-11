@@ -104,7 +104,7 @@ SELECT DISTINCT
 	,'FW14-AMB-' + Stuff(SKU, 1, 3, '') + '-' + Size		AS sku	
 	,Description											AS name
 	,0														AS has_options
-	,NULL													AS department
+	,dbo.getAMBDepartment(Gender)							AS department
 	,Color													AS image_label 
 	,Color													AS choose_color
 	,Size													AS choose_size
@@ -118,7 +118,7 @@ SELECT DISTINCT
 	,CAST(Whlsl AS float) AS cost
 FROM tbl_RawData_FW14_AMB_UPC_Price
 GO
-
+  
 UPDATE a SET 
 	a.image = b.filename
 --SELECT a.image, b.filename
@@ -190,12 +190,10 @@ UPDATE tbl_LoadFile_FW14_AMB SET status = 'Disabled' WHERE image IS NULL AND typ
 UPDATE tbl_LoadFile_FW14_AMB SET small_image = image, thumbnail = image
 GO
 
-select department from tbl_LoadFile_FW14_AMB 
-
---UPDATE tbl_LoadFile_FW14_AMB --Final update on descriptions for SEO keywords
---SET description = '<b><i>The ' + name + ' by ' + manufacturer + ' for ' + CASE WHEN department = 'Men|Women' THEN 'Men and Women' ELSE department END + '</i></b><br>'
---+ (SELECT TOP 1 Description1 FROM tbl_RawData_FW14_AMB_Marketing 
---		WHERE SUBSTRING(SKU,CHARINDEX('-',SKU)+1,CHARINDEX('-',REPLACE(SKU,LEFT(SKU,CHARINDEX('-',SKU)+1),''))) = vendor_product_id)
+UPDATE tbl_LoadFile_FW14_AMB --Final update on descriptions for SEO keywords
+SET description = '<b><i>The ' + name + ' by ' + manufacturer + ' for ' + CASE WHEN department = 'Men|Women' THEN 'Men and Women' ELSE department END + '</i></b><br>'
++ (SELECT TOP 1 Description1 FROM tbl_RawData_FW14_AMB_Marketing 
+		WHERE SUBSTRING(SKU,CHARINDEX('-',SKU)+1,CHARINDEX('-',REPLACE(SKU,LEFT(SKU,CHARINDEX('-',SKU)+1),''))) = vendor_product_id)
 
 --CREATE VIEW [dbo].[view_LoadFile_FW14_AMB]
 --AS

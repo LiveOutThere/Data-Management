@@ -7,3 +7,5 @@
 bin/
 *Backup.rdl
 *.rds
+/Kilimanjaro/LiveOutThere.com Report Server/bin/Debug/LOT_Reporting.rds
+/Kilimanjaro/LiveOutThere.com Report Server/LOT_Reporting.rds

@@ -256,8 +256,10 @@
           </TablixMembers>
         </TablixRowHierarchy>
         <DataSetName>Percentage_Totals</DataSetName>
+        <PageBreak>
+          <BreakLocation>End</BreakLocation>
+        </PageBreak>
         <Top>0.52944in</Top>
-        <Left>0in</Left>
         <Height>0.42in</Height>
         <Width>2.26042in</Width>
         <Style />
@@ -279,7 +281,6 @@
           </Paragraph>
         </Paragraphs>
         <rd:DefaultName>textbox1</rd:DefaultName>
-        <Left>0in</Left>
         <Height>0.21in</Height>
         <Width>5in</Width>
         <ZIndex>1</ZIndex>
@@ -650,9 +651,12 @@
           </TablixMembers>
         </TablixRowHierarchy>
         <DataSetName>Empty_Locations_Volume_Bay</DataSetName>
+        <PageBreak>
+          <BreakLocation>End</BreakLocation>
+        </PageBreak>
         <Top>1.27562in</Top>
-        <Height>0.44083in</Height>
-        <Width>3.45833in</Width>
+        <Height>0.44084in</Height>
+        <Width>3.45834in</Width>
         <ZIndex>2</ZIndex>
         <Style />
       </Tablix>
@@ -1016,8 +1020,10 @@
           </TablixMembers>
         </TablixRowHierarchy>
         <DataSetName>Empty_Locations_Volume_Dimension</DataSetName>
+        <PageBreak>
+          <BreakLocation>End</BreakLocation>
+        </PageBreak>
         <Top>2.09146in</Top>
-        <Left>0in</Left>
         <Height>0.44084in</Height>
         <Width>3.78125in</Width>
         <ZIndex>3</ZIndex>
@@ -1490,7 +1496,6 @@
         </TablixRowHierarchy>
         <DataSetName>Empty_Locations_Volume_Bay_Dimension</DataSetName>
         <Top>2.95604in</Top>
-        <Left>0in</Left>
         <Height>0.44084in</Height>
         <Width>4.82291in</Width>
         <ZIndex>4</ZIndex>
@@ -1514,7 +1519,6 @@
         </Paragraphs>
         <rd:DefaultName>Textbox34</rd:DefaultName>
         <Top>0.98729in</Top>
-        <Left>0in</Left>
         <Height>0.25in</Height>
         <Width>2.45833in</Width>
         <ZIndex>5</ZIndex>
@@ -1546,7 +1550,6 @@
         </Paragraphs>
         <rd:DefaultName>Textbox34</rd:DefaultName>
         <Top>2.65048in</Top>
-        <Left>0in</Left>
         <Height>0.25in</Height>
         <Width>3.26042in</Width>
         <ZIndex>6</ZIndex>

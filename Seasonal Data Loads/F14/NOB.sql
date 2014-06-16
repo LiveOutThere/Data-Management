@@ -104,14 +104,14 @@ INSERT INTO tbl_LoadFile_FW14_NOB (
 SELECT DISTINCT
 	'simple' AS type
 	,'FW14-NOB-' + a.[Vendor Code] + CASE WHEN a.Size IS NULL THEN + '' ELSE + '-' + a.Size END AS sku
-	,a.Name AS name
+	,dbo.getNOBName(a.Name) AS name
 	,0 AS has_options
 	,CAST(a.MSRP AS float) - 0.01 AS price
 	,a.Wholesale AS cost
 	,dbo.getNOBDepartment(b.gender) AS department
 	,NULL AS image
-	,dbo.getNOBColor(b.Colorway) AS image_label
-	,dbo.getNOBColor(b.Colorway) AS choose_color
+	,REPLACE((dbo.ProperCase(b.Colorway)),'H.','Heathered ') AS image_label
+	,REPLACE((dbo.ProperCase(b.Colorway)),'H.','Heathered ') AS choose_color
 	,a.Size AS choose_size
 	,CAST(REPLACE(b.[GTIN-12],'-','') AS bigint) AS vendor_sku
 	,a.[Vendor Code] AS vendor_product_id
@@ -120,8 +120,20 @@ SELECT DISTINCT
 	,NULL AS weight
 FROM tbl_RawData_FW14_NOB_Price_Marketing AS a
 INNER JOIN tbl_RawData_FW14_NOB_UPC AS b
-ON a.Name = dbo.getNOBName(b.Style)
+ON REPLACE(REPLACE(REPLACE((a.Name),' (Colour Block)',''),' (Crosshatch)',''),' (Wool Blend)','') = 
+dbo.getNOBName(b.STYLE) AND dbo.getNOBSize(a.Size) = dbo.getNOBSize(b.size)
+--FROM tbl_RawData_FW14_NOB_Price_Marketing AS a
+--INNER JOIN tbl_RawData_FW14_NOB_UPC AS b
+--ON a.Name + a.Size = CASE WHEN b.Make IS NULL THEN dbo.getNOBName(b.Style) ELSE dbo.getNOBName(b.Style) + ' ' + b.Make END + (dbo.getNOBSize(b.size))
 GO
+
+UPDATE a
+	SET a.image = b.filename
+FROM tbl_LoadFile_FW14_NOB AS a
+INNER JOIN tbl_RawData_FW14_Image_Filenames AS b
+ON REPLACE(REPLACE(REPLACE(a.name,' (Colour Block)',''),' (Crosshatch)',''),' (Wool Blend)','') + ' ' + dbo.getNOBColor(a.choose_color) = 
+REPLACE(REPLACE((dbo.getNOBPhoto(b.filename)),'-',' '),'Crosshatch ','')
+WHERE a.type = 'simple' AND b.Brand = 'NOB'
 
 /*
 UPDATE a
@@ -138,6 +150,7 @@ INNER JOIN tbl_RawData_FW14_Image_Filenames AS b
 ON RIGHT(b.filename,CHARINDEX('/',REVERSE(b.filename)) - 1) = a.vendor_product_id + '_' + a.vendor_color_code + '%.jpg' 
 WHERE b.brand = 'COL' AND a.type = 'simple' AND image IS NULL
 */	
+
 INSERT INTO tbl_LoadFile_FW14_NOB (
 	type
 	,sku
@@ -183,16 +196,21 @@ GO
 
 UPDATE tbl_LoadFile_FW14_NOB SET
 	 categories = dbo.getMagentoCategories(a.vendor_product_id)
-	,description = (SELECT TOP 1 [Long Description] FROM tbl_RawData_FW14_NOB_UPC_Marketing WHERE [Part Number] = a.vendor_product_id)	
+	,description = (SELECT TOP 1 Description FROM tbl_RawData_FW14_NOB_Price_Marketing WHERE [Vendor Code] = a.vendor_product_id)	
+	,features = (SELECT TOP 1 Features FROM tbl_RawData_FW14_NOB_Price_Marketing WHERE [Vendor Code] = a.vendor_product_id)
 	,simples_skus = dbo.getNOBAssociatedProducts(a.vendor_product_id)
 FROM tbl_LoadFile_FW14_NOB AS a
 WHERE type = 'configurable'
 GO
-	
+
 UPDATE tbl_LoadFile_FW14_NOB SET categories = NULL WHERE type = 'simple'
 UPDATE tbl_LoadFile_FW14_NOB SET status = 'Disabled' WHERE image IS NULL AND type = 'simple'
 UPDATE tbl_LoadFile_FW14_NOB SET thumbnail = image, small_image = image WHERE type = 'simple'
 GO
+
+UPDATE tbl_LoadFile_FW14_NOB --Final update on descriptions for SEO keywords
+SET description	= '<b><i>The ' + name + ' by ' + manufacturer + ' for ' + CASE WHEN department = 'Men|Women' THEN 'Men and Women' ELSE department END + '</i></b><br>'
++ (SELECT TOP 1 Description FROM tbl_RawData_FW14_NOB_Price_Marketing WHERE [Vendor Code] = vendor_product_id) WHERE type = 'configurable'
 
 /*
 CREATE VIEW [dbo].[view_LoadFile_FW14_NOB]

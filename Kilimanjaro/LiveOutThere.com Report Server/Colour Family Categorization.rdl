@@ -229,19 +229,9 @@
     <DataSet Name="DataSet1">
       <Query>
         <DataSourceName>LOT_Reporting</DataSourceName>
-        <CommandText>EXEC dbo.report_Colour_Family_Export</CommandText>
+        <CommandText>EXEC dbo.report_Colour_Family_Export 'export'</CommandText>
         <rd:UseGenericDesigner>true</rd:UseGenericDesigner>
       </Query>
-      <Fields>
-        <Field Name="choose_color">
-          <DataField>choose_color</DataField>
-          <rd:TypeName>System.String</rd:TypeName>
-        </Field>
-        <Field Name="image_url">
-          <DataField>image_url</DataField>
-          <rd:TypeName>System.String</rd:TypeName>
-        </Field>
-      </Fields>
     </DataSet>
   </DataSets>
   <Language>en-US</Language>

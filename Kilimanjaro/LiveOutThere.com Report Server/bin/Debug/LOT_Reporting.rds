@@ -3,6 +3,7 @@
   <ConnectionProperties>
     <Extension>SQL</Extension>
     <ConnectString>Data Source=fs01;Initial Catalog=LOT_Reporting</ConnectString>
+    <IntegratedSecurity>true</IntegratedSecurity>
   </ConnectionProperties>
   <DataSourceID>4ee6d52a-6246-41f5-9a5c-b6d39e2bf5c1</DataSourceID>
 </RptDataSource>

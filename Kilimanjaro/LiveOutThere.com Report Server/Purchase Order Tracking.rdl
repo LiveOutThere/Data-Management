@@ -101,6 +101,7 @@ UNION ALL
 SELECT CASE WHEN po_status = 'new' THEN 'New'
 	      WHEN po_status = 'waiting_to_receive' THEN 'Arrived'
 	      WHEN po_status = 'in_progress' THEN 'In Progress'
+ 	      WHEN po_status = 'acknowledged' THEN 'Acknowledged'
 	      ELSE po_status END AS status
 FROM OPENQUERY (MAGENTO,'SELECT DISTINCT po_status FROM purchase_order WHERE po_status NOT IN(''complete'',''closed'',''cancelled'')')
 ORDER BY status		</CommandText>
@@ -1185,7 +1186,7 @@ ORDER BY status		</CommandText>
                 <Value>=Fields!Urgency.Value</Value>
               </SortExpression>
             </SortExpressions>
-            <Top>0.69597in</Top>
+            <Top>0.38347in</Top>
             <Height>0.42in</Height>
             <Width>15.14585in</Width>
             <Style />

@@ -63,13 +63,13 @@
               <Width>1in</Width>
             </TablixColumn>
             <TablixColumn>
-              <Width>0.78125in</Width>
+              <Width>0.98958in</Width>
             </TablixColumn>
             <TablixColumn>
-              <Width>1in</Width>
+              <Width>1.30208in</Width>
             </TablixColumn>
             <TablixColumn>
-              <Width>0.89583in</Width>
+              <Width>1.34375in</Width>
             </TablixColumn>
           </TablixColumns>
           <TablixRows>
@@ -1067,7 +1067,7 @@
                         <Paragraph>
                           <TextRuns>
                             <TextRun>
-                              <Value>Ship Days</Value>
+                              <Value>Days till Ship</Value>
                               <Style>
                                 <FontWeight>Bold</FontWeight>
                               </Style>
@@ -1120,7 +1120,7 @@
                         <Paragraph>
                           <TextRuns>
                             <TextRun>
-                              <Value>Cancel Days</Value>
+                              <Value>Payment Window</Value>
                               <Style>
                                 <FontWeight>Bold</FontWeight>
                               </Style>
@@ -1173,7 +1173,7 @@
                         <Paragraph>
                           <TextRuns>
                             <TextRun>
-                              <Value>Arrival Days</Value>
+                              <Value>Days since Arrival</Value>
                               <Style>
                                 <FontWeight>Bold</FontWeight>
                               </Style>
@@ -2182,14 +2182,14 @@
                 </TablixCell>
                 <TablixCell>
                   <CellContents>
-                    <Textbox Name="ship_days">
+                    <Textbox Name="days_till_shipment">
                       <CanGrow>true</CanGrow>
                       <KeepTogether>true</KeepTogether>
                       <Paragraphs>
                         <Paragraph>
                           <TextRuns>
                             <TextRun>
-                              <Value>=Fields!ship_days.Value</Value>
+                              <Value>=Fields!days_till_shipment.Value</Value>
                               <Style />
                             </TextRun>
                           </TextRuns>
@@ -2198,7 +2198,7 @@
                           </Style>
                         </Paragraph>
                       </Paragraphs>
-                      <rd:DefaultName>ship_days</rd:DefaultName>
+                      <rd:DefaultName>days_till_shipment</rd:DefaultName>
                       <Style>
                         <Border>
                           <Style>Solid</Style>
@@ -2233,14 +2233,14 @@
                 </TablixCell>
                 <TablixCell>
                   <CellContents>
-                    <Textbox Name="cancel_days">
+                    <Textbox Name="days_till_payment">
                       <CanGrow>true</CanGrow>
                       <KeepTogether>true</KeepTogether>
                       <Paragraphs>
                         <Paragraph>
                           <TextRuns>
                             <TextRun>
-                              <Value>=Fields!cancel_days.Value</Value>
+                              <Value>=Fields!days_till_payment.Value</Value>
                               <Style />
                             </TextRun>
                           </TextRuns>
@@ -2249,7 +2249,7 @@
                           </Style>
                         </Paragraph>
                       </Paragraphs>
-                      <rd:DefaultName>cancel_days</rd:DefaultName>
+                      <rd:DefaultName>days_till_payment</rd:DefaultName>
                       <Style>
                         <Border>
                           <Style>Solid</Style>
@@ -2284,14 +2284,14 @@
                 </TablixCell>
                 <TablixCell>
                   <CellContents>
-                    <Textbox Name="arrival_days">
+                    <Textbox Name="days_since_arrival">
                       <CanGrow>true</CanGrow>
                       <KeepTogether>true</KeepTogether>
                       <Paragraphs>
                         <Paragraph>
                           <TextRuns>
                             <TextRun>
-                              <Value>=Fields!arrival_days.Value</Value>
+                              <Value>=Fields!days_since_arrival.Value</Value>
                               <Style />
                             </TextRun>
                           </TextRuns>
@@ -2300,7 +2300,7 @@
                           </Style>
                         </Paragraph>
                       </Paragraphs>
-                      <rd:DefaultName>arrival_days</rd:DefaultName>
+                      <rd:DefaultName>days_since_arrival</rd:DefaultName>
                       <Style>
                         <Border>
                           <Style>Solid</Style>
@@ -3024,6 +3024,37 @@
                 </TablixCell>
                 <TablixCell>
                   <CellContents>
+                    <Textbox Name="Textbox81">
+                      <CanGrow>true</CanGrow>
+                      <KeepTogether>true</KeepTogether>
+                      <Paragraphs>
+                        <Paragraph>
+                          <TextRuns>
+                            <TextRun>
+                              <Value />
+                              <Style />
+                            </TextRun>
+                          </TextRuns>
+                          <Style>
+                            <TextAlign>Left</TextAlign>
+                          </Style>
+                        </Paragraph>
+                      </Paragraphs>
+                      <rd:DefaultName>Textbox77</rd:DefaultName>
+                      <Style>
+                        <Border>
+                          <Style>None</Style>
+                        </Border>
+                        <PaddingLeft>2pt</PaddingLeft>
+                        <PaddingRight>2pt</PaddingRight>
+                        <PaddingTop>2pt</PaddingTop>
+                        <PaddingBottom>2pt</PaddingBottom>
+                      </Style>
+                    </Textbox>
+                  </CellContents>
+                </TablixCell>
+                <TablixCell>
+                  <CellContents>
                     <Textbox Name="Textbox78">
                       <CanGrow>true</CanGrow>
                       <KeepTogether>true</KeepTogether>
@@ -3040,8 +3071,11 @@
                           </Style>
                         </Paragraph>
                       </Paragraphs>
-                      <rd:DefaultName>Textbox78</rd:DefaultName>
+                      <rd:DefaultName>Textbox77</rd:DefaultName>
                       <Style>
+                        <Border>
+                          <Style>None</Style>
+                        </Border>
                         <PaddingLeft>2pt</PaddingLeft>
                         <PaddingRight>2pt</PaddingRight>
                         <PaddingTop>2pt</PaddingTop>
@@ -3068,36 +3102,11 @@
                           </Style>
                         </Paragraph>
                       </Paragraphs>
-                      <rd:DefaultName>Textbox79</rd:DefaultName>
+                      <rd:DefaultName>Textbox77</rd:DefaultName>
                       <Style>
-                        <PaddingLeft>2pt</PaddingLeft>
-                        <PaddingRight>2pt</PaddingRight>
-                        <PaddingTop>2pt</PaddingTop>
-                        <PaddingBottom>2pt</PaddingBottom>
-                      </Style>
-                    </Textbox>
-                  </CellContents>
-                </TablixCell>
-                <TablixCell>
-                  <CellContents>
-                    <Textbox Name="Textbox80">
-                      <CanGrow>true</CanGrow>
-                      <KeepTogether>true</KeepTogether>
-                      <Paragraphs>
-                        <Paragraph>
-                          <TextRuns>
-                            <TextRun>
-                              <Value />
-                              <Style />
-                            </TextRun>
-                          </TextRuns>
-                          <Style>
-                            <TextAlign>Left</TextAlign>
-                          </Style>
-                        </Paragraph>
-                      </Paragraphs>
-                      <rd:DefaultName>Textbox80</rd:DefaultName>
-                      <Style>
+                        <Border>
+                          <Style>None</Style>
+                        </Border>
                         <PaddingLeft>2pt</PaddingLeft>
                         <PaddingRight>2pt</PaddingRight>
                         <PaddingTop>2pt</PaddingTop>
@@ -3168,7 +3177,7 @@
         </SortExpressions>
         <Top>0.21in</Top>
         <Height>0.67in</Height>
-        <Width>24.26043in</Width>
+        <Width>25.21876in</Width>
         <Style />
       </Tablix>
       <Textbox Name="textbox1">
@@ -3203,7 +3212,7 @@
     <Height>0.88in</Height>
     <Style />
   </Body>
-  <Width>24.58335in</Width>
+  <Width>25.21876in</Width>
   <Page>
     <LeftMargin>1in</LeftMargin>
     <RightMargin>1in</RightMargin>
@@ -3233,8 +3242,11 @@
           <QueryParameter Name="@po_status">
             <Value>=Parameters!po_status.Value</Value>
           </QueryParameter>
+          <QueryParameter Name="@po_season_type">
+            <Value>=Parameters!po_season_type.Value</Value>
+          </QueryParameter>
         </QueryParameters>
-        <CommandText>EXEC dbo.report_Ops_Purchase_Orders @ship_date, @po_type, @po_status</CommandText>
+        <CommandText>EXEC dbo.report_Ops_Purchase_Orders @ship_date, @po_type, @po_season_type, @po_status</CommandText>
         <rd:UseGenericDesigner>true</rd:UseGenericDesigner>
       </Query>
       <Fields>
@@ -3268,7 +3280,7 @@
         </Field>
         <Field Name="po_discount">
           <DataField>po_discount</DataField>
-          <rd:TypeName>System.Int32</rd:TypeName>
+          <rd:TypeName>System.String</rd:TypeName>
         </Field>
         <Field Name="po_units">
           <DataField>po_units</DataField>
@@ -3314,16 +3326,16 @@
           <DataField>po_skus</DataField>
           <rd:TypeName>System.Int32</rd:TypeName>
         </Field>
-        <Field Name="ship_days">
-          <DataField>ship_days</DataField>
+        <Field Name="days_till_shipment">
+          <DataField>days_till_shipment</DataField>
           <rd:TypeName>System.Int32</rd:TypeName>
         </Field>
-        <Field Name="cancel_days">
-          <DataField>cancel_days</DataField>
+        <Field Name="days_till_payment">
+          <DataField>days_till_payment</DataField>
           <rd:TypeName>System.Int32</rd:TypeName>
         </Field>
-        <Field Name="arrival_days">
-          <DataField>arrival_days</DataField>
+        <Field Name="days_since_arrival">
+          <DataField>days_since_arrival</DataField>
           <rd:TypeName>System.Int32</rd:TypeName>
         </Field>
       </Fields>
@@ -3351,6 +3363,24 @@ ORDER BY po_status</CommandText>
       <Fields>
         <Field Name="po_status">
           <DataField>po_status</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+      </Fields>
+    </DataSet>
+    <DataSet Name="POSeason">
+      <Query>
+        <DataSourceName>LOT_Reporting</DataSourceName>
+        <CommandText>SELECT NULL AS po_season
+UNION ALL
+SELECT * 
+FROM OPENQUERY(MAGENTO,'
+SELECT DISTINCT po_carrier AS po_season 
+FROM purchase_order')
+ORDER BY po_season</CommandText>
+      </Query>
+      <Fields>
+        <Field Name="po_season">
+          <DataField>po_season</DataField>
           <rd:TypeName>System.String</rd:TypeName>
         </Field>
       </Fields>
@@ -3395,6 +3425,18 @@ ORDER BY po_status</CommandText>
           <DataSetName>POStatus</DataSetName>
           <ValueField>po_status</ValueField>
           <LabelField>po_status</LabelField>
+        </DataSetReference>
+      </ValidValues>
+    </ReportParameter>
+    <ReportParameter Name="po_season_type">
+      <DataType>String</DataType>
+      <Nullable>true</Nullable>
+      <Prompt>Season:</Prompt>
+      <ValidValues>
+        <DataSetReference>
+          <DataSetName>POSeason</DataSetName>
+          <ValueField>po_season</ValueField>
+          <LabelField>po_season</LabelField>
         </DataSetReference>
       </ValidValues>
     </ReportParameter>

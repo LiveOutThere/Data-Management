@@ -20,10 +20,6 @@
           <DataField>parent_sku</DataField>
           <rd:TypeName>System.String</rd:TypeName>
         </Field>
-        <Field Name="parent_season">
-          <DataField>parent_season</DataField>
-          <rd:TypeName>System.String</rd:TypeName>
-        </Field>
         <Field Name="child_sku">
           <DataField>child_sku</DataField>
           <rd:TypeName>System.String</rd:TypeName>
@@ -48,14 +44,6 @@
           <DataField>child_department</DataField>
           <rd:TypeName>System.String</rd:TypeName>
         </Field>
-        <Field Name="child_price">
-          <DataField>child_price</DataField>
-          <rd:TypeName>System.Decimal</rd:TypeName>
-        </Field>
-        <Field Name="child_cost">
-          <DataField>child_cost</DataField>
-          <rd:TypeName>System.Decimal</rd:TypeName>
-        </Field>
         <Field Name="child_brand">
           <DataField>child_brand</DataField>
           <rd:TypeName>System.String</rd:TypeName>
@@ -70,35 +58,27 @@
         </Field>
         <Field Name="brand_code_issue">
           <DataField>brand_code_issue</DataField>
-          <rd:TypeName>System.String</rd:TypeName>
+          <rd:TypeName>System.Int32</rd:TypeName>
         </Field>
         <Field Name="style_issue">
           <DataField>style_issue</DataField>
-          <rd:TypeName>System.String</rd:TypeName>
+          <rd:TypeName>System.Int32</rd:TypeName>
         </Field>
         <Field Name="name_issue">
           <DataField>name_issue</DataField>
-          <rd:TypeName>System.String</rd:TypeName>
+          <rd:TypeName>System.Int32</rd:TypeName>
         </Field>
         <Field Name="department_issue">
           <DataField>department_issue</DataField>
-          <rd:TypeName>System.String</rd:TypeName>
-        </Field>
-        <Field Name="price_issue">
-          <DataField>price_issue</DataField>
-          <rd:TypeName>System.String</rd:TypeName>
-        </Field>
-        <Field Name="cost_issue">
-          <DataField>cost_issue</DataField>
-          <rd:TypeName>System.String</rd:TypeName>
+          <rd:TypeName>System.Int32</rd:TypeName>
         </Field>
         <Field Name="manufacturer_issue">
           <DataField>manufacturer_issue</DataField>
-          <rd:TypeName>System.String</rd:TypeName>
+          <rd:TypeName>System.Int32</rd:TypeName>
         </Field>
         <Field Name="image_issue">
           <DataField>image_issue</DataField>
-          <rd:TypeName>System.String</rd:TypeName>
+          <rd:TypeName>System.Int32</rd:TypeName>
         </Field>
       </Fields>
     </DataSet>
@@ -135,25 +115,13 @@
                   <Width>0.25in</Width>
                 </TablixColumn>
                 <TablixColumn>
-                  <Width>0.83333in</Width>
-                </TablixColumn>
-                <TablixColumn>
-                  <Width>0.23958in</Width>
-                </TablixColumn>
-                <TablixColumn>
-                  <Width>0.80208in</Width>
-                </TablixColumn>
-                <TablixColumn>
-                  <Width>0.21875in</Width>
-                </TablixColumn>
-                <TablixColumn>
                   <Width>0.85417in</Width>
                 </TablixColumn>
                 <TablixColumn>
-                  <Width>0.22917in</Width>
+                  <Width>1.05209in</Width>
                 </TablixColumn>
                 <TablixColumn>
-                  <Width>0.21875in</Width>
+                  <Width>0.82292in</Width>
                 </TablixColumn>
                 <TablixColumn>
                   <Width>0.92708in</Width>
@@ -162,7 +130,7 @@
                   <Width>0.84375in</Width>
                 </TablixColumn>
                 <TablixColumn>
-                  <Width>0.26042in</Width>
+                  <Width>0.88542in</Width>
                 </TablixColumn>
                 <TablixColumn>
                   <Width>0.51042in</Width>
@@ -194,6 +162,9 @@
                           </Paragraphs>
                           <rd:DefaultName>textbox2</rd:DefaultName>
                           <Style>
+                            <Border>
+                              <Style>None</Style>
+                            </Border>
                             <PaddingLeft>2pt</PaddingLeft>
                             <PaddingRight>2pt</PaddingRight>
                             <PaddingTop>2pt</PaddingTop>
@@ -224,6 +195,9 @@
                           </Paragraphs>
                           <rd:DefaultName>textbox4</rd:DefaultName>
                           <Style>
+                            <Border>
+                              <Style>None</Style>
+                            </Border>
                             <PaddingLeft>2pt</PaddingLeft>
                             <PaddingRight>2pt</PaddingRight>
                             <PaddingTop>2pt</PaddingTop>
@@ -254,6 +228,9 @@
                           </Paragraphs>
                           <rd:DefaultName>textbox6</rd:DefaultName>
                           <Style>
+                            <Border>
+                              <Style>None</Style>
+                            </Border>
                             <PaddingLeft>2pt</PaddingLeft>
                             <PaddingRight>2pt</PaddingRight>
                             <PaddingTop>2pt</PaddingTop>
@@ -284,6 +261,9 @@
                           </Paragraphs>
                           <rd:DefaultName>textbox7</rd:DefaultName>
                           <Style>
+                            <Border>
+                              <Style>None</Style>
+                            </Border>
                             <PaddingLeft>2pt</PaddingLeft>
                             <PaddingRight>2pt</PaddingRight>
                             <PaddingTop>2pt</PaddingTop>
@@ -314,6 +294,9 @@
                           </Paragraphs>
                           <rd:DefaultName>textbox17</rd:DefaultName>
                           <Style>
+                            <Border>
+                              <Style>None</Style>
+                            </Border>
                             <PaddingLeft>2pt</PaddingLeft>
                             <PaddingRight>2pt</PaddingRight>
                             <PaddingTop>2pt</PaddingTop>
@@ -344,6 +327,9 @@
                           </Paragraphs>
                           <rd:DefaultName>textbox8</rd:DefaultName>
                           <Style>
+                            <Border>
+                              <Style>None</Style>
+                            </Border>
                             <PaddingLeft>2pt</PaddingLeft>
                             <PaddingRight>2pt</PaddingRight>
                             <PaddingTop>2pt</PaddingTop>
@@ -374,6 +360,9 @@
                           </Paragraphs>
                           <rd:DefaultName>textbox9</rd:DefaultName>
                           <Style>
+                            <Border>
+                              <Style>None</Style>
+                            </Border>
                             <PaddingLeft>2pt</PaddingLeft>
                             <PaddingRight>2pt</PaddingRight>
                             <PaddingTop>2pt</PaddingTop>
@@ -404,126 +393,9 @@
                           </Paragraphs>
                           <rd:DefaultName>textbox18</rd:DefaultName>
                           <Style>
-                            <PaddingLeft>2pt</PaddingLeft>
-                            <PaddingRight>2pt</PaddingRight>
-                            <PaddingTop>2pt</PaddingTop>
-                            <PaddingBottom>2pt</PaddingBottom>
-                          </Style>
-                        </Textbox>
-                      </CellContents>
-                    </TablixCell>
-                    <TablixCell>
-                      <CellContents>
-                        <Textbox Name="textbox10">
-                          <CanGrow>true</CanGrow>
-                          <KeepTogether>true</KeepTogether>
-                          <Paragraphs>
-                            <Paragraph>
-                              <TextRuns>
-                                <TextRun>
-                                  <Value>Child Price</Value>
-                                  <Style>
-                                    <FontWeight>Bold</FontWeight>
-                                  </Style>
-                                </TextRun>
-                              </TextRuns>
-                              <Style>
-                                <TextAlign>Right</TextAlign>
-                              </Style>
-                            </Paragraph>
-                          </Paragraphs>
-                          <rd:DefaultName>textbox10</rd:DefaultName>
-                          <Style>
-                            <PaddingLeft>2pt</PaddingLeft>
-                            <PaddingRight>2pt</PaddingRight>
-                            <PaddingTop>2pt</PaddingTop>
-                            <PaddingBottom>2pt</PaddingBottom>
-                          </Style>
-                        </Textbox>
-                      </CellContents>
-                    </TablixCell>
-                    <TablixCell>
-                      <CellContents>
-                        <Textbox Name="textbox19">
-                          <CanGrow>true</CanGrow>
-                          <KeepTogether>true</KeepTogether>
-                          <Paragraphs>
-                            <Paragraph>
-                              <TextRuns>
-                                <TextRun>
-                                  <Value />
-                                  <Style>
-                                    <FontWeight>Bold</FontWeight>
-                                  </Style>
-                                </TextRun>
-                              </TextRuns>
-                              <Style>
-                                <TextAlign>Right</TextAlign>
-                              </Style>
-                            </Paragraph>
-                          </Paragraphs>
-                          <rd:DefaultName>textbox19</rd:DefaultName>
-                          <Style>
-                            <PaddingLeft>2pt</PaddingLeft>
-                            <PaddingRight>2pt</PaddingRight>
-                            <PaddingTop>2pt</PaddingTop>
-                            <PaddingBottom>2pt</PaddingBottom>
-                          </Style>
-                        </Textbox>
-                      </CellContents>
-                    </TablixCell>
-                    <TablixCell>
-                      <CellContents>
-                        <Textbox Name="textbox11">
-                          <CanGrow>true</CanGrow>
-                          <KeepTogether>true</KeepTogether>
-                          <Paragraphs>
-                            <Paragraph>
-                              <TextRuns>
-                                <TextRun>
-                                  <Value>Child Cost</Value>
-                                  <Style>
-                                    <FontWeight>Bold</FontWeight>
-                                  </Style>
-                                </TextRun>
-                              </TextRuns>
-                              <Style>
-                                <TextAlign>Right</TextAlign>
-                              </Style>
-                            </Paragraph>
-                          </Paragraphs>
-                          <rd:DefaultName>textbox11</rd:DefaultName>
-                          <Style>
-                            <PaddingLeft>2pt</PaddingLeft>
-                            <PaddingRight>2pt</PaddingRight>
-                            <PaddingTop>2pt</PaddingTop>
-                            <PaddingBottom>2pt</PaddingBottom>
-                          </Style>
-                        </Textbox>
-                      </CellContents>
-                    </TablixCell>
-                    <TablixCell>
-                      <CellContents>
-                        <Textbox Name="textbox20">
-                          <CanGrow>true</CanGrow>
-                          <KeepTogether>true</KeepTogether>
-                          <Paragraphs>
-                            <Paragraph>
-                              <TextRuns>
-                                <TextRun>
-                                  <Value />
-                                  <Style>
-                                    <FontWeight>Bold</FontWeight>
-                                  </Style>
-                                </TextRun>
-                              </TextRuns>
-                              <Style>
-                                <TextAlign>Right</TextAlign>
-                              </Style>
-                            </Paragraph>
-                          </Paragraphs>
-                          <rd:DefaultName>textbox20</rd:DefaultName>
-                          <Style>
+                            <Border>
+                              <Style>None</Style>
+                            </Border>
                             <PaddingLeft>2pt</PaddingLeft>
                             <PaddingRight>2pt</PaddingRight>
                             <PaddingTop>2pt</PaddingTop>
@@ -554,6 +426,9 @@
                           </Paragraphs>
                           <rd:DefaultName>textbox12</rd:DefaultName>
                           <Style>
+                            <Border>
+                              <Style>None</Style>
+                            </Border>
                             <PaddingLeft>2pt</PaddingLeft>
                             <PaddingRight>2pt</PaddingRight>
                             <PaddingTop>2pt</PaddingTop>
@@ -571,7 +446,7 @@
                             <Paragraph>
                               <TextRuns>
                                 <TextRun>
-                                  <Value />
+                                  <Value>Manufacturer</Value>
                                   <Style>
                                     <FontWeight>Bold</FontWeight>
                                   </Style>
@@ -584,6 +459,9 @@
                           </Paragraphs>
                           <rd:DefaultName>textbox21</rd:DefaultName>
                           <Style>
+                            <Border>
+                              <Style>None</Style>
+                            </Border>
                             <PaddingLeft>2pt</PaddingLeft>
                             <PaddingRight>2pt</PaddingRight>
                             <PaddingTop>2pt</PaddingTop>
@@ -601,7 +479,7 @@
                             <Paragraph>
                               <TextRuns>
                                 <TextRun>
-                                  <Value />
+                                  <Value>SKU Code</Value>
                                   <Style>
                                     <FontWeight>Bold</FontWeight>
                                   </Style>
@@ -614,6 +492,9 @@
                           </Paragraphs>
                           <rd:DefaultName>textbox15</rd:DefaultName>
                           <Style>
+                            <Border>
+                              <Style>None</Style>
+                            </Border>
                             <PaddingLeft>2pt</PaddingLeft>
                             <PaddingRight>2pt</PaddingRight>
                             <PaddingTop>2pt</PaddingTop>
@@ -644,6 +525,9 @@
                           </Paragraphs>
                           <rd:DefaultName>textbox13</rd:DefaultName>
                           <Style>
+                            <Border>
+                              <Style>None</Style>
+                            </Border>
                             <PaddingLeft>2pt</PaddingLeft>
                             <PaddingRight>2pt</PaddingRight>
                             <PaddingTop>2pt</PaddingTop>
@@ -674,6 +558,9 @@
                           </Paragraphs>
                           <rd:DefaultName>textbox14</rd:DefaultName>
                           <Style>
+                            <Border>
+                              <Style>None</Style>
+                            </Border>
                             <PaddingLeft>2pt</PaddingLeft>
                             <PaddingRight>2pt</PaddingRight>
                             <PaddingTop>2pt</PaddingTop>
@@ -691,7 +578,7 @@
                             <Paragraph>
                               <TextRuns>
                                 <TextRun>
-                                  <Value />
+                                  <Value>Style Code</Value>
                                   <Style>
                                     <FontWeight>Bold</FontWeight>
                                   </Style>
@@ -704,6 +591,9 @@
                           </Paragraphs>
                           <rd:DefaultName>textbox16</rd:DefaultName>
                           <Style>
+                            <Border>
+                              <Style>None</Style>
+                            </Border>
                             <PaddingLeft>2pt</PaddingLeft>
                             <PaddingRight>2pt</PaddingRight>
                             <PaddingTop>2pt</PaddingTop>
@@ -734,6 +624,9 @@
                           </Paragraphs>
                           <rd:DefaultName>textbox22</rd:DefaultName>
                           <Style>
+                            <Border>
+                              <Style>None</Style>
+                            </Border>
                             <PaddingLeft>2pt</PaddingLeft>
                             <PaddingRight>2pt</PaddingRight>
                             <PaddingTop>2pt</PaddingTop>
@@ -767,6 +660,9 @@
                           </Paragraphs>
                           <rd:DefaultName>parent_sku</rd:DefaultName>
                           <Style>
+                            <Border>
+                              <Style>None</Style>
+                            </Border>
                             <PaddingLeft>2pt</PaddingLeft>
                             <PaddingRight>2pt</PaddingRight>
                             <PaddingTop>2pt</PaddingTop>
@@ -795,6 +691,9 @@
                           </Paragraphs>
                           <rd:DefaultName>child_sku</rd:DefaultName>
                           <Style>
+                            <Border>
+                              <Style>None</Style>
+                            </Border>
                             <PaddingLeft>2pt</PaddingLeft>
                             <PaddingRight>2pt</PaddingRight>
                             <PaddingTop>2pt</PaddingTop>
@@ -823,6 +722,9 @@
                           </Paragraphs>
                           <rd:DefaultName>parent_name</rd:DefaultName>
                           <Style>
+                            <Border>
+                              <Style>None</Style>
+                            </Border>
                             <PaddingLeft>2pt</PaddingLeft>
                             <PaddingRight>2pt</PaddingRight>
                             <PaddingTop>2pt</PaddingTop>
@@ -851,6 +753,9 @@
                           </Paragraphs>
                           <rd:DefaultName>child_name</rd:DefaultName>
                           <Style>
+                            <Border>
+                              <Style>None</Style>
+                            </Border>
                             <PaddingLeft>2pt</PaddingLeft>
                             <PaddingRight>2pt</PaddingRight>
                             <PaddingTop>2pt</PaddingTop>
@@ -1010,6 +915,9 @@
                           </Paragraphs>
                           <rd:DefaultName>parent_department</rd:DefaultName>
                           <Style>
+                            <Border>
+                              <Style>None</Style>
+                            </Border>
                             <PaddingLeft>2pt</PaddingLeft>
                             <PaddingRight>2pt</PaddingRight>
                             <PaddingTop>2pt</PaddingTop>
@@ -1038,6 +946,9 @@
                           </Paragraphs>
                           <rd:DefaultName>child_department</rd:DefaultName>
                           <Style>
+                            <Border>
+                              <Style>None</Style>
+                            </Border>
                             <PaddingLeft>2pt</PaddingLeft>
                             <PaddingRight>2pt</PaddingRight>
                             <PaddingTop>2pt</PaddingTop>
@@ -1170,337 +1081,7 @@
                           <DataSetName>DataSet1</DataSetName>
                           <Style>
                             <Border>
-                              <Color>LightGrey</Color>
-                            </Border>
-                            <BackgroundColor>White</BackgroundColor>
-                          </Style>
-                        </GaugePanel>
-                      </CellContents>
-                    </TablixCell>
-                    <TablixCell>
-                      <CellContents>
-                        <Textbox Name="child_price">
-                          <CanGrow>true</CanGrow>
-                          <KeepTogether>true</KeepTogether>
-                          <Paragraphs>
-                            <Paragraph>
-                              <TextRuns>
-                                <TextRun>
-                                  <Value>=Fields!child_price.Value</Value>
-                                  <Style>
-                                    <Format>'$'0.00;('$'0.00)</Format>
-                                  </Style>
-                                </TextRun>
-                              </TextRuns>
-                              <Style>
-                                <TextAlign>Right</TextAlign>
-                              </Style>
-                            </Paragraph>
-                          </Paragraphs>
-                          <rd:DefaultName>child_price</rd:DefaultName>
-                          <Style>
-                            <Border>
                               <Style>None</Style>
-                            </Border>
-                            <PaddingLeft>2pt</PaddingLeft>
-                            <PaddingRight>2pt</PaddingRight>
-                            <PaddingTop>2pt</PaddingTop>
-                            <PaddingBottom>2pt</PaddingBottom>
-                            <rd:FormatSymbolCulture>en-US</rd:FormatSymbolCulture>
-                          </Style>
-                        </Textbox>
-                      </CellContents>
-                    </TablixCell>
-                    <TablixCell>
-                      <CellContents>
-                        <GaugePanel Name="GaugePanel4">
-                          <StateIndicators>
-                            <StateIndicator Name="Indicator1">
-                              <GaugeInputValue>
-                                <Value>=Fields!price_issue.Value</Value>
-                                <Multiplier>1</Multiplier>
-                                <DataElementOutput>NoOutput</DataElementOutput>
-                              </GaugeInputValue>
-                              <TransformationType>None</TransformationType>
-                              <TransformationScope>table1</TransformationScope>
-                              <MinimumValue>
-                                <Value>NaN</Value>
-                                <Multiplier>1</Multiplier>
-                              </MinimumValue>
-                              <MaximumValue>
-                                <Value>NaN</Value>
-                                <Multiplier>1</Multiplier>
-                              </MaximumValue>
-                              <IndicatorStyle>None</IndicatorStyle>
-                              <IndicatorImage>
-                                <Source>External</Source>
-                                <Value />
-                              </IndicatorImage>
-                              <ScaleFactor>1</ScaleFactor>
-                              <IndicatorStates>
-                                <IndicatorState Name="ThreeSymbolCross">
-                                  <StartValue>
-                                    <Value>1</Value>
-                                    <Multiplier>1</Multiplier>
-                                  </StartValue>
-                                  <EndValue>
-                                    <Value>1</Value>
-                                    <Multiplier>1</Multiplier>
-                                  </EndValue>
-                                  <Color>Red</Color>
-                                  <ScaleFactor>1</ScaleFactor>
-                                  <IndicatorStyle>ThreeSymbolCross</IndicatorStyle>
-                                  <IndicatorImage>
-                                    <Source>External</Source>
-                                    <Value />
-                                  </IndicatorImage>
-                                </IndicatorState>
-                                <IndicatorState Name="ThreeSymbolExclamation">
-                                  <StartValue>
-                                    <Value>33</Value>
-                                    <Multiplier>1</Multiplier>
-                                  </StartValue>
-                                  <EndValue>
-                                    <Value>66</Value>
-                                    <Multiplier>1</Multiplier>
-                                  </EndValue>
-                                  <Color>Yellow</Color>
-                                  <ScaleFactor>1</ScaleFactor>
-                                  <IndicatorStyle>None</IndicatorStyle>
-                                  <IndicatorImage>
-                                    <Source>External</Source>
-                                    <Value />
-                                  </IndicatorImage>
-                                </IndicatorState>
-                                <IndicatorState Name="ThreeSymbolCheck">
-                                  <StartValue>
-                                    <Value>0</Value>
-                                    <Multiplier>1</Multiplier>
-                                  </StartValue>
-                                  <EndValue>
-                                    <Value>0</Value>
-                                    <Multiplier>1</Multiplier>
-                                  </EndValue>
-                                  <Color>Green</Color>
-                                  <ScaleFactor>1</ScaleFactor>
-                                  <IndicatorStyle>ThreeSymbolCheck</IndicatorStyle>
-                                  <IndicatorImage>
-                                    <Source>External</Source>
-                                    <Value />
-                                  </IndicatorImage>
-                                </IndicatorState>
-                              </IndicatorStates>
-                              <Angle>0</Angle>
-                              <StateDataElementName />
-                              <rd:IconsSet>ThreeCircledSymbols</rd:IconsSet>
-                              <Style>
-                                <ShadowOffset>2pt</ShadowOffset>
-                              </Style>
-                              <Top>4</Top>
-                              <Left>4</Left>
-                              <Height>92</Height>
-                              <Width>92</Width>
-                              <ToolTip>Price Issue</ToolTip>
-                            </StateIndicator>
-                          </StateIndicators>
-                          <AutoLayout>true</AutoLayout>
-                          <BackFrame>
-                            <Style>
-                              <Border>
-                                <Style>None</Style>
-                              </Border>
-                              <BackgroundColor>Gainsboro</BackgroundColor>
-                              <BackgroundGradientType>DiagonalLeft</BackgroundGradientType>
-                              <BackgroundGradientEndColor>Gray</BackgroundGradientEndColor>
-                              <BackgroundHatchType>None</BackgroundHatchType>
-                              <ShadowOffset>0pt</ShadowOffset>
-                            </Style>
-                            <FrameBackground>
-                              <Style>
-                                <BackgroundColor>Silver</BackgroundColor>
-                                <BackgroundGradientType>DiagonalLeft</BackgroundGradientType>
-                                <BackgroundGradientEndColor>Gray</BackgroundGradientEndColor>
-                                <BackgroundHatchType>None</BackgroundHatchType>
-                              </Style>
-                            </FrameBackground>
-                            <FrameImage>
-                              <Source>External</Source>
-                              <Value />
-                            </FrameImage>
-                          </BackFrame>
-                          <TopImage>
-                            <Source>External</Source>
-                            <Value />
-                          </TopImage>
-                          <DataSetName>DataSet1</DataSetName>
-                          <Style>
-                            <Border>
-                              <Color>LightGrey</Color>
-                            </Border>
-                            <BackgroundColor>White</BackgroundColor>
-                          </Style>
-                        </GaugePanel>
-                      </CellContents>
-                    </TablixCell>
-                    <TablixCell>
-                      <CellContents>
-                        <Textbox Name="child_cost">
-                          <CanGrow>true</CanGrow>
-                          <KeepTogether>true</KeepTogether>
-                          <Paragraphs>
-                            <Paragraph>
-                              <TextRuns>
-                                <TextRun>
-                                  <Value>=Fields!child_cost.Value</Value>
-                                  <Style>
-                                    <Format>'$'0.00;('$'0.00)</Format>
-                                  </Style>
-                                </TextRun>
-                              </TextRuns>
-                              <Style>
-                                <TextAlign>Right</TextAlign>
-                              </Style>
-                            </Paragraph>
-                          </Paragraphs>
-                          <rd:DefaultName>child_cost</rd:DefaultName>
-                          <Style>
-                            <Border>
-                              <Style>None</Style>
-                            </Border>
-                            <PaddingLeft>2pt</PaddingLeft>
-                            <PaddingRight>2pt</PaddingRight>
-                            <PaddingTop>2pt</PaddingTop>
-                            <PaddingBottom>2pt</PaddingBottom>
-                            <rd:FormatSymbolCulture>en-US</rd:FormatSymbolCulture>
-                          </Style>
-                        </Textbox>
-                      </CellContents>
-                    </TablixCell>
-                    <TablixCell>
-                      <CellContents>
-                        <GaugePanel Name="GaugePanel5">
-                          <StateIndicators>
-                            <StateIndicator Name="Indicator1">
-                              <GaugeInputValue>
-                                <Value>=Fields!cost_issue.Value</Value>
-                                <Multiplier>1</Multiplier>
-                                <DataElementOutput>NoOutput</DataElementOutput>
-                              </GaugeInputValue>
-                              <TransformationType>None</TransformationType>
-                              <TransformationScope>table1</TransformationScope>
-                              <MinimumValue>
-                                <Value>NaN</Value>
-                                <Multiplier>1</Multiplier>
-                              </MinimumValue>
-                              <MaximumValue>
-                                <Value>NaN</Value>
-                                <Multiplier>1</Multiplier>
-                              </MaximumValue>
-                              <IndicatorStyle>None</IndicatorStyle>
-                              <IndicatorImage>
-                                <Source>External</Source>
-                                <Value />
-                              </IndicatorImage>
-                              <ScaleFactor>1</ScaleFactor>
-                              <IndicatorStates>
-                                <IndicatorState Name="ThreeSymbolCross">
-                                  <StartValue>
-                                    <Value>1</Value>
-                                    <Multiplier>1</Multiplier>
-                                  </StartValue>
-                                  <EndValue>
-                                    <Value>1</Value>
-                                    <Multiplier>1</Multiplier>
-                                  </EndValue>
-                                  <Color>Red</Color>
-                                  <ScaleFactor>1</ScaleFactor>
-                                  <IndicatorStyle>ThreeSymbolCross</IndicatorStyle>
-                                  <IndicatorImage>
-                                    <Source>External</Source>
-                                    <Value />
-                                  </IndicatorImage>
-                                </IndicatorState>
-                                <IndicatorState Name="ThreeSymbolExclamation">
-                                  <StartValue>
-                                    <Value>33</Value>
-                                    <Multiplier>1</Multiplier>
-                                  </StartValue>
-                                  <EndValue>
-                                    <Value>66</Value>
-                                    <Multiplier>1</Multiplier>
-                                  </EndValue>
-                                  <Color>Yellow</Color>
-                                  <ScaleFactor>1</ScaleFactor>
-                                  <IndicatorStyle>None</IndicatorStyle>
-                                  <IndicatorImage>
-                                    <Source>External</Source>
-                                    <Value />
-                                  </IndicatorImage>
-                                </IndicatorState>
-                                <IndicatorState Name="ThreeSymbolCheck">
-                                  <StartValue>
-                                    <Value>0</Value>
-                                    <Multiplier>1</Multiplier>
-                                  </StartValue>
-                                  <EndValue>
-                                    <Value>0</Value>
-                                    <Multiplier>1</Multiplier>
-                                  </EndValue>
-                                  <Color>Green</Color>
-                                  <ScaleFactor>1</ScaleFactor>
-                                  <IndicatorStyle>ThreeSymbolCheck</IndicatorStyle>
-                                  <IndicatorImage>
-                                    <Source>External</Source>
-                                    <Value />
-                                  </IndicatorImage>
-                                </IndicatorState>
-                              </IndicatorStates>
-                              <Angle>0</Angle>
-                              <StateDataElementName />
-                              <rd:IconsSet>ThreeCircledSymbols</rd:IconsSet>
-                              <Style>
-                                <ShadowOffset>2pt</ShadowOffset>
-                              </Style>
-                              <Top>4</Top>
-                              <Left>4</Left>
-                              <Height>92</Height>
-                              <Width>92</Width>
-                              <ToolTip>Cost Issue</ToolTip>
-                            </StateIndicator>
-                          </StateIndicators>
-                          <AutoLayout>true</AutoLayout>
-                          <BackFrame>
-                            <Style>
-                              <Border>
-                                <Style>None</Style>
-                              </Border>
-                              <BackgroundColor>Gainsboro</BackgroundColor>
-                              <BackgroundGradientType>DiagonalLeft</BackgroundGradientType>
-                              <BackgroundGradientEndColor>Gray</BackgroundGradientEndColor>
-                              <BackgroundHatchType>None</BackgroundHatchType>
-                              <ShadowOffset>0pt</ShadowOffset>
-                            </Style>
-                            <FrameBackground>
-                              <Style>
-                                <BackgroundColor>Silver</BackgroundColor>
-                                <BackgroundGradientType>DiagonalLeft</BackgroundGradientType>
-                                <BackgroundGradientEndColor>Gray</BackgroundGradientEndColor>
-                                <BackgroundHatchType>None</BackgroundHatchType>
-                              </Style>
-                            </FrameBackground>
-                            <FrameImage>
-                              <Source>External</Source>
-                              <Value />
-                            </FrameImage>
-                          </BackFrame>
-                          <TopImage>
-                            <Source>External</Source>
-                            <Value />
-                          </TopImage>
-                          <DataSetName>DataSet1</DataSetName>
-                          <Style>
-                            <Border>
-                              <Color>LightGrey</Color>
                             </Border>
                             <BackgroundColor>White</BackgroundColor>
                           </Style>
@@ -1527,6 +1108,9 @@
                           </Paragraphs>
                           <rd:DefaultName>child_brand</rd:DefaultName>
                           <Style>
+                            <Border>
+                              <Style>None</Style>
+                            </Border>
                             <PaddingLeft>2pt</PaddingLeft>
                             <PaddingRight>2pt</PaddingRight>
                             <PaddingTop>2pt</PaddingTop>
@@ -1659,7 +1243,7 @@
                           <DataSetName>DataSet1</DataSetName>
                           <Style>
                             <Border>
-                              <Color>LightGrey</Color>
+                              <Style>None</Style>
                             </Border>
                             <BackgroundColor>White</BackgroundColor>
                           </Style>
@@ -1790,7 +1374,7 @@
                           <DataSetName>DataSet1</DataSetName>
                           <Style>
                             <Border>
-                              <Color>LightGrey</Color>
+                              <Style>None</Style>
                             </Border>
                             <BackgroundColor>White</BackgroundColor>
                           </Style>
@@ -1817,6 +1401,9 @@
                           </Paragraphs>
                           <rd:DefaultName>parent_style</rd:DefaultName>
                           <Style>
+                            <Border>
+                              <Style>None</Style>
+                            </Border>
                             <PaddingLeft>2pt</PaddingLeft>
                             <PaddingRight>2pt</PaddingRight>
                             <PaddingTop>2pt</PaddingTop>
@@ -1845,6 +1432,9 @@
                           </Paragraphs>
                           <rd:DefaultName>child_style</rd:DefaultName>
                           <Style>
+                            <Border>
+                              <Style>None</Style>
+                            </Border>
                             <PaddingLeft>2pt</PaddingLeft>
                             <PaddingRight>2pt</PaddingRight>
                             <PaddingTop>2pt</PaddingTop>
@@ -1977,7 +1567,7 @@
                           <DataSetName>DataSet1</DataSetName>
                           <Style>
                             <Border>
-                              <Color>LightGrey</Color>
+                              <Style>None</Style>
                             </Border>
                             <BackgroundColor>White</BackgroundColor>
                           </Style>
@@ -2108,7 +1698,7 @@
                           <DataSetName>DataSet1</DataSetName>
                           <Style>
                             <Border>
-                              <Color>LightGrey</Color>
+                              <Style>None</Style>
                             </Border>
                             <BackgroundColor>White</BackgroundColor>
                           </Style>
@@ -2121,10 +1711,6 @@
             </TablixBody>
             <TablixColumnHierarchy>
               <TablixMembers>
-                <TablixMember />
-                <TablixMember />
-                <TablixMember />
-                <TablixMember />
                 <TablixMember />
                 <TablixMember />
                 <TablixMember />
@@ -2165,7 +1751,7 @@
             <DataSetName>DataSet1</DataSetName>
             <Top>0.21in</Top>
             <Height>0.42in</Height>
-            <Width>18.58333in</Width>
+            <Width>18.54167in</Width>
             <Style />
           </Tablix>
           <Textbox Name="textbox1">

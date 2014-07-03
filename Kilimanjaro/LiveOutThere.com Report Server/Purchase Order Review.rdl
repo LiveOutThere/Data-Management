@@ -3245,8 +3245,11 @@
           <QueryParameter Name="@po_season_type">
             <Value>=Parameters!po_season_type.Value</Value>
           </QueryParameter>
+          <QueryParameter Name="@po_author">
+            <Value>=Parameters!po_author.Value</Value>
+          </QueryParameter>
         </QueryParameters>
-        <CommandText>EXEC dbo.report_Ops_Purchase_Orders @ship_date, @po_type, @po_season_type, @po_status</CommandText>
+        <CommandText>EXEC dbo.report_Ops_Purchase_Orders @ship_date, @po_type, @po_season_type, @po_status, @po_author</CommandText>
         <rd:UseGenericDesigner>true</rd:UseGenericDesigner>
       </Query>
       <Fields>
@@ -3260,6 +3263,10 @@
         </Field>
         <Field Name="po_carrier">
           <DataField>po_carrier</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="po_author">
+          <DataField>po_author</DataField>
           <rd:TypeName>System.String</rd:TypeName>
         </Field>
         <Field Name="po_type">
@@ -3438,6 +3445,31 @@ ORDER BY po_season</CommandText>
           <ValueField>po_season</ValueField>
           <LabelField>po_season</LabelField>
         </DataSetReference>
+      </ValidValues>
+    </ReportParameter>
+    <ReportParameter Name="po_author">
+      <DataType>String</DataType>
+      <Nullable>true</Nullable>
+      <Prompt>Author:</Prompt>
+      <ValidValues>
+        <ParameterValues>
+          <ParameterValue>
+            <Value>NULL</Value>
+            <Label>(Null)</Label>
+          </ParameterValue>
+          <ParameterValue>
+            <Value>colin.matthews</Value>
+            <Label>Colin Matthews</Label>
+          </ParameterValue>
+          <ParameterValue>
+            <Value>christina.daoust</Value>
+            <Label>Christina Daoust</Label>
+          </ParameterValue>
+          <ParameterValue>
+            <Value>jenna.larson</Value>
+            <Label>Jenna Larson</Label>
+          </ParameterValue>
+        </ParameterValues>
       </ValidValues>
     </ReportParameter>
   </ReportParameters>

@@ -41,7 +41,7 @@ SELECT DISTINCT manufacturer,
 				seo_status 
 FROM #seo_export
 
-SELECT DISTINCT sku FROM #seo_export
+SELECT DISTINCT sku, 'checked_out' AS seo_status FROM #seo_export
 /*
 
 MAGENTO ATTRIBUTES

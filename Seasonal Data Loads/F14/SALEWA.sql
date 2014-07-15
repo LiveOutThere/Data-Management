@@ -103,8 +103,7 @@ INSERT INTO tbl_LoadFile_FW14_SALEWA (
 
 SELECT DISTINCT
 	'simple' AS type
-	--,'FW14A-SALEWA-' + CAST(a.[Item Number] AS varchar(255)) AS sku
-	,'FW14A-SALEWA-' + LEFT(a.[Item Number],5) + '-' + STUFF(a.[Item Number], 1, 11, '') AS sku
+	,'FW14A-SALEWA-' + a.[Item Number] AS sku
 	,dbo.getSALEWAName(a.[Item Name]) AS name
 	,0 AS has_options
 	,CAST(ROUND(b.MSRP,0) AS float) - 0.01 AS price
@@ -125,16 +124,21 @@ ON LEFT(a.[Item Number],5) = b.[Prod Code]
 WHERE SUBSTRING(a.[Item Number],7, 4) = CASE 
            WHEN LEN(b.[Color Code]) = 3 THEN '0' + b.[Color Code]
            ELSE b.[Color Code]
-           END
+           END 
 GO
 
---UPDATE a
---	SET a.image = b.image
---FROM tbl_LoadFile_FW14_SALEWA AS a
---INNER JOIN tbl_LoadFile_SS14_SALEWA AS b
---ON b.vendor_sku = a.vendor_sku 
---WHERE a.type = 'simple'
+--UPDATE image COLUMN
+UPDATE a
+	SET a.image = b.filename
+FROM tbl_LoadFile_FW14_SALEWA AS a
+INNER JOIN tbl_RawData_FW14_Image_Filenames AS b
+ON a.vendor_product_id + '-' + CASE WHEN LEN(a.vendor_color_code)= 3 THEN '0' + a.vendor_color_code ELSE a.vendor_color_code END 
++ '-'+ UPPER(REPLACE(REPLACE(a.name,'WOMEN','WS'),'MEN','MS')) LIKE
+CASE WHEN LEFT(b.filename,1) = '0' THEN REPLACE(REPLACE(RIGHT(b.filename,LEN(b.filename) - 1),'_','-'),'.jpg','') 
+ELSE REPLACE(REPLACE(b.filename,'_','-'),'.jpg','') END 
+WHERE a.type = 'simple' AND b.brand = 'SALEWA'
 
+--UPDATE LOAD FILE WITH 'configurables'
 INSERT INTO tbl_LoadFile_FW14_SALEWA (
 	type
 	,sku
@@ -173,27 +177,43 @@ SELECT DISTINCT
 	,'F' AS merchandise_priority
 	,0 AS manage_stock
 	,0 AS use_config_manage_stock
-	
 	,NULL AS qty
 	,NULL AS is_in_stock
 FROM tbl_LoadFile_FW14_SALEWA
 GO
 
+--UPDATE DESCRIPTION AND OTHER INFORMATION FOR CONFIGURABLE PRODUCTS
 UPDATE tbl_LoadFile_FW14_SALEWA SET
-	 categories = dbo.getMagentoCategories(a.vendor_product_id)
-	--,description = (SELECT TOP 1 [Product Summary] FROM tbl_RawData_FW14_SALEWA_UPC_Marketing WHERE LEFT(Material,6) = a.vendor_product_id)
-	,features = (SELECT TOP 1 [Catalog Features] FROM tbl_RawData_FW14_SALEWA_UPC_Marketing WHERE LEFT([Material Number],7) = a.vendor_product_id)  
-	,fabric = (SELECT TOP 1 [Catalog Fabric] FROM tbl_RawData_FW14_SALEWA_UPC_Marketing WHERE LEFT([Material Number],7) = a.vendor_product_id) 
-	,fit = (SELECT TOP 1 [Fit Description] FROM tbl_RawData_FW14_SALEWA_UPC_Marketing WHERE LEFT([Material Number],7) = a.vendor_product_id)
-	,simples_skus = dbo.getSALEWAAssociatedProducts(a.vendor_product_id)
+	 categories = dbo.getMagentoCategories(a.vendor_product_id),
+	 simples_skus = dbo.getSALEWAAssociatedProducts(a.vendor_product_id)
 FROM tbl_LoadFile_FW14_SALEWA AS a
 WHERE type = 'configurable'
 GO
-	
+
+UPDATE a 
+SET a.description = REPLACE(b.[Long Description],'. ','|')
+FROM tbl_LoadFile_FW14_SALEWA AS a
+INNER JOIN tbl_RawData_FW14_SALEWA_UPC_Marketing AS b
+ON a.sku = REPLACE(b.SKU,'00-00000','FW14A-SALEWA-')
+WHERE type = 'configurable'
+
+UPDATE a 
+SET a.description = b.[Technical Description]
+FROM tbl_LoadFile_FW14_SALEWA AS a
+INNER JOIN tbl_RawData_FW14_SALEWA_UPC_Marketing AS b
+ON a.sku = REPLACE(b.SKU,'00-00000','FW14A-SALEWA-')
+WHERE type = 'configurable'
+
+select description,features from tbl_LoadFile_FW14_SALEWA where type = 'configurable'
 UPDATE tbl_LoadFile_FW14_SALEWA SET categories = NULL WHERE type = 'simple'
 UPDATE tbl_LoadFile_FW14_SALEWA SET status = 'Disabled' WHERE image IS NULL AND type = 'simple'
 UPDATE tbl_LoadFile_FW14_SALEWA SET thumbnail = image, small_image = image WHERE type = 'simple'
 GO
+
+UPDATE tbl_LoadFile_FW14_OR --Final update on descriptions for SEO keywords
+SET description	= '<b><i>The ' + name + ' by ' + manufacturer + ' for ' 
++ department + '</i></b><br>' + description
+WHERE type = 'configurable'
 
 /*
 CREATE VIEW [dbo].[view_LoadFile_FW14_SALEWA]

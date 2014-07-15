@@ -24,10 +24,10 @@
               <Width>0.90625in</Width>
             </TablixColumn>
             <TablixColumn>
-              <Width>1.21875in</Width>
+              <Width>1.35417in</Width>
             </TablixColumn>
             <TablixColumn>
-              <Width>1.54167in</Width>
+              <Width>1.69792in</Width>
             </TablixColumn>
             <TablixColumn>
               <Width>1.125in</Width>
@@ -249,7 +249,7 @@
                         <Paragraph>
                           <TextRuns>
                             <TextRun>
-                              <Value>PO Total</Value>
+                              <Value>PO Total $</Value>
                               <Style>
                                 <FontSize>11pt</FontSize>
                                 <FontWeight>Bold</FontWeight>
@@ -289,7 +289,7 @@
                         <Paragraph>
                           <TextRuns>
                             <TextRun>
-                              <Value>Total Discount</Value>
+                              <Value>Total Discount $</Value>
                               <Style>
                                 <FontSize>11pt</FontSize>
                                 <FontWeight>Bold</FontWeight>
@@ -329,7 +329,7 @@
                         <Paragraph>
                           <TextRuns>
                             <TextRun>
-                              <Value>Outstanding Cost</Value>
+                              <Value>Outstanding Cost $</Value>
                               <Style>
                                 <FontSize>11pt</FontSize>
                                 <FontWeight>Bold</FontWeight>
@@ -650,7 +650,9 @@
                           <TextRuns>
                             <TextRun>
                               <Value>=Fields!PO_Total.Value</Value>
-                              <Style />
+                              <Style>
+                                <Format>'$'#,0.00;('$'#,0.00)</Format>
+                              </Style>
                             </TextRun>
                           </TextRuns>
                           <Style>
@@ -673,6 +675,7 @@
                         <PaddingRight>2pt</PaddingRight>
                         <PaddingTop>2pt</PaddingTop>
                         <PaddingBottom>2pt</PaddingBottom>
+                        <rd:FormatSymbolCulture>en-US</rd:FormatSymbolCulture>
                       </Style>
                     </Textbox>
                   </CellContents>
@@ -687,7 +690,9 @@
                           <TextRuns>
                             <TextRun>
                               <Value>=Fields!Total_Discount.Value</Value>
-                              <Style />
+                              <Style>
+                                <Format>'$'#,0.00;('$'#,0.00)</Format>
+                              </Style>
                             </TextRun>
                           </TextRuns>
                           <Style>
@@ -710,6 +715,7 @@
                         <PaddingRight>2pt</PaddingRight>
                         <PaddingTop>2pt</PaddingTop>
                         <PaddingBottom>2pt</PaddingBottom>
+                        <rd:FormatSymbolCulture>en-US</rd:FormatSymbolCulture>
                       </Style>
                     </Textbox>
                   </CellContents>
@@ -724,7 +730,9 @@
                           <TextRuns>
                             <TextRun>
                               <Value>=Fields!Outstanding_Cost.Value</Value>
-                              <Style />
+                              <Style>
+                                <Format>'$'#,0.00;('$'#,0.00)</Format>
+                              </Style>
                             </TextRun>
                           </TextRuns>
                           <Style>
@@ -747,6 +755,7 @@
                         <PaddingRight>2pt</PaddingRight>
                         <PaddingTop>2pt</PaddingTop>
                         <PaddingBottom>2pt</PaddingBottom>
+                        <rd:FormatSymbolCulture>en-US</rd:FormatSymbolCulture>
                       </Style>
                     </Textbox>
                   </CellContents>
@@ -1069,7 +1078,11 @@
                           <TextRuns>
                             <TextRun>
                               <Value>Total</Value>
-                              <Style />
+                              <Style>
+                                <FontSize>11pt</FontSize>
+                                <FontWeight>Bold</FontWeight>
+                                <Format>'$'#,0.00;('$'#,0.00)</Format>
+                              </Style>
                             </TextRun>
                           </TextRuns>
                           <Style>
@@ -1092,6 +1105,7 @@
                         <PaddingRight>2pt</PaddingRight>
                         <PaddingTop>2pt</PaddingTop>
                         <PaddingBottom>2pt</PaddingBottom>
+                        <rd:FormatSymbolCulture>en-US</rd:FormatSymbolCulture>
                       </Style>
                     </Textbox>
                   </CellContents>
@@ -1106,7 +1120,11 @@
                           <TextRuns>
                             <TextRun>
                               <Value>=Sum(Fields!Outstanding_Cost.Value)</Value>
-                              <Style />
+                              <Style>
+                                <FontSize>11pt</FontSize>
+                                <FontWeight>Bold</FontWeight>
+                                <Format>'$'#,0.00;('$'#,0.00)</Format>
+                              </Style>
                             </TextRun>
                           </TextRuns>
                           <Style>
@@ -1129,6 +1147,7 @@
                         <PaddingRight>2pt</PaddingRight>
                         <PaddingTop>2pt</PaddingTop>
                         <PaddingBottom>2pt</PaddingBottom>
+                        <rd:FormatSymbolCulture>en-US</rd:FormatSymbolCulture>
                       </Style>
                     </Textbox>
                   </CellContents>
@@ -1251,7 +1270,7 @@
         <DataSetName>DataSet1</DataSetName>
         <Top>0.42in</Top>
         <Height>0.67in</Height>
-        <Width>13.5625in</Width>
+        <Width>13.85417in</Width>
         <Style />
       </Tablix>
       <Textbox Name="textbox1">
@@ -1286,7 +1305,7 @@
     <Height>1.09in</Height>
     <Style />
   </Body>
-  <Width>13.71875in</Width>
+  <Width>13.85417in</Width>
   <Page>
     <LeftMargin>1in</LeftMargin>
     <RightMargin>1in</RightMargin>
@@ -1363,11 +1382,11 @@
   <ReportParameters>
     <ReportParameter Name="start_date">
       <DataType>DateTime</DataType>
-      <Prompt>start date</Prompt>
+      <Prompt>Start Date:</Prompt>
     </ReportParameter>
     <ReportParameter Name="end_date">
       <DataType>DateTime</DataType>
-      <Prompt>end date</Prompt>
+      <Prompt>End Date:</Prompt>
     </ReportParameter>
   </ReportParameters>
   <Language>en-US</Language>

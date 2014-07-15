@@ -105,7 +105,7 @@ INSERT INTO tbl_LoadFile_FW14_IB (
 SELECT DISTINCT
 	'simple' AS type
 	,'FW14A-IB-' + CAST([style code] AS nvarchar(255)) + '-' + CAST([Colourway Code] AS nvarchar(255)) + '-' + REPLACE(Size,'OS','O/S') AS sku
-	,dbo.getIBName([Style Name]) AS name
+	,dbo.getIBName2([Style Name]) AS name
 	,0 AS has_options
 	,ROUND(MSRP,2) AS price
 	,ROUND(Price,1) AS cost

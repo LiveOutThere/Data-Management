@@ -1732,8 +1732,11 @@
           <QueryParameter Name="@brand">
             <Value>=Parameters!brand.Value</Value>
           </QueryParameter>
+          <QueryParameter Name="@department">
+            <Value>=Parameters!department.Value</Value>
+          </QueryParameter>
         </QueryParameters>
-        <CommandText>EXEC dbo.task_DOTD_Generator @children_cap, @repeat_deal_cap, @margin_limit, @suggestions_limit, @days_since_last_run, @brand</CommandText>
+        <CommandText>EXEC dbo.task_DOTD_Generator @children_cap, @repeat_deal_cap, @margin_limit, @suggestions_limit, @days_since_last_run, @brand, @department</CommandText>
         <rd:UseGenericDesigner>true</rd:UseGenericDesigner>
       </Query>
       <Fields>
@@ -1805,6 +1808,10 @@
           <DataField>deal_end</DataField>
           <rd:TypeName>System.String</rd:TypeName>
         </Field>
+        <Field Name="deal_start">
+          <DataField>deal_start</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
       </Fields>
     </DataSet>
     <DataSet Name="DataSet2">
@@ -1823,6 +1830,7 @@
   <ReportParameters>
     <ReportParameter Name="children_cap">
       <DataType>String</DataType>
+      <Nullable>true</Nullable>
       <DefaultValue>
         <Values>
           <Value>10</Value>
@@ -1866,6 +1874,27 @@
           <LabelField>brand</LabelField>
         </DataSetReference>
       </ValidValues>
+    </ReportParameter>
+    <ReportParameter Name="department">
+      <DataType>String</DataType>
+      <Prompt>Gender:</Prompt>
+      <ValidValues>
+        <ParameterValues>
+          <ParameterValue>
+            <Value>Men</Value>
+            <Label>Men</Label>
+          </ParameterValue>
+          <ParameterValue>
+            <Value>Women</Value>
+            <Label>Women</Label>
+          </ParameterValue>
+          <ParameterValue>
+            <Value>Men|Women</Value>
+            <Label>Men|Women</Label>
+          </ParameterValue>
+        </ParameterValues>
+      </ValidValues>
+      <MultiValue>true</MultiValue>
     </ReportParameter>
   </ReportParameters>
   <Language>en-US</Language>

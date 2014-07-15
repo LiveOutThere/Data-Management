@@ -48,7 +48,7 @@
                                 <Width>1in</Width>
                               </TablixColumn>
                               <TablixColumn>
-                                <Width>1in</Width>
+                                <Width>1.51042in</Width>
                               </TablixColumn>
                               <TablixColumn>
                                 <Width>1in</Width>
@@ -6897,7 +6897,7 @@
                           <DataSetName>DataSet1</DataSetName>
                           <Top>0.13542in</Top>
                           <Height>1.84in</Height>
-                          <Width>27.20833in</Width>
+                          <Width>27.71875in</Width>
                           <Style />
                         </Tablix>
                       </ReportItems>

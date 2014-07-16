@@ -1732,11 +1732,8 @@
           <QueryParameter Name="@brand">
             <Value>=Parameters!brand.Value</Value>
           </QueryParameter>
-          <QueryParameter Name="@department">
-            <Value>=Parameters!department.Value</Value>
-          </QueryParameter>
         </QueryParameters>
-        <CommandText>EXEC dbo.task_DOTD_Generator @children_cap, @repeat_deal_cap, @margin_limit, @suggestions_limit, @days_since_last_run, @brand, @department</CommandText>
+        <CommandText>EXEC dbo.task_DOTD_Generator @children_cap, @repeat_deal_cap, @margin_limit, @suggestions_limit, @days_since_last_run, @brand</CommandText>
         <rd:UseGenericDesigner>true</rd:UseGenericDesigner>
       </Query>
       <Fields>
@@ -1813,6 +1810,15 @@
           <rd:TypeName>System.String</rd:TypeName>
         </Field>
       </Fields>
+      <Filters>
+        <Filter>
+          <FilterExpression>=Fields!department.Value</FilterExpression>
+          <Operator>In</Operator>
+          <FilterValues>
+            <FilterValue>=Parameters!department.Value</FilterValue>
+          </FilterValues>
+        </Filter>
+      </Filters>
     </DataSet>
     <DataSet Name="DataSet2">
       <Query>

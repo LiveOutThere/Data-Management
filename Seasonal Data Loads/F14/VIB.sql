@@ -9,28 +9,28 @@ GO
 SET CONCAT_NULL_YIELDS_NULL OFF
 GO
 
-IF EXISTS (SELECT * FROM sysobjects WHERE id = object_id(N'[dbo].[tbl_LoadFile_FW14_NOB]')
+IF EXISTS (SELECT * FROM sysobjects WHERE id = object_id(N'[dbo].[tbl_LoadFile_FW14_VIB]')
 AND OBJECTPROPERTY(id, N'IsUserTable') = 1)
-DROP TABLE [dbo].[tbl_LoadFile_FW14_NOB]
+DROP TABLE [dbo].[tbl_LoadFile_FW14_VIB]
 
-CREATE TABLE [dbo].[tbl_LoadFile_FW14_NOB](
+CREATE TABLE [dbo].[tbl_LoadFile_FW14_VIB](
 	[id] [int] IDENTITY(1,1) NOT NULL,
-	[store] [nvarchar](4000) COLLATE SQL_Latin1_General_CP1_CI_AS NULL CONSTRAINT [DF_tbl_LoadFile_FW14_NOB_store]  DEFAULT ('admin'),
-	[websites] [nvarchar](4000) COLLATE SQL_Latin1_General_CP1_CI_AS NULL CONSTRAINT [DF_tbl_LoadFile_FW14_NOB_websites]  DEFAULT ('base'),
+	[store] [nvarchar](4000) COLLATE SQL_Latin1_General_CP1_CI_AS NULL CONSTRAINT [DF_tbl_LoadFile_FW14_VIB_store]  DEFAULT ('admin'),
+	[websites] [nvarchar](4000) COLLATE SQL_Latin1_General_CP1_CI_AS NULL CONSTRAINT [DF_tbl_LoadFile_FW14_VIB_websites]  DEFAULT ('base'),
 	[type] [nvarchar](50) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
 	[sku] [nvarchar](50) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
 	[name] [nvarchar](4000) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
 	[categories] [nvarchar](4000) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
-	[attribute_set] [nvarchar](4000) COLLATE SQL_Latin1_General_CP1_CI_AS NULL CONSTRAINT [DF_tbl_LoadFile_FW14_NOB_attribute_set]  DEFAULT ('default'),
+	[attribute_set] [nvarchar](4000) COLLATE SQL_Latin1_General_CP1_CI_AS NULL CONSTRAINT [DF_tbl_LoadFile_FW14_VIB_attribute_set]  DEFAULT ('default'),
 	[configurable_attributes] [nvarchar](4000) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
 	[has_options] [nvarchar](4000) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
 	[price] [nvarchar](4000) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
 	[cost] [nvarchar](4000) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
 	[super_attribute_pricing] [nvarchar](4000) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
-	[status] [nvarchar](4000) COLLATE SQL_Latin1_General_CP1_CI_AS NULL CONSTRAINT [DF_tbl_LoadFile_FW14_NOB_status]  DEFAULT ('Enabled'),
-	[tax_class_id] [nvarchar](4000) COLLATE SQL_Latin1_General_CP1_CI_AS NULL CONSTRAINT [DF_tbl_LoadFile_FW14_NOB_tax_class]  DEFAULT ('Taxable Goods'),
+	[status] [nvarchar](4000) COLLATE SQL_Latin1_General_CP1_CI_AS NULL CONSTRAINT [DF_tbl_LoadFile_FW14_VIB_status]  DEFAULT ('Enabled'),
+	[tax_class_id] [nvarchar](4000) COLLATE SQL_Latin1_General_CP1_CI_AS NULL CONSTRAINT [DF_tbl_LoadFile_FW14_VIB_tax_class]  DEFAULT ('Taxable Goods'),
 	[department] [nvarchar](4000) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
-	[visibility] [nvarchar](4000) COLLATE SQL_Latin1_General_CP1_CI_AS NULL CONSTRAINT [DF_tbl_LoadFile_FW14_NOB_visibility]  DEFAULT ('Not Visible Individually'),
+	[visibility] [nvarchar](4000) COLLATE SQL_Latin1_General_CP1_CI_AS NULL CONSTRAINT [DF_tbl_LoadFile_FW14_VIB_visibility]  DEFAULT ('Not Visible Individually'),
 	[image] [nvarchar](4000) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
 	[image_label] [nvarchar](4000) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
 	[small_image] [nvarchar](4000) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
@@ -41,7 +41,7 @@ CREATE TABLE [dbo].[tbl_LoadFile_FW14_NOB](
 	[vendor_product_id] [nvarchar](50) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
 	[vendor_color_code] [nvarchar](4000) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
 	[vendor_size_code] [nvarchar](4000) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
-	[season_id] [nvarchar](4000) COLLATE SQL_Latin1_General_CP1_CI_AS NULL CONSTRAINT [DF_tbl_LoadFile_FW14_NOB_season]  DEFAULT (N'FW14 ASAP'),
+	[season_id] [nvarchar](4000) COLLATE SQL_Latin1_General_CP1_CI_AS NULL CONSTRAINT [DF_tbl_LoadFile_FW14_VIB_season]  DEFAULT (N'FW14 ASAP'),
 	[short_description] [nvarchar](4000) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
 	[description] [nvarchar](MAX) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
 	[features] [nvarchar](4000) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
@@ -52,27 +52,27 @@ CREATE TABLE [dbo].[tbl_LoadFile_FW14_NOB](
 	[fabric] [nvarchar](4000) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
 	[fit] [nvarchar](4000) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
 	[volume] [nvarchar](4000) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
-	[manufacturer] [nvarchar](4000) COLLATE SQL_Latin1_General_CP1_CI_AS NULL CONSTRAINT [DF_tbl_LoadFile_FW14_NOB_manufacturer]  DEFAULT ('Nobis'),
-	[qty] [nvarchar](4000) COLLATE SQL_Latin1_General_CP1_CI_AS NULL CONSTRAINT [DF_tbl_LoadFile_FW14_NOB_qty]  DEFAULT ((0)),
-	[is_in_stock] [nvarchar](4000) COLLATE SQL_Latin1_General_CP1_CI_AS NULL CONSTRAINT [DF_tbl_LoadFile_FW14_NOB_is_in_stock]  DEFAULT ((0)),
+	[manufacturer] [nvarchar](4000) COLLATE SQL_Latin1_General_CP1_CI_AS NULL CONSTRAINT [DF_tbl_LoadFile_FW14_VIB_manufacturer]  DEFAULT ('Vibram'),
+	[qty] [nvarchar](4000) COLLATE SQL_Latin1_General_CP1_CI_AS NULL CONSTRAINT [DF_tbl_LoadFile_FW14_VIB_qty]  DEFAULT ((0)),
+	[is_in_stock] [nvarchar](4000) COLLATE SQL_Latin1_General_CP1_CI_AS NULL CONSTRAINT [DF_tbl_LoadFile_FW14_VIB_is_in_stock]  DEFAULT ((0)),
 	[simples_skus] [nvarchar](MAX) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
 	[url_key] [nvarchar](4000) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
 	[meta_title] [nvarchar](4000) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
 	[videos] [nvarchar](4000) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
 	[weight] [nvarchar](4000) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
 	[merchandise_priority] [nvarchar](4000) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
-	[never_backorder] [nvarchar](4000) COLLATE SQL_Latin1_General_CP1_CI_AS NULL CONSTRAINT [DF_tbl_LoadFile_FW14_NOB_never_backorder]  DEFAULT ((0)),
-	[backorders] [nvarchar](4000) COLLATE SQL_Latin1_General_CP1_CI_AS NULL CONSTRAINT [DF_tbl_LoadFile_FW14_NOB_backorders]  DEFAULT ((0)),
-	[manage_stock] [nvarchar](4000) COLLATE SQL_Latin1_General_CP1_CI_AS NULL CONSTRAINT [DF_tbl_LoadFile_FW14_NOB_manage_stock]  DEFAULT ((1)),
-	[use_config_backorders] [nvarchar](4000) COLLATE SQL_Latin1_General_CP1_CI_AS NULL CONSTRAINT [DF_tbl_LoadFile_FW14_NOB_use_config_backorders]  DEFAULT ((0)),
-	[use_config_manage_stock] [nvarchar](4000) COLLATE SQL_Latin1_General_CP1_CI_AS NULL CONSTRAINT [DF_tbl_LoadFile_FW14_NOB_use_config_manage_stock]  DEFAULT ((1))
- CONSTRAINT [PK_tbl_LoadFile_FW14_NOB] PRIMARY KEY CLUSTERED 
+	[never_backorder] [nvarchar](4000) COLLATE SQL_Latin1_General_CP1_CI_AS NULL CONSTRAINT [DF_tbl_LoadFile_FW14_VIB_never_backorder]  DEFAULT ((0)),
+	[backorders] [nvarchar](4000) COLLATE SQL_Latin1_General_CP1_CI_AS NULL CONSTRAINT [DF_tbl_LoadFile_FW14_VIB_backorders]  DEFAULT ((0)),
+	[manage_stock] [nvarchar](4000) COLLATE SQL_Latin1_General_CP1_CI_AS NULL CONSTRAINT [DF_tbl_LoadFile_FW14_VIB_manage_stock]  DEFAULT ((1)),
+	[use_config_backorders] [nvarchar](4000) COLLATE SQL_Latin1_General_CP1_CI_AS NULL CONSTRAINT [DF_tbl_LoadFile_FW14_VIB_use_config_backorders]  DEFAULT ((0)),
+	[use_config_manage_stock] [nvarchar](4000) COLLATE SQL_Latin1_General_CP1_CI_AS NULL CONSTRAINT [DF_tbl_LoadFile_FW14_VIB_use_config_manage_stock]  DEFAULT ((1))
+ CONSTRAINT [PK_tbl_LoadFile_FW14_VIB] PRIMARY KEY CLUSTERED 
 (
 	[id] ASC
 )WITH (IGNORE_DUP_KEY = OFF) ON [PRIMARY]
 ) ON [PRIMARY]
 
-CREATE NONCLUSTERED INDEX [IX_tbl_LoadFile_FW14_NOB] ON [dbo].[tbl_LoadFile_FW14_NOB] 
+CREATE NONCLUSTERED INDEX [IX_tbl_LoadFile_FW14_VIB] ON [dbo].[tbl_LoadFile_FW14_VIB] 
 (
 	[sku] ASC,
 	[type] ASC,
@@ -80,10 +80,10 @@ CREATE NONCLUSTERED INDEX [IX_tbl_LoadFile_FW14_NOB] ON [dbo].[tbl_LoadFile_FW14
 )WITH (PAD_INDEX  = OFF, STATISTICS_NORECOMPUTE  = OFF, SORT_IN_TEMPDB = OFF, IGNORE_DUP_KEY = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS  = ON, ALLOW_PAGE_LOCKS  = ON) ON [PRIMARY]
 
 GO
-TRUNCATE TABLE tbl_LoadFile_FW14_NOB
+TRUNCATE TABLE tbl_LoadFile_FW14_VIB
 
 GO
-INSERT INTO tbl_LoadFile_FW14_NOB (
+INSERT INTO tbl_LoadFile_FW14_VIB (
 		[type]		
 		,sku
 		,[name]
@@ -103,55 +103,34 @@ INSERT INTO tbl_LoadFile_FW14_NOB (
 
 SELECT DISTINCT
 	'simple' AS type
-	,'FW14-NOB-' + a.[Vendor Code] + CASE WHEN a.Size IS NULL THEN + '' ELSE + '-' + a.Size END AS sku
-	,dbo.getNOBName(a.Name) AS name
+	,'FW14-VIB-' + a.SKU + '-' + RIGHT(b.ItemCode,2) AS sku --No color code
+	,a.MODEL AS name
 	,0 AS has_options
-	,CAST(a.MSRP AS float) - 0.01 AS price
-	,a.Wholesale AS cost
-	,dbo.getNOBDepartment(b.gender) AS department
+	,CAST(b.Retail AS float) - 0.01 AS price
+	,b.Wholesale AS cost
+	,CASE WHEN dbo.RemoveNonAlphaCharacters(a.SKU) = 'M' THEN 'Men' WHEN dbo.RemoveNonAlphaCharacters(a.SKU) = 'W' THEN 'Women' ELSE 'Boys|Girls' END AS department
 	,NULL AS image
-	,REPLACE((dbo.ProperCase(b.Colorway)),'H.','Heathered ') AS image_label
-	,REPLACE((dbo.ProperCase(b.Colorway)),'H.','Heathered ') AS choose_color
-	,a.Size AS choose_size
-	,CAST(REPLACE(b.[GTIN-12],'-','') AS bigint) AS vendor_sku
-	,a.[Vendor Code] AS vendor_product_id
-	,NULL AS vendor_color_code
-	,a.Size AS vendor_size_code
+	,a.COLOR AS image_label
+	,a.COLOR AS choose_color
+	,RIGHT(b.ItemCode,2) AS choose_size
+	,CAST(b.UPC AS bigint) AS vendor_sku
+	,b.[Base SKU] AS vendor_product_id
+	,a.COLOR AS vendor_color_code
+	,RIGHT(b.ItemCode,2) AS vendor_size_code
 	,NULL AS weight
-FROM tbl_RawData_FW14_NOB_Price_Marketing AS a
-INNER JOIN tbl_RawData_FW14_NOB_UPC AS b
-ON REPLACE(REPLACE(REPLACE((a.Name),' (Colour Block)',''),' (Crosshatch)',''),' (Wool Blend)','') = 
-dbo.getNOBName(b.STYLE) AND dbo.getNOBSize(a.Size) = dbo.getNOBSize(b.size)
---FROM tbl_RawData_FW14_NOB_Price_Marketing AS a
---INNER JOIN tbl_RawData_FW14_NOB_UPC AS b
---ON a.Name + a.Size = CASE WHEN b.Make IS NULL THEN dbo.getNOBName(b.Style) ELSE dbo.getNOBName(b.Style) + ' ' + b.Make END + (dbo.getNOBSize(b.size))
+FROM tbl_RawData_FW14_VIB_Marketing AS a
+INNER JOIN tbl_RawData_FW14_VIB_UPC AS b
+ON a.SKU = b.[Base SKU] AND REPLACE(b.ItemName,' / ','/') = a.MODEL + ' ' + a.COLOR
 GO
 
 UPDATE a
-	SET a.image = b.filename
-FROM tbl_LoadFile_FW14_NOB AS a
+SET a.image = b.filename
+FROM tbl_LoadFile_FW14_VIB AS a
 INNER JOIN tbl_RawData_FW14_Image_Filenames AS b
-ON REPLACE(REPLACE(REPLACE(a.name,' (Colour Block)',''),' (Crosshatch)',''),' (Wool Blend)','') + ' ' + dbo.getNOBColor(a.choose_color) = 
-REPLACE(REPLACE((dbo.getNOBPhoto(b.filename)),'-',' '),'Crosshatch ','')
-WHERE a.type = 'simple' AND b.Brand = 'NOB'
+ON	a.vendor_product_id + '-' + REPLACE(a.name,' ','') + '_' + REPLACE(a.choose_color,'/','') = dbo.getVIBColor(b.filename)
+WHERE b.brand = 'VIB' AND a.type = 'simple' AND a.image IS NULL
 
-/*
-UPDATE a
-	SET a.image = RIGHT(b.filename,CHARINDEX('/',REVERSE(b.filename)) - 1)
-FROM tbl_LoadFile_FW14_NOB AS a
-INNER JOIN tbl_RawData_FW14_Image_Filenames AS b
-ON RIGHT(b.filename,CHARINDEX('/',REVERSE(b.filename)) - 1) = a.vendor_product_id + '_' + a.vendor_color_code + '_f.jpg' 
-WHERE b.brand = 'COL' AND a.type = 'simple' AND a.image IS NULL
-
-UPDATE a
-	SET a.image = RIGHT(b.filename,CHARINDEX('/',REVERSE(b.filename)) - 1)
-FROM tbl_LoadFile_FW14_NOB AS a
-INNER JOIN tbl_RawData_FW14_Image_Filenames AS b
-ON RIGHT(b.filename,CHARINDEX('/',REVERSE(b.filename)) - 1) = a.vendor_product_id + '_' + a.vendor_color_code + '%.jpg' 
-WHERE b.brand = 'COL' AND a.type = 'simple' AND image IS NULL
-*/	
-
-INSERT INTO tbl_LoadFile_FW14_NOB (
+INSERT INTO tbl_LoadFile_FW14_VIB (
 	type
 	,sku
 	,name
@@ -174,7 +153,7 @@ INSERT INTO tbl_LoadFile_FW14_NOB (
 
 SELECT DISTINCT
 	'configurable' AS type
-	,'NOB-' + vendor_product_id AS sku
+	,'VIB-' + vendor_product_id AS sku
 	,name AS name
 	,'Uncategorized' AS categories
 	,'choose_color,choose_size' AS configurable_attributes
@@ -184,35 +163,43 @@ SELECT DISTINCT
 	,department AS department
 	,'Catalog, Search' AS visibility
 	,vendor_product_id AS vendor_product_id
-	,dbo.getUrlKey(name,'Nobis','',department) AS url_key
-	,'Nobis ' + REPLACE(REPLACE(department + '''s ','Men|Women''s ',''),'Boy|Girl''s ','') + name AS meta_title
+	,dbo.getUrlKey(name,'Vibram','',department) AS url_key
+	,'Vibram ' + REPLACE(REPLACE(department + '''s ','Men|Women''s ',''),'Boy|Girl''s ','') + name AS meta_title
 	,'F' AS merchandise_priority
 	,0 AS manage_stock
 	,0 AS use_config_manage_stock
 	,NULL AS qty
 	,NULL AS is_in_stock
-FROM tbl_LoadFile_FW14_NOB
+FROM tbl_LoadFile_FW14_VIB
 GO
 
-UPDATE tbl_LoadFile_FW14_NOB SET
+UPDATE tbl_LoadFile_FW14_VIB SET
 	 categories = dbo.getMagentoCategories(a.vendor_product_id)
-	,description = (SELECT TOP 1 Description FROM tbl_RawData_FW14_NOB_Price_Marketing WHERE [Vendor Code] = a.vendor_product_id)	
-	,features = (SELECT TOP 1 Features FROM tbl_RawData_FW14_NOB_Price_Marketing WHERE [Vendor Code] = a.vendor_product_id)
-	,simples_skus = dbo.getNOBAssociatedProducts(a.vendor_product_id)
-FROM tbl_LoadFile_FW14_NOB AS a
+	,description = (SELECT TOP 1 REPLACE(DESCRIPTION,'. ','.|') FROM tbl_RawData_FW14_VIB_Marketing WHERE SKU = vendor_product_id)
+	,fabric = (SELECT TOP 1 INSOLE FROM	tbl_RawData_FW14_VIB_Marketing WHERE SKU = vendor_product_id)
+	,simples_skus = dbo.getVIBAssociatedProducts(a.vendor_product_id)
+FROM tbl_LoadFile_FW14_VIB AS a
+WHERE type != 'simple'
+GO
+
+UPDATE tbl_LoadFile_FW14_VIB SET categories = NULL WHERE type = 'simple'
+UPDATE tbl_LoadFile_FW14_VIB SET status = 'Disabled' WHERE image IS NULL AND type = 'simple'
+UPDATE tbl_LoadFile_FW14_VIB SET thumbnail = image, small_image = image WHERE type = 'simple'
+GO
+
+UPDATE tbl_LoadFile_FW14_VIB --Final update on descriptions for SEO keywords
+SET description = '<b><i>The ' + name + ' by ' + manufacturer + ' for ' + CASE WHEN department = 'Boys|Girls' THEN 'Boys and Girls' ELSE department END + '</i></b><br>'
++ (SELECT TOP 1 REPLACE(DESCRIPTION,'. ','.|') FROM tbl_RawData_FW14_VIB_Marketing WHERE SKU = vendor_product_id) 
 WHERE type = 'configurable'
-GO
 
-UPDATE tbl_LoadFile_FW14_NOB SET categories = NULL WHERE type = 'simple'
-UPDATE tbl_LoadFile_FW14_NOB SET status = 'Disabled' WHERE image IS NULL AND type = 'simple'
-UPDATE tbl_LoadFile_FW14_NOB SET thumbnail = image, small_image = image WHERE type = 'simple'
-GO
+--select DISTINCT RIGHT(REPLACE(REPLACE(REPLACE(REPLACE(REPLACE([Product Description (Long)],'•-','| '),'• ','| '),'-','|'),' •','|'),'-- ','|'),
+--LEN(REPLACE(REPLACE(REPLACE(REPLACE(REPLACE([Product Description (Long)],'•-','| '),'• ','| '),'-','|'),' •','|'),'-- ','|')) - 2)
+--from tbl_RawData_FW14_VIB_Marketing
 
-UPDATE tbl_LoadFile_FW14_NOB --Final update on descriptions for SEO keywords
-SET description	= '<b><i>The ' + name + ' by ' + manufacturer + ' for ' + CASE WHEN department = 'Men|Women' THEN 'Men and Women' ELSE department END + '</i></b><br>'
-+ (SELECT TOP 1 Description FROM tbl_RawData_FW14_NOB_Price_Marketing WHERE [Vendor Code] = vendor_product_id) WHERE type = 'configurable'
+--CASE WHEN LEFT(@output,1) = ' ' OR LEFT(@output,1) = '-' THEN LEFT(@output,LEN(@output) - 1)
+	
 /*
-CREATE VIEW [dbo].[view_LoadFile_FW14_NOB]
+CREATE VIEW [dbo].[view_LoadFile_FW14_VIB]
 AS
 SELECT  '"store"' AS store, 
 		'"websites"' AS websites, 
@@ -271,12 +258,12 @@ SELECT  '"' + RTRIM(LTRIM(REPLACE(a.store,'"','""'))) + '"','"' + RTRIM(LTRIM(RE
 		'"' + RTRIM(LTRIM(REPLACE(a.vendor_color_code,'"','""'))) + '"','"' + RTRIM(LTRIM(REPLACE(a.vendor_size_code,'"','""'))) + '"','"' + RTRIM(LTRIM(REPLACE(a.season_id,'"','""'))) + '"','"' + RTRIM(LTRIM(REPLACE(a. short_description,'"','""'))) + '"','"' + RTRIM(LTRIM(REPLACE(a.description,'"','""'))) + '"','"' + RTRIM(LTRIM(REPLACE(a.features,'"','""'))) + '"','"' + RTRIM(LTRIM(REPLACE(a.activities,'"','""'))) + '"','"' + RTRIM(LTRIM(REPLACE(a.weather,'"','""'))) + '"','"' + RTRIM(LTRIM(REPLACE(a.layering,'"','""'))) + '"','"' + RTRIM(LTRIM(REPLACE(a.care_instructions,'"','""'))) + '"',
 		'"' + RTRIM(LTRIM(REPLACE(a.fabric,'"','""'))) + '"','"' + RTRIM(LTRIM(REPLACE(a.fit,'"','""'))) + '"','"' + RTRIM(LTRIM(REPLACE(a.volume,'"','""'))) + '"','"' + RTRIM(LTRIM(REPLACE(a.manufacturer,'"','""'))) + '"','"' + RTRIM(LTRIM(REPLACE(a.qty,'"','""'))) + '"','"' + RTRIM(LTRIM(REPLACE(a.is_in_stock,'"','""'))) + '"','"' + RTRIM(LTRIM(REPLACE(a.simples_skus,'"','""'))) + '"','"' + RTRIM(LTRIM(REPLACE(a.url_key,'"','""'))) + '"',
 		'"' + RTRIM(LTRIM(REPLACE(a.videos,'"','""'))) + '"','"' + RTRIM(LTRIM(REPLACE(a.weight,'"','""'))) + '"','"' + RTRIM(LTRIM(REPLACE(a.merchandise_priority,'"','""'))) + '"','"' + RTRIM(LTRIM(REPLACE(a.backorders,'"','""'))) + '"','"' + RTRIM(LTRIM(REPLACE(a.manage_stock,'"','""'))) + '"','"' + RTRIM(LTRIM(REPLACE(a.never_backorder,'"','""'))) + '"','"' + RTRIM(LTRIM(REPLACE(a.use_config_manage_stock,'"','""'))) + '"','"' + RTRIM(LTRIM(REPLACE(a.use_config_backorders,'"','""'))) + '"','"' + RTRIM(LTRIM(REPLACE(a.meta_title,'"','""'))) + '"'
-FROM dbo.tbl_LoadFile_FW14_NOB AS a
+FROM dbo.tbl_LoadFile_FW14_VIB AS a
 GO
 
 DECLARE @sql varchar(1024)
-SELECT @sql = 'bcp "SELECT * FROM LOT_Inventory.dbo.view_LoadFile_FW14_NOB" queryout "C:\Data\Shared\FW14NOB.csv" -w -t , -T -S ' + @@servername
+SELECT @sql = 'bcp "SELECT * FROM LOT_Inventory.dbo.view_LoadFile_FW14_VIB" queryout "C:\Data\Shared\FW14VIB.csv" -w -t , -T -S ' + @@servername
 EXEC master..xp_cmdshell @sql
 
-DROP VIEW view_LoadFile_FW14_NOB
+DROP VIEW view_LoadFile_FW14_VIB
 */

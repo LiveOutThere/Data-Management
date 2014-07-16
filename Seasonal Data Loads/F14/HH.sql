@@ -43,8 +43,8 @@ CREATE TABLE [dbo].[tbl_LoadFile_FW14_HH](
 	[vendor_size_code] [nvarchar](4000) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
 	[season_id] [nvarchar](4000) COLLATE SQL_Latin1_General_CP1_CI_AS NULL CONSTRAINT [DF_tbl_LoadFile_FW14_HH_season]  DEFAULT (N'FW14 ASAP'),
 	[short_description] [nvarchar](4000) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
-	[description] [nvarchar](4000) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
-	[features] [nvarchar](4000) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
+	[description] [nvarchar](MAX) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
+	[features] [nvarchar](MAX) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
 	[activities] [nvarchar](4000) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
 	[weather] [nvarchar](4000) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
 	[layering] [nvarchar](4000) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
@@ -187,8 +187,8 @@ GO
 
 UPDATE tbl_LoadFile_FW14_HH SET
 	categories = dbo.getMagentoCategories(a.vendor_product_id)
-	,description = (SELECT TOP 1 [Product Statement] FROM tbl_RawData_FW14_HH_Marketing WHERE Style = a.vendor_product_id)
-	,features = (SELECT TOP 1 [Product Features] FROM tbl_RawData_FW14_HH_Marketing WHERE Style = a.vendor_product_id)
+	,description = (SELECT [Product Statement] FROM tbl_RawData_FW14_HH_Marketing WHERE Style = a.vendor_product_id)
+	,features = (SELECT [Product Feature] FROM tbl_RawData_FW14_HH_Marketing WHERE Style = a.vendor_product_id)
 	--,fabric = (SELECT TOP 1 Fabric_Content FROM tbl_RawData_FW14_HH_Marketing WHERE Style = a.vendor_product_id)
 	,simples_skus = dbo.getHHAssociatedProducts(a.vendor_product_id)
 FROM tbl_LoadFile_FW14_HH AS a

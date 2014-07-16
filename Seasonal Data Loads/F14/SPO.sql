@@ -104,14 +104,14 @@ INSERT INTO tbl_LoadFile_FW14_SPO (
 SELECT DISTINCT
 	'simple' AS type
 	,'FW14-SPO-' + Name AS sku
-	,dbo.getSPOName(Category) AS name
+	,REPLACE(REPLACE(dbo.getSPOName(Category),REPLACE(REPLACE(dbo.ProperCase([Color Code]),' /','/'),'*',''),''),' -','') AS name
 	,0 AS has_options
 	,MSRP - 0.01 AS price
 	,WHLSL AS cost
 	,Department AS department
 	,NULL AS image
-	,[Color Code] AS image_label
-	,[Color Code] AS choose_color
+	,REPLACE(REPLACE(dbo.ProperCase([Color Code]),' /','/'),'*','') AS image_label
+	,REPLACE(REPLACE(dbo.ProperCase([Color Code]),' /','/'),'*','') AS choose_color
 	,dbo.getSPOSize([Item Size]) AS choose_size
 	,CAST([UPC Code] AS bigint) AS vendor_sku
 	,Item# AS vendor_product_id
@@ -121,13 +121,15 @@ SELECT DISTINCT
 FROM tbl_RawData_FW14_SPO_UPC_Price
 GO
 
---UPDATE a
---	SET a.image = b.image
---FROM tbl_LoadFile_FW14_SPO AS a
---INNER JOIN tbl_LoadFile_SS14_COL AS b
---ON b.vendor_sku = a.vendor_sku 
---WHERE a.type = 'simple'
-	
+--UPDATE AS MORE IMAGES ARRIVE
+UPDATE a
+	SET a.image = b.filename
+FROM tbl_LoadFile_FW14_SPO AS a
+INNER JOIN tbl_RawData_FW14_Image_Filenames AS b
+ON REPLACE(REPLACE(REPLACE(a.name,' ',''),'Women''s','Wmns') + REPLACE(REPLACE(a.choose_color,'/',''),' ',''),'.','') = 
+REPLACE(REPLACE(LEFT(b.filename,LEN(b.filename) - 4),'_',''),'.','')
+WHERE a.type = 'simple' AND b.brand = 'SPO' AND a.image IS NOT NULL
+
 INSERT INTO tbl_LoadFile_FW14_SPO(
 	type
 	,sku
@@ -168,25 +170,27 @@ SELECT DISTINCT
 	,0 AS use_config_manage_stock
 	,NULL AS qty
 	,NULL AS is_in_stock
-FROM tbl_LoadFile_FW14_SPO WHERE name LIKE '%Baruntse%'
+FROM tbl_LoadFile_FW14_SPO
 GO
 
 UPDATE tbl_LoadFile_FW14_SPO SET
 	 categories = dbo.getMagentoCategories(a.vendor_product_id)
 	,description = (SELECT TOP 1 Description FROM tbl_RawData_FW14_SPO_Marketing WHERE Style = a.vendor_product_id)
-	--,fabrics = (SELECT TOP 1 Fabrics/Materials FROM tbl_RawData_FW14_SPO_Marketing WHERE Style = a.vendor_product_id)
+	,fabric = (SELECT TOP 1 [Fabrics/Materials] FROM tbl_RawData_FW14_SPO_Marketing WHERE Style = a.vendor_product_id)
 	,features = (SELECT TOP 1 [Unique Features] FROM tbl_RawData_FW14_SPO_Marketing WHERE Style = a.vendor_product_id)
 	,simples_skus = dbo.getSPOassociatedProducts(a.vendor_product_id)
 FROM tbl_LoadFile_FW14_SPO AS a
 WHERE type = 'configurable'
 GO
-	
+
+UPDATE tbl_LoadFile_FW14_SPO SET categories = NULL WHERE type = 'simple'
+UPDATE tbl_LoadFile_FW14_SPO SET status = 'Disabled' WHERE image IS NULL AND type = 'simple'
 UPDATE tbl_LoadFile_FW14_SPO SET thumbnail = image, small_image = image WHERE type = 'simple'
 GO
 
 UPDATE tbl_LoadFile_FW14_SPO --Final update on descriptions for SEO keywords
 SET description	= '<b><i>The ' + name + ' by ' + manufacturer + ' for ' + CASE WHEN department = 'Men|Women' THEN 'Men and Women' ELSE department END + '</i></b><br>'
-+ (SELECT TOP 1 Description FROM tbl_RawData_FW14_SPO_Marketing WHERE Style = vendor_product_id)
++ (SELECT TOP 1 Description FROM tbl_RawData_FW14_SPO_Marketing WHERE Style = vendor_product_id) where type = 'configurable'
 
 /*
 CREATE VIEW [dbo].[view_LoadFile_FW14_SPO]
@@ -197,6 +201,7 @@ SELECT  '"store"' AS store,
 		'"sku"' AS sku, 
 		'"name"' AS name, 
 		'"categories"' AS categories, 
+		
 		'"attribute_set"' AS attribute_set, 
         '"configurable_attributes"' AS configurable_attributes, 
         '"has_options"' AS has_options, 

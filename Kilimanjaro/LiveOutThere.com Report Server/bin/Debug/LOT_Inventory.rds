@@ -2,7 +2,7 @@
 <RptDataSource xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" Name="LOT_Inventory">
   <ConnectionProperties>
     <Extension>SQL</Extension>
-    <ConnectString>Data Source=lot.dyndns.org;Initial Catalog=LOT_Inventory</ConnectString>
+    <ConnectString>Data Source=184.70.199.202;Initial Catalog=LOT_Inventory</ConnectString>
   </ConnectionProperties>
   <DataSourceID>c6f31a9f-d296-45ee-a09e-3cfe5e3a96e6</DataSourceID>
 </RptDataSource>

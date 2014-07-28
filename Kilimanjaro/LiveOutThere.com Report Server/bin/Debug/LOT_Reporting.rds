@@ -2,7 +2,7 @@
 <RptDataSource xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" Name="LOT_Reporting">
   <ConnectionProperties>
     <Extension>SQL</Extension>
-    <ConnectString>Data Source=fs01;Initial Catalog=LOT_Reporting</ConnectString>
+    <ConnectString>Data Source=184.70.199.202;Initial Catalog=LOT_Reporting</ConnectString>
   </ConnectionProperties>
   <DataSourceID>4ee6d52a-6246-41f5-9a5c-b6d39e2bf5c1</DataSourceID>
 </RptDataSource>

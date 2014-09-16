@@ -28,7 +28,7 @@
                         <Paragraph>
                           <TextRuns>
                             <TextRun>
-                              <Value>Colour Value</Value>
+                              <Value>Color Value</Value>
                               <Style>
                                 <FontWeight>Bold</FontWeight>
                               </Style>
@@ -56,7 +56,7 @@
                         <Paragraph>
                           <TextRuns>
                             <TextRun>
-                              <Value>color_family</Value>
+                              <Value>Color Family</Value>
                               <Style>
                                 <FontWeight>Bold</FontWeight>
                               </Style>
@@ -84,7 +84,7 @@
                         <Paragraph>
                           <TextRuns>
                             <TextRun>
-                              <Value>Example Image URL</Value>
+                              <Value>Representative Image URL</Value>
                               <Style>
                                 <FontWeight>Bold</FontWeight>
                               </Style>
@@ -237,7 +237,7 @@
         </TablixRowHierarchy>
         <DataSetName>DataSet1</DataSetName>
         <Top>1.30792in</Top>
-        <Height>0.51375in</Height>
+        <Height>0.51376in</Height>
         <Width>11.50001in</Width>
         <Style />
       </Tablix>
@@ -362,7 +362,19 @@ Multicolor</Value>
           <Paragraph>
             <TextRuns>
               <TextRun>
-                <Value>- For each row, type in 1-3 Color Family options, pipe-delimited. EX: "Blue|Brown|Pink".</Value>
+                <Value>- For each row, type in </Value>
+                <Style>
+                  <TextDecoration>None</TextDecoration>
+                </Style>
+              </TextRun>
+              <TextRun>
+                <Value>one</Value>
+                <Style>
+                  <TextDecoration>Underline</TextDecoration>
+                </Style>
+              </TextRun>
+              <TextRun>
+                <Value> Color Family option.</Value>
                 <Style>
                   <TextDecoration>None</TextDecoration>
                 </Style>
@@ -373,7 +385,7 @@ Multicolor</Value>
           <Paragraph>
             <TextRuns>
               <TextRun>
-                <Value>- All Color Family Options are indicated at the bottom of the report.</Value>
+                <Value>- Choose the best applicable option from the options available at the bottom of the report.</Value>
                 <Style>
                   <TextDecoration>None</TextDecoration>
                 </Style>
